@@ -134,6 +134,22 @@ Expedia is an independent third party and is not affiliated with, sponsoring,
 or endorsing Copy4Chat. Expedia and its associated trademarks belong to their
 respective owners.
 
+## Icon
+
+`icons/icon.svg` is the source; the PNGs Chrome loads are generated from it:
+
+```
+./tools/make-icons.sh     # writes icons/icon{16,32,48,128}.png
+```
+
+Chrome itself is the rasteriser, so there is no ImageMagick or librsvg
+dependency and the result matches what the browser will draw. Edit the SVG,
+re-run the script, then reload the extension.
+
+Sizes are the ones Chrome asks for: 16 and 32 for the context menu and
+favicon slots, 48 for `chrome://extensions`, 128 for installation and the
+Web Store listing.
+
 ## Architecture
 
 ```

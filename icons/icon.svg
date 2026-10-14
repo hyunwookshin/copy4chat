@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="128" height="128">
+  <rect width="128" height="128" rx="28" fill="#10182B"/>
+  <!-- Corner brackets: the frame the renderer draws. -->
+  <g stroke="#F8FAFC" stroke-width="8" fill="none" stroke-linecap="square">
+    <path d="M34 44 V34 H44"/>
+    <path d="M84 34 H94 V44"/>
+    <path d="M94 84 V94 H84"/>
+    <path d="M44 94 H34 V84"/>
+  </g>
+  <!-- Two lines of content inside it. -->
+  <rect x="46" y="55" width="36" height="8" rx="4" fill="#60A5FA"/>
+  <rect x="46" y="70" width="22" height="8" rx="4" fill="#60A5FA"/>
+</svg>
