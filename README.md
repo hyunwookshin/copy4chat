@@ -7,7 +7,7 @@ Copies browser selections as structured text for LLMs, preserving visual and sem
 ## Install
 
 1. Open `chrome://extensions`, enable **Developer mode**, and click **Load unpacked** on this directory.
-2. Select text on any page, right-click, and choose **Copy for chat**.
+2. Select text on any page, right-click, and choose **Copy For Chat (CopyForChat)**.
 
 ## Architecture
 
