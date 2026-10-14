@@ -46,9 +46,9 @@ The extractor produces a renderer-agnostic IR, so output style is a swap, not a 
 ```
 ┌─ Welcome back ────────────────┐
 │ Email address                 │
-│ [ james@example.com_____ ]    │
+│ [ james@example.com____ ]     │
 │ Password                      │
-│ [ ••••••••••____________ ]    │
+│ [ ••••••••••____ ]            │
 │ ☑ Remember me                 │
 │ [ Sign in ]                   │
 │ ⚠ Incorrect email or password │
@@ -77,6 +77,33 @@ What a converter structurally *cannot* see, and where our value therefore lives:
 | `split-labels.html` | Differentiator: live `.value` / `selectedOptions` are invisible to a converter |
 | `pricing-cards.html` | Negative test: must remain nested, not coerced into a table |
 | `feature-matrix.html` | **At risk** — a GFM converter handles real tables, so this may no longer measure anything. Re-score, then likely delete. |
+
+## Tests
+
+```
+node test/render-invariants.js          # geometry
+node test/render-invariants.js --print  # geometry + rendered output
+```
+
+The boxed renderer holds one invariant, and the United regression was a
+violation of it rather than a tuning problem:
+
+> Every render operation returns a Rect — `{ lines, w }` with every line padded
+> to exactly `w` display columns — and nothing downstream ever re-wraps it.
+
+Wrapping is a property of text, so it happens once, when text becomes a Rect.
+The earlier renderer returned bare string arrays of unknown width and wrapped
+them inside the panel builder, which could word-wrap a nested box's border.
+Budget flows downward: a frame at budget B renders its body at B-4, so a child
+can never return wider than its parent allows. Horizontal composition is
+attempted on finished rectangles and falls back to packing or stacking them
+**unchanged** — a composed block is never reflowed.
+
+The tests assert this rather than eyeballing it: nothing exceeds 80 columns,
+every opening corner has a closing corner in the same *display* column (not
+string index — they diverge under CJK), no orphaned border fragments, and
+balanced verticals. `test/ir/*.json` are IR fixtures replayed through the same
+checks; `united-search.json` is the page that broke it.
 
 ## Out of Scope (v0.1)
 

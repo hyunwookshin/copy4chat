@@ -1,61 +1,166 @@
 // Visual-text renderer.
 //
-// The pitch for this extension is that you paste something recognisable — a
-// form still looks like a form. That is worth real tokens, but not everywhere,
-// so this is a hybrid: frame the things whose frame carries meaning (forms,
-// repeated records, side-by-side arrangements), and leave prose alone. Same
-// "which relation is load-bearing" rule as extraction, one layer later.
+// Paste a form and it should still look like a form. That is the reason to
+// install this; whether it also helps the agent is what the fixtures decide.
+//
+// THE INVARIANT, which the first version violated and which every bug in the
+// United output traced back to:
+//
+//   Every render operation returns a Rect — { lines, w } where every line is
+//   already padded to exactly w display columns — and NOTHING downstream ever
+//   re-wraps it.
+//
+// Wrapping is a property of text, so it happens when text becomes a Rect and
+// never again. The previous renderer returned bare string arrays of unknown
+// width and wrapped them inside the panel builder, which meant a nested box's
+// border could be word-wrapped. That is what produced torn frames.
+//
+// Budget flows downward: a frame at budget B renders its body at B-4, so a
+// child can never come back wider than its parent allows.
 //
 // Output is fenced. Chat clients render proportional fonts, which destroys
-// column alignment on arrival; the fence is what makes any of this survive
-// the paste.
+// alignment on arrival.
 
 (function () {
   const C4C = (globalThis.C4C = globalThis.C4C || {});
 
-  const MAX_WIDTH = 76; // fits most chat composers without wrapping
-  const MIN_FIELD = 12;
-  const MIN_COLUMN = 18; // narrower than this and columns read worse than a stack
-  const MIN_COLUMN_TEXT = 12; // prose wraps, so text-only records tolerate more
+  const MAX = 80;
+  const GAP = 2; // columns between side-by-side blocks
   const MAX_TITLE = 36;
+  const FIELD_PAD = 12;
+  const MIN_SOFT = 16; // narrowest column worth squeezing prose into
 
   // Lines that must survive intact: buttons, inputs, checkboxes, radios.
   const ATOMIC = /^(\[|☑|☐|\(•\)|\( \)|\( )/;
 
   const WIDE = /[ᄀ-ᅟ⺀-꓏가-힣豈-﫿︰-﹯＀-｠￠-￦]/;
 
-  // CJK and full-width glyphs occupy two cells; without this the frames skew.
+  // String length is not display width: CJK and full-width glyphs take two
+  // columns, and combining marks take none. Frames skew without this.
   function width(s) {
     let n = 0;
-    for (const ch of s) n += WIDE.test(ch) ? 2 : 1;
+    for (const ch of s) {
+      if (/\p{M}/u.test(ch)) continue;
+      n += WIDE.test(ch) ? 2 : 1;
+    }
     return n;
   }
 
-  function pad(s, w) {
+  function padTo(s, w) {
     return s + " ".repeat(Math.max(0, w - width(s)));
   }
 
-  function wrap(s, w) {
-    if (width(s) <= w) return [s];
-    const words = s.split(/\s+/);
+  function truncate(s, w) {
+    if (width(s) <= w) return s;
+    let out = "";
+    for (const ch of s) {
+      if (width(out) + width(ch) > w - 1) break;
+      out += ch;
+    }
+    return out + "…";
+  }
+
+  // ------------------------------------------------------------------ Rect
+
+  const EMPTY = { lines: [], w: 0 };
+
+  function rectOf(lines, forceW) {
+    const w = forceW ?? Math.max(0, ...lines.map(width));
+    return { lines: lines.map((l) => padTo(l, w)), w };
+  }
+
+  function stack(rects) {
+    const list = rects.filter((r) => r && r.lines.length);
+    if (!list.length) return EMPTY;
+    const w = Math.max(...list.map((r) => r.w));
+    return { lines: list.flatMap((r) => r.lines.map((l) => padTo(l, w))), w };
+  }
+
+  // Side by side. Both operands are already final rectangles, so this is pure
+  // concatenation — no measurement, no wrapping, nothing that can tear.
+  function row(rects) {
+    const list = rects.filter((r) => r && r.lines.length);
+    if (!list.length) return EMPTY;
+    const h = Math.max(...list.map((r) => r.lines.length));
+    const gap = " ".repeat(GAP);
+    const lines = [];
+    for (let i = 0; i < h; i++) {
+      lines.push(list.map((r) => r.lines[i] ?? " ".repeat(r.w)).join(gap));
+    }
+    return rectOf(lines);
+  }
+
+  function indent(r, k) {
+    if (!r.lines.length) return EMPTY;
+    const p = " ".repeat(k);
+    return { lines: r.lines.map((l) => p + l), w: r.w + k };
+  }
+
+  function frame(title, body, budget) {
+    const inner = Math.max(Math.min(body.w, budget - 4), 6);
+    const t = title ? truncate(title, Math.max(0, inner - 1)) : "";
+
+    const top = t
+      ? "┌─ " + t + " " + "─".repeat(Math.max(0, inner - width(t) - 1)) + "┐"
+      : "┌" + "─".repeat(inner + 2) + "┐";
+
+    return rectOf([
+      top,
+      ...body.lines.map((l) => "│ " + padTo(l, inner) + " │"),
+      "└" + "─".repeat(inner + 2) + "┘",
+    ]);
+  }
+
+  // ------------------------------------------------------------------ text
+
+  function wrapText(s, budget) {
+    const limit = Math.max(4, budget);
+    const out = [];
+    for (const word of s.split(/\s+/)) {
+      const last = out[out.length - 1];
+      if (last !== undefined && width(last) + 1 + width(word) <= limit) {
+        out[out.length - 1] = last + " " + word;
+      } else {
+        out.push(word);
+      }
+    }
+    // A single unbreakable token (a long URL) still has to be cut, and this is
+    // the only place in the renderer allowed to do it.
+    return out.flatMap((l) => {
+      if (width(l) <= limit) return [l];
+      const parts = [];
+      let cur = "";
+      for (const ch of l) {
+        if (width(cur) + width(ch) > limit) {
+          parts.push(cur);
+          cur = "";
+        }
+        cur += ch;
+      }
+      if (cur) parts.push(cur);
+      return parts;
+    });
+  }
+
+  function textRect(s, budget) {
+    const t = s.replace(/\s+/g, " ").trim();
+    return t ? rectOf(wrapText(t, budget)) : EMPTY;
+  }
+
+  // Pack items onto lines without ever splitting one.
+  function packRect(items, budget) {
     const lines = [];
     let cur = "";
-    for (const word of words) {
-      if (!cur) cur = word;
-      else if (width(cur) + 1 + width(word) <= w) cur += " " + word;
+    for (const item of items) {
+      if (!cur) cur = item;
+      else if (width(cur) + GAP + width(item) <= budget) cur += " ".repeat(GAP) + item;
       else {
         lines.push(cur);
-        cur = word;
+        cur = item;
       }
     }
     if (cur) lines.push(cur);
-    // A single unbreakable token (a long URL) still has to be cut.
-    return lines.flatMap((l) => {
-      if (width(l) <= w) return [l];
-      const parts = [];
-      for (let i = 0; i < l.length; i += w) parts.push(l.slice(i, i + w));
-      return parts;
-    });
+    return rectOf(lines);
   }
 
   function linkText(n) {
@@ -63,87 +168,7 @@
     return n.href ? `${t} (${n.href})` : t;
   }
 
-  // ------------------------------------------------------------- primitives
-
-  function panel(title, body, forceInner) {
-    const inner = forceInner ?? Math.min(
-      MAX_WIDTH - 4,
-      Math.max(width(title) + 4, ...body.map(width), 10)
-    );
-    const lines = body.flatMap((l) => wrap(l, inner));
-
-    // Body lines measure inner+4 ("| " + inner + " |"); the head has to match.
-    const head = title
-      ? `┌─ ${title} ` + "─".repeat(Math.max(0, inner - width(title) - 1)) + "┐"
-      : "┌" + "─".repeat(inner + 2) + "┐";
-
-    return [
-      head,
-      ...lines.map((l) => `│ ${pad(l, inner)} │`),
-      "└" + "─".repeat(inner + 2) + "┘",
-    ];
-  }
-
-  // Side-by-side only pays when the content actually fits. Squeezing three
-  // cards into slivers makes the grouping harder to read than stacking them,
-  // so this returns null to mean "stack instead".
-  function columnWidths(cells) {
-    const natural = cells.map((c) =>
-      Math.max(width(c.title) + 2, ...c.lines.map(width), 8)
-    );
-    if (natural.reduce((a, b) => a + b + 3, 0) + 1 <= MAX_WIDTH) return natural;
-
-    const share = Math.floor((MAX_WIDTH - cells.length * 3 - 1) / cells.length);
-    const hasControls = cells.some((c) => c.lines.some((l) => ATOMIC.test(l)));
-
-    // Text-only records lean horizontal: prose wraps gracefully, so narrow
-    // columns stay readable and the arrangement is worth keeping. Controls
-    // are what force a stack.
-    if (share < (hasControls ? MIN_COLUMN : MIN_COLUMN_TEXT)) return null;
-
-    // A button sliced into "[ Contact our sales" / "team ]" reads as broken,
-    // which is worse than simply stacking the cards.
-    if (hasControls && cells.some((c) => c.lines.some((l) => ATOMIC.test(l) && width(l) > share))) {
-      return null;
-    }
-
-    return natural.map((n) => Math.min(n, share));
-  }
-
-  function columns(cells, widths) {
-    const wrapped = cells.map((c, i) => c.lines.flatMap((l) => wrap(l, widths[i])));
-    const height = Math.max(...wrapped.map((w) => w.length));
-
-    const seg = (i, left, fill, right) =>
-      (i === 0 ? left : "") + fill.repeat(widths[i] + 2) + right;
-
-    let top = "";
-    cells.forEach((c, i) => {
-      const label = c.title ? `─ ${c.title} ` : "──";
-      const rest = Math.max(0, widths[i] + 2 - width(label));
-      top += (i === 0 ? "┌" : "┬") + label + "─".repeat(rest);
-    });
-    top += "┐";
-
-    const rows = [];
-    for (let r = 0; r < height; r++) {
-      let line = "";
-      wrapped.forEach((w, i) => {
-        line += "│ " + pad(w[r] ?? "", widths[i]) + " ";
-      });
-      rows.push(line + "│");
-    }
-
-    let bottom = "";
-    cells.forEach((c, i) => {
-      bottom += (i === 0 ? "└" : "┴") + "─".repeat(widths[i] + 2);
-    });
-    bottom += "┘";
-
-    return [top, ...rows, bottom];
-  }
-
-  // ----------------------------------------------------------------- fields
+  // ---------------------------------------------------------------- fields
 
   function field(f, omitLabel) {
     const label = omitLabel ? "" : (f.label || "").replace(/\s+/g, " ").trim();
@@ -160,32 +185,29 @@
       case "select":
         return [label, `( ${f.value} ▾ )${note}`].filter(Boolean);
       default: {
-        // An input reads as an input from a few trailing underscores; padding
-        // every field to a fixed minimum just made them too wide to sit side
-        // by side, which cost far more than the visual cue was worth.
-        const fill = Math.max(MIN_FIELD - width(f.value), 4);
-        const box = `[ ${f.value}${"_".repeat(fill)} ]`;
-        return label ? [label, box + note] : [box + note];
+        const fill = Math.max(FIELD_PAD - width(f.value), 4);
+        const box = `[ ${f.value}${"_".repeat(fill)} ]${note}`;
+        return label ? [label, box] : [box];
       }
     }
   }
 
-  // ------------------------------------------------------------------ walk
+  // ------------------------------------------------------------- IR shape
 
-  // Direct children only. Checking descendants recursively frames every
-  // ancestor of a single button, so a whole page ends up inside one box.
   function holdsControls(n) {
     return (n.children || []).some((c) => c.kind === "field");
   }
 
+  function titleOf(n) {
+    return titleNodeOf(n).text;
+  }
+
   // Accessible names are often whole instruction paragraphs ("a tabs widget:
   // Book, Flight status…; use arrow keys to navigate"). The leading clause is
-  // the part that works as a label; the rest wrecks the frame.
+  // the part that works as a label.
   function shortTitle(name) {
     const head = name.split(/[:;]|\s[–—-]\s/)[0].trim();
-    if (!head) return "";
-    if (width(head) <= MAX_TITLE) return head;
-    return head.slice(0, MAX_TITLE - 1).trimEnd() + "…";
+    return head ? truncate(head, MAX_TITLE) : "";
   }
 
   function titleNodeOf(n) {
@@ -196,52 +218,129 @@
       : { text: "", href: null };
   }
 
-  function titleOf(n) {
-    return titleNodeOf(n).text;
-  }
-
-  // A group earns a frame when the frame says something: it holds controls, or
-  // it is one of a set of repeated records. Prose stays unframed.
-  //
-  // An untitled group whose children are all themselves framed earns nothing:
-  // the children's own frames already show the grouping, and the extra box is
-  // pure nesting noise.
+  // A group earns a frame when the frame says something. An untitled group
+  // whose children are all themselves framed earns nothing — the children's
+  // own frames already show the grouping.
   function framed(n) {
-    if (n.kind !== "group") return false;
+    if (!n || n.kind !== "group") return false;
     if (!(n.item || holdsControls(n) || (n.children || []).some(framed))) return false;
     const kids = (n.children || []).filter((c) => c.kind !== "text" || c.text.trim());
     if (!titleOf(n) && kids.length > 1 && kids.every(framed)) return false;
     return true;
   }
 
-  // Collapse echoes: a label that a neighbouring control already displays, and
-  // consecutive identical lines. Real forms emit the same string two or three
-  // times (a <label>, the control's accessible name, a visible span).
-  function dedupe(lines) {
+  // Soft content wraps gracefully, so it can be squeezed into a narrow column.
+  // Controls and nested frames cannot.
+  function isSoft(n) {
+    if (!n) return true;
+    if (n.kind === "field" || n.kind === "table") return false;
+    if (framed(n)) return false;
+    return (n.children || []).every(isSoft);
+  }
+
+  // Forms emit the same string two or three times — a <label>, the control's
+  // accessible name, a visible span. Drop the echoes before rendering.
+  function dropEchoes(children, title) {
     const out = [];
-    for (const line of lines) {
-      const prev = out[out.length - 1];
-      if (prev === line) continue;
-      if (prev && ATOMIC.test(prev) && !ATOMIC.test(line) && prev.includes(line)) continue;
-      if (prev && ATOMIC.test(line) && !ATOMIC.test(prev) && prev && line.includes(prev)) {
-        out[out.length - 1] = line;
+    for (let i = 0; i < children.length; i++) {
+      const c = children[i];
+      if (c.kind === "text") {
+        const t = c.text.trim();
+        if (!t) continue;
+        if (t === title) continue;
+        const prev = out[out.length - 1];
+        if (prev && prev.kind === "text" && prev.text.trim() === t) continue;
+        // A control's label may sit on either side of it in the DOM.
+        const labelled = (x) => x && x.kind === "field" && (x.label || "").trim() === t;
+        if (labelled(children[i + 1]) || labelled(prev)) continue;
+        out.push(c);
         continue;
       }
-      out.push(line);
+      if (c.kind === "field" && (c.label || "").trim() === title) {
+        out.push({ ...c, label: "" });
+        continue;
+      }
+      out.push(c);
     }
     return out;
   }
 
-  // parentAxis comes from the container's measured layout: whether these
-  // siblings sit across the page or down it.
-  function block(nodes, parentAxis) {
-    const out = [];
-    let inlineRun = [];
-    const flush = () => {
-      if (inlineRun.length) {
-        out.push(inlineRun.join(" ").replace(/\s+/g, " ").trim());
-        inlineRun = [];
+  // ---------------------------------------------------------------- render
+
+  function renderGroup(n, budget) {
+    const title = titleNodeOf(n);
+    const kids = dropEchoes(n.children || [], title.text);
+
+    if (framed(n)) {
+      const inner = budget - 4;
+      const body = renderList(kids, inner, n.axis);
+      // A frame cannot hold a link, so a titled link keeps its target inside.
+      const full = title.href ? stack([textRect(title.href, inner), body]) : body;
+      // A frame around one untitled line says nothing the line doesn't.
+      if (!title.text && full.lines.length <= 1) return full;
+      return frame(title.text, full, budget);
+    }
+
+    const head = [];
+    if (n.name && n.level) head.push(textRect("#".repeat(Math.min(n.level, 6)) + " " + n.name, budget));
+    else if (n.name) head.push(textRect(n.name, budget));
+
+    const sub = renderList(kids, head.length ? budget - 2 : budget, n.axis);
+    return stack([...head, head.length ? indent(sub, 2) : sub]);
+  }
+
+  // Natural first: render each child at the full budget and compose only if
+  // the finished rectangles fit. Otherwise stack them *unchanged* — never
+  // reflow a block that has already been composed.
+  function widthOf(rects) {
+    return rects.reduce((a, r) => a + r.w, 0) + GAP * (rects.length - 1);
+  }
+
+  // Greedy pack into as many full rows as fit. Each row is composed from
+  // finished rectangles and the rows are then stacked, so the invariant holds
+  // however the run divides.
+  function packRows(rects, budget) {
+    const rows = [];
+    let cur = [];
+    for (const r of rects) {
+      if (cur.length && widthOf([...cur, r]) > budget) {
+        rows.push(row(cur));
+        cur = [];
       }
+      cur.push(r);
+    }
+    if (cur.length) rows.push(row(cur));
+    return rows.length === 1 ? rows[0] : stack(rows);
+  }
+
+  function composeRow(run, budget) {
+    const natural = run.map((g) => renderGroup(g, budget));
+    if (widthOf(natural) <= budget) return row(natural);
+
+    // Prose tolerates a narrower column; controls and nested frames do not.
+    if (run.every(isSoft)) {
+      const share = Math.floor((budget - GAP * (run.length - 1)) / run.length);
+      if (share >= MIN_SOFT) {
+        const squeezed = run.map((g) => renderGroup(g, share));
+        if (widthOf(squeezed) <= budget) return row(squeezed);
+      }
+    }
+
+    // Three boxes that don't fit on one line usually still fit two-and-one,
+    // which beats stacking all three.
+    return packRows(natural, budget);
+  }
+
+  function renderList(nodes, budget, parentAxis) {
+    const blocks = [];
+    let inlineRun = [];
+
+    const flushInline = () => {
+      if (!inlineRun.length) return;
+      const s = inlineRun.join(" ");
+      inlineRun = [];
+      const r = textRect(s, budget);
+      if (r.lines.length) blocks.push(r);
     };
 
     for (let i = 0; i < nodes.length; i++) {
@@ -251,112 +350,68 @@
         inlineRun.push(linkText(n));
         continue;
       }
-      flush();
+      flushInline();
 
       if (n.kind === "text") {
-        out.push((n.bullet ? "- " : "") + linkText(n));
+        blocks.push(textRect((n.bullet ? "- " : "") + linkText(n), budget));
         continue;
       }
+
       if (n.kind === "field") {
-        // A row of controls (tabs, a button bar) belongs on one line.
-        // Only single-line controls qualify; a labelled input is two lines
-        // and reads worse side by side.
+        // A row of controls (tabs, a button bar) packs onto shared lines.
         if (parentAxis === "row") {
-          const run = [];
+          const items = [];
           let j = i;
           while (j < nodes.length && nodes[j].kind === "field") {
-            const rendered = field(nodes[j]);
-            if (rendered.length !== 1) break;
-            run.push(rendered[0]);
+            const r = field(nodes[j]);
+            if (r.length !== 1) break;
+            items.push(r[0]);
             j++;
           }
-          if (run.length > 1 && width(run.join("  ")) <= MAX_WIDTH) {
-            out.push(run.join("  "));
+          if (items.length > 1) {
+            blocks.push(packRect(items, budget));
             i = j - 1;
             continue;
           }
         }
-        out.push(...field(n));
+        blocks.push(rectOf(field(n).flatMap((l) => wrapText(l, budget))));
         continue;
       }
+
       if (n.kind === "table") {
-        out.push(...C4C.render.tableLines(n));
+        blocks.push(rectOf(C4C.render.tableLines(n).flatMap((l) => wrapText(l, budget))));
         continue;
       }
 
-      const bodyOf = (g) => {
-        const title = titleNodeOf(g);
-        // Don't repeat the title inside its own frame — as a text node, or as
-        // a control's label. A frame can't hold a link, so a titled link keeps
-        // its target as the first body line.
-        const kids = g.children.filter(
-          (c) => c.kind !== "text" || c.text.trim() !== title.text
-        );
-        const body = dedupe(
-          block(
-            kids.map((c) =>
-              c.kind === "field" && (c.label || "").trim() === title.text
-                ? { ...c, label: "" }
-                : c
-            ),
-            g.axis
-          )
-        );
-        return title.href ? [title.href, ...body] : body;
-      };
-
-      // Any run of framed siblings can sit across when the container is laid
-      // out that way. Gating this on repeated records was the bug: From/To
-      // and Departure/Return are side by side but are not repeats, so they
-      // could never reach the column path at all.
-      if (framed(n) && parentAxis === "row") {
+      if (parentAxis === "row" && framed(n)) {
         const run = [];
         let j = i;
         while (j < nodes.length && framed(nodes[j])) run.push(nodes[j++]);
         if (run.length > 1) {
-          const cells = run.map((r) => ({ title: titleOf(r), lines: bodyOf(r) }));
-          const widths = columnWidths(cells);
-          if (widths) {
-            out.push(...columns(cells, widths));
-          } else {
-            // Too wide to sit across: stack the records instead. Nesting
-            // alternates orientation naturally, since each container's axis
-            // is measured independently. Share one width so the stack still
-            // reads as a set.
-            const inner = Math.min(
-              MAX_WIDTH - 4,
-              Math.max(...cells.map((c) => Math.max(width(c.title) + 4, ...c.lines.map(width), 10)))
-            );
-            cells.forEach((c) => out.push(...panel(c.title, c.lines, inner)));
-          }
+          blocks.push(composeRow(run, budget));
           i = j - 1;
           continue;
         }
       }
 
-      if (framed(n)) {
-        out.push(...panel(titleOf(n), bodyOf(n)));
-        continue;
-      }
-
-      // Unframed group: keep the heading, keep the nesting, no box.
-      if (n.name && n.level) out.push("#".repeat(Math.min(n.level, 6)) + " " + n.name);
-      else if (n.name) out.push(n.name);
-      const inner = block(n.children, n.axis);
-      out.push(...(n.name ? inner.map((l) => "  " + l) : inner));
+      blocks.push(renderGroup(n, budget));
     }
-    flush();
-    return dedupe(out);
+
+    flushInline();
+    return stack(blocks);
   }
 
   C4C.render.boxed = function boxed(doc) {
-    const out = [];
+    const parts = [];
     if (doc.context.length) {
-      out.push(`‹context: ${doc.context.join(" › ")}›`, "");
+      parts.push(textRect(`‹context: ${doc.context.join(" › ")}›`, MAX));
     }
-    out.push(...block(doc.children, "column"));
-    const body = out.join("\n").replace(/\n{3,}/g, "\n\n").trim();
-    // Fenced, or the chat client's proportional font eats the alignment.
+    parts.push(renderList(doc.children, MAX, "column"));
+    const r = stack(parts);
+    const body = r.lines.map((l) => l.replace(/\s+$/, "")).join("\n").trim();
     return "```\n" + body + "\n```";
   };
+
+  // Exposed for the invariant tests.
+  C4C.render._boxed = { width, stack, row, frame, textRect, MAX };
 })();

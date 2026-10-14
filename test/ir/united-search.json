@@ -1,0 +1,122 @@
+{
+  "_comment": [
+    "Regression fixture: united.com flight search, reconstructed from a real",
+    "Copy4Chat paste whose boxed output came back with torn borders, a frame",
+    "wrapped onto a second line, and a URL breaking out of its cell.",
+    "",
+    "All three traced to one defect: the renderer returned bare string arrays",
+    "of unknown width and wrapped them *after* composition, so a nested box's",
+    "border could be word-wrapped. Hence the Rect invariant.",
+    "",
+    "The long aria-label, the long URLs and the deep nesting are all load",
+    "bearing here. Do not tidy them."
+  ],
+  "kind": "doc",
+  "context": [],
+  "children": [
+    {
+      "kind": "group",
+      "name": "A tabs widget: Book, Flight status, Check-in, My trip; note, use arrow keys to navigate between tabs and enter/space key to activate and navigate through the tab content",
+      "axis": "row",
+      "children": [
+        { "kind": "field", "control": "button", "label": "Book", "value": "Book", "states": [] },
+        { "kind": "field", "control": "button", "label": "Flight status", "value": "Flight status", "states": [] },
+        { "kind": "field", "control": "button", "label": "Check-in", "value": "Check-in", "states": [] },
+        { "kind": "field", "control": "button", "label": "My trips", "value": "My trips", "states": [] }
+      ]
+    },
+    {
+      "kind": "group",
+      "name": "",
+      "axis": "row",
+      "children": [
+        {
+          "kind": "group", "name": "From", "axis": "column",
+          "children": [
+            { "kind": "text", "text": "From", "block": true },
+            { "kind": "field", "control": "text", "label": "From", "value": "San Jose SJC", "states": ["collapsed"] }
+          ]
+        },
+        {
+          "kind": "group", "name": "To", "axis": "column",
+          "children": [
+            { "kind": "text", "text": "To", "block": true },
+            { "kind": "field", "control": "text", "label": "To", "value": "", "states": ["collapsed"] }
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "group",
+      "name": "Dates",
+      "axis": "row",
+      "children": [
+        {
+          "kind": "group", "name": "Departure", "axis": "column",
+          "children": [
+            { "kind": "field", "control": "text", "label": "Departure", "value": "Dec 11", "states": ["required"] }
+          ]
+        },
+        {
+          "kind": "group", "name": "Return", "axis": "column",
+          "children": [
+            { "kind": "field", "control": "text", "label": "Return", "value": "Dec 13", "states": ["required"] }
+          ]
+        },
+        {
+          "kind": "group", "name": "Number of travelers: 1 Adult, click to edit", "axis": "column",
+          "children": [
+            { "kind": "field", "control": "button", "label": "1 Adult", "value": "1 Adult", "states": ["required"] }
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "group",
+      "name": "",
+      "axis": "row",
+      "children": [
+        { "kind": "field", "control": "checkbox", "label": "Book with miles", "states": ["unchecked"] },
+        { "kind": "field", "control": "checkbox", "label": "Flexible dates", "states": ["unchecked"] }
+      ]
+    },
+    {
+      "kind": "group",
+      "name": "",
+      "axis": "column",
+      "children": [
+        { "kind": "field", "control": "select", "label": "", "value": "Economy", "states": [] },
+        {
+          "kind": "group", "name": "", "axis": "column",
+          "children": [
+            { "kind": "field", "control": "checkbox", "label": "Include Basic economy & restrictive fares", "states": ["checked"] },
+            { "kind": "text", "text": "Include Basic economy & restrictive fares", "block": true }
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "text", "block": true,
+      "text": "Advanced search",
+      "href": "https://www.united.com/en-US/book-flight/united-reservations"
+    },
+    {
+      "kind": "text", "block": true,
+      "text": "fees for optional services",
+      "href": "https://www.united.com/en/US/fly/products/upgrades-and-optional-service-charges.html"
+    },
+    {
+      "kind": "group",
+      "name": "",
+      "axis": "row",
+      "children": [
+        { "kind": "field", "control": "button", "label": "Find flights", "value": "Find flights", "states": [] },
+        { "kind": "field", "control": "button", "label": "Find your travel credits", "value": "Find your travel credits", "states": [] }
+      ]
+    },
+    {
+      "kind": "text", "block": true,
+      "text": "You're preapproved: Earn up to 100,000 bonus miles after qualifying activities +3,000 PQP after first purchase. Unlimited United Club℠ access. 11x total miles on eligible United flights."
+    }
+  ]
+}
