@@ -15,6 +15,11 @@
 
   const MAX_WIDTH = 76; // fits most chat composers without wrapping
   const MIN_FIELD = 22;
+  const MIN_COLUMN = 18; // narrower than this and columns read worse than a stack
+  const MIN_COLUMN_TEXT = 12; // prose wraps, so text-only records tolerate more
+
+  // Lines that must survive intact: buttons, inputs, checkboxes, radios.
+  const ATOMIC = /^(\[|☑|☐|\(•\)|\( \)|\( )/;
 
   const WIDE = /[ᄀ-ᅟ⺀-꓏가-힣豈-﫿︰-﹯＀-｠￠-￦]/;
 
@@ -59,8 +64,8 @@
 
   // ------------------------------------------------------------- primitives
 
-  function panel(title, body) {
-    const inner = Math.min(
+  function panel(title, body, forceInner) {
+    const inner = forceInner ?? Math.min(
       MAX_WIDTH - 4,
       Math.max(width(title) + 4, ...body.map(width), 10)
     );
@@ -78,14 +83,33 @@
     ];
   }
 
-  function columns(cells) {
-    // cells: [{ title, lines }]
-    const widths = cells.map((c) =>
-      Math.min(
-        Math.floor((MAX_WIDTH - cells.length * 3) / cells.length),
-        Math.max(width(c.title) + 2, ...c.lines.map(width), 8)
-      )
+  // Side-by-side only pays when the content actually fits. Squeezing three
+  // cards into slivers makes the grouping harder to read than stacking them,
+  // so this returns null to mean "stack instead".
+  function columnWidths(cells) {
+    const natural = cells.map((c) =>
+      Math.max(width(c.title) + 2, ...c.lines.map(width), 8)
     );
+    if (natural.reduce((a, b) => a + b + 3, 0) + 1 <= MAX_WIDTH) return natural;
+
+    const share = Math.floor((MAX_WIDTH - cells.length * 3 - 1) / cells.length);
+    const hasControls = cells.some((c) => c.lines.some((l) => ATOMIC.test(l)));
+
+    // Text-only records lean horizontal: prose wraps gracefully, so narrow
+    // columns stay readable and the arrangement is worth keeping. Controls
+    // are what force a stack.
+    if (share < (hasControls ? MIN_COLUMN : MIN_COLUMN_TEXT)) return null;
+
+    // A button sliced into "[ Contact our sales" / "team ]" reads as broken,
+    // which is worse than simply stacking the cards.
+    if (hasControls && cells.some((c) => c.lines.some((l) => ATOMIC.test(l) && width(l) > share))) {
+      return null;
+    }
+
+    return natural.map((n) => Math.min(n, share));
+  }
+
+  function columns(cells, widths) {
     const wrapped = cells.map((c, i) => c.lines.flatMap((l) => wrap(l, widths[i])));
     const height = Math.max(...wrapped.map((w) => w.length));
 
@@ -221,7 +245,21 @@
         let j = i;
         while (j < nodes.length && nodes[j].item && framed(nodes[j])) run.push(nodes[j++]);
         if (run.length > 1) {
-          out.push(...columns(run.map((r) => ({ title: titleOf(r), lines: bodyOf(r) }))));
+          const cells = run.map((r) => ({ title: titleOf(r), lines: bodyOf(r) }));
+          const widths = columnWidths(cells);
+          if (widths) {
+            out.push(...columns(cells, widths));
+          } else {
+            // Too wide to sit across: stack the records instead. Nesting
+            // alternates orientation naturally, since each container's axis
+            // is measured independently. Share one width so the stack still
+            // reads as a set.
+            const inner = Math.min(
+              MAX_WIDTH - 4,
+              Math.max(...cells.map((c) => Math.max(width(c.title) + 4, ...c.lines.map(width), 10)))
+            );
+            cells.forEach((c) => out.push(...panel(c.title, c.lines, inner)));
+          }
           i = j - 1;
           continue;
         }
