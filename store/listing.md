@@ -142,17 +142,20 @@ Build and verify with `./tools/package.sh`.
 
 ## 10. Screenshot notes
 
-All listing images must be 24-bit PNG **without an alpha channel**. A capture
-exported with transparency will be rejected, so flatten before uploading:
-render it onto an opaque background at the target size (the same headless
-Chrome step used for the icons works), then re-derive the 640×400 from the
-flattened 1280×800 rather than from the original.
+Source is `img/screenshot_overlay.png` — the page with the pasted output
+overlaid and a callout to the menu item.
 
-### Deriving an accepted size from an over-wide capture
+**No alpha.** Listing images must be 24-bit PNG without an alpha channel; a
+capture exported with transparency is rejected. Compositing onto an opaque
+background at the target size handles it.
 
-`img/screenshot.png` is 1787×827 (2.16:1); the store wants 1.6:1. Scaling and
-padding left the content small inside white bars, and a centred crop sliced
-the form's left-hand labels mid-word. So the crop is offset instead — source
-window x 190–1513, which is exactly 1.6:1 at full height, keeping the labels
-intact and letting the bleed fall on the panel's right edge. Rendered with
-headless Chrome, since `sips` only crops from the centre.
+**Getting to 1.6:1.** The capture is 1787×827 (2.16:1). Content spans roughly
+x 150–1700 once the decorative tree margins are discounted, which is 1550
+wide — still too wide to crop to 1.6:1 at this height without slicing the
+overlay panel. So it is scaled to fit the width and centred vertically, with
+the letterbox filled in the brand navy (#0C1424) so it reads as deliberate
+rather than as an export artefact.
+
+Both steps run in one headless-Chrome pass (`sips` only crops from the
+centre, so it cannot do the horizontal offset). Derive the 640×400 from the
+finished 1280×800, never from the original.
