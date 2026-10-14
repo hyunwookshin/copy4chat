@@ -59,6 +59,78 @@ Framing is driven by the IR, not by guesswork: a group earns a frame when it dir
 
 **Open question:** boxes roughly double the token count and models have seen far more Markdown than box art, so recognisability may cost comprehension. Score both renderers on the fixtures before treating the default as settled.
 
+## Real-world example: Expedia
+
+The page as a person sees it, and what lands on the clipboard.
+
+<table>
+<tr>
+<th width="45%">What you're looking at</th>
+<th width="55%">What Copy4Chat pastes</th>
+</tr>
+<tr>
+<td valign="top"><img src="img/screenshot.png" alt="Expedia homepage search panel"></td>
+<td valign="top">
+
+<pre>
+┌─ Expedia logo ────────────────────────────────────┐
+│ https://www.expedia.com/                          │
+│ [ Shop travelShop travelShop travel ] ‹collapsed› │
+│ [ USD• ]                                          │
+│ [ AAlex$0.00 OneKeyCash ] ‹collapsed›             │
+└───────────────────────────────────────────────────┘
+┌─ The one place you go to go places ─────────────────────────────────────┐
+│ ┌─────────────────────────────────────────────────────────────────────┐ │
+│ │ ┌─────────────────────────────────────────────────────────────────┐ │ │
+│ │ │ ┌─ Where to? ─────────────────────────────────────────────────┐ │ │ │
+│ │ │ │ Where to?. Results available.                               │ │ │ │
+│ │ │ │ [ San Francisco, California, United States of America____ ] │ │ │ │
+│ │ │ └─────────────────────────────────────────────────────────────┘ │ │ │
+│ │ │ ┌─ Dates ────────────────────────────────────────────┐          │ │ │
+│ │ │ │ [ Tue, Oct 20 - Wed, Oct 21 ] ‹focused, collapsed› │          │ │ │
+│ │ │ └────────────────────────────────────────────────────┘          │ │ │
+│ │ │ ┌─ Travelers ─────────────────────────┐                         │ │ │
+│ │ │ │ [ 2 travelers, 1 room ] ‹collapsed› │                         │ │ │
+│ │ │ └─────────────────────────────────────┘                         │ │ │
+│ │ │ [ Search ]                                                      │ │ │
+│ │ └─────────────────────────────────────────────────────────────────┘ │ │
+│ │ Add a flight to Bundle &amp; Save*                                      │ │
+│ └─────────────────────────────────────────────────────────────────────┘ │
+└─────────────────────────────────────────────────────────────────────────┘
+Get more trip for less when you bundle flight and hotel together
+Book now (https://www.expedia.com/deals/bundle-for-less)
+#### Last-minute weekend deals
+  Minimum 20% off deals for your next weekend getaway!
+See all deals (https://www.expedia.com/clp/XtvM6jr)
+</pre>
+
+</td>
+</tr>
+</table>
+
+What survives that ordinary copy drops:
+
+- `San Francisco, California, United States of America` is the **value of the
+  destination field**, not a line that happens to follow "Where to?".
+- The date and traveler pickers are `‹collapsed›`, and the date picker is
+  `‹focused›` — live state that exists nowhere in the DOM text.
+- `Search` is a button, not a word.
+- Link targets survive on *Book now* and *See all deals*.
+
+Rough edges are left in rather than cleaned up for the screenshot. They are
+open bugs, not stylistic choices:
+
+- `Shop travelShop travelShop travel` and `AAlex$0.00 OneKeyCash` —
+  inline elements are being concatenated without separators.
+- Three wrapper frames stack up before the search panel. Each one holds
+  something of its own, so the pure-wrapper trim does not fire, but the
+  nesting is still noise.
+- `Where to?. Results available.` is a live region echoing its own label.
+
+Expedia is an independent third party and is not affiliated with, sponsoring,
+or endorsing Copy4Chat. Expedia and its associated trademarks belong to their
+respective owners.
+
 ## Privacy
 
 - **Unconditional masking:** `input[type=password]`, sensitive `autocomplete` attributes (`cc-number`, `cc-csc`, `one-time-code`, etc.), secret-like field names/labels, token patterns, and Luhn-valid card numbers—applied to both content and context labels.
