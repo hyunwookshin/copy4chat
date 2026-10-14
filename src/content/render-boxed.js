@@ -91,6 +91,13 @@
     return rectOf(lines);
   }
 
+  // A list item keeps its marker, with continuation lines aligned under the
+  // text rather than under the dash.
+  function bulletize(r) {
+    if (!r.lines.length) return r;
+    return { lines: r.lines.map((l, i) => (i === 0 ? "- " : "  ") + l), w: r.w + 2 };
+  }
+
   function indent(r, k) {
     if (!r.lines.length) return EMPTY;
     const p = " ".repeat(k);
@@ -296,9 +303,16 @@
 
   function renderGroup(n, budget, depth) {
     const title = titleNodeOf(n);
-    const kids = dropEchoes(n.children || [], title.text);
+    const isFramed = framed(n);
 
-    if (framed(n)) {
+    // Only suppress a child that duplicates a label we are actually going to
+    // draw. titleNodeOf falls back to the first text child, which an unframed
+    // group never renders — stripping it there deleted the content outright,
+    // silently emptying every single-line list item.
+    const shown = isFramed ? title.text : n.name ? shortTitle(n.name) : "";
+    const kids = dropEchoes(n.children || [], shown);
+
+    if (isFramed) {
       // Once a stack of boxes runs deeper than MAX_NEST, wrappers that
       // contribute nothing of their own are dropped rather than drawn. The
       // nesting they show is already visible from the frames inside them.
@@ -393,7 +407,8 @@
       flushInline();
 
       if (n.kind === "text") {
-        blocks.push(textRect((n.bullet ? "- " : "") + linkText(n), budget));
+        const r = textRect(linkText(n), n.bullet ? budget - 2 : budget);
+        blocks.push(n.bullet ? bulletize(r) : r);
         continue;
       }
 
@@ -434,7 +449,8 @@
         }
       }
 
-      blocks.push(renderGroup(n, budget, depth));
+      const g = renderGroup(n, n.bullet ? budget - 2 : budget, depth);
+      blocks.push(n.bullet && !framed(n) ? bulletize(g) : g);
     }
 
     flushInline();
