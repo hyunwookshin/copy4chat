@@ -13,7 +13,7 @@ Copies browser selections as structured text for LLMs, preserving visual and sem
 ## Real-world example: Budget
 
 <p align="center">
-  <img src="img/screenshot.png" alt="Budget car rental booking form" width="900">
+  <img src="img/screenshot_overlay.png" alt="Budget car rental booking form, with the Copy4Chat output overlaid and a callout to the context-menu item" width="900">
 </p>
 
 The same selection, copied both ways.
