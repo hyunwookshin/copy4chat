@@ -10,10 +10,10 @@ Copies browser selections as structured text for LLMs, preserving visual and sem
 2. Select text on any page, right-click, and choose **Copy For Chat (Copy4Chat)**.
 
 
-## Real-world example: Expedia
+## Real-world example: Budget
 
 <p align="center">
-  <img src="img/screenshot.png" alt="Expedia homepage search panel" width="900">
+  <img src="img/screenshot.png" alt="Budget car rental booking form" width="900">
 </p>
 
 The same selection, copied both ways.
@@ -27,111 +27,116 @@ The same selection, copied both ways.
 <td valign="top">
 
 <pre>
-┌─ Expedia logo ────────────────────────────────────┐
-│ https://www.expedia.com/                          │
-│ [ Shop travelShop travelShop travel ] ‹collapsed› │
-│ [ USD• ]                                          │
-│ [ AAlex$0.00 OneKeyCash ] ‹collapsed›             │
-└───────────────────────────────────────────────────┘
-┌─ The one place you go to go places ─────────────────────────────────────┐
-│ ┌─────────────────────────────────────────────────────────────────────┐ │
-│ │ ┌─────────────────────────────────────────────────────────────────┐ │ │
-│ │ │ ┌─ Where to? ─────────────────────────────────────────────────┐ │ │ │
-│ │ │ │ Where to?. Results available.                               │ │ │ │
-│ │ │ │ [ San Francisco, California, United States of America____ ] │ │ │ │
-│ │ │ └─────────────────────────────────────────────────────────────┘ │ │ │
-│ │ │ ┌─ Dates ────────────────────────────────────────────┐          │ │ │
-│ │ │ │ [ Tue, Oct 20 - Wed, Oct 21 ] ‹focused, collapsed› │          │ │ │
-│ │ │ └────────────────────────────────────────────────────┘          │ │ │
-│ │ │ ┌─ Travelers ─────────────────────────┐                         │ │ │
-│ │ │ │ [ 2 travelers, 1 room ] ‹collapsed› │                         │ │ │
-│ │ │ └─────────────────────────────────────┘                         │ │ │
-│ │ │ [ Search ]                                                      │ │ │
-│ │ └─────────────────────────────────────────────────────────────────┘ │ │
-│ │ Add a flight to Bundle &amp; Save*                                      │ │
-│ └─────────────────────────────────────────────────────────────────────┘ │
-└─────────────────────────────────────────────────────────────────────────┘
-Get more trip for less when you bundle flight and hotel together
-Book now (https://www.expedia.com/deals/bundle-for-less)
-#### Last-minute weekend deals
-  Minimum 20% off deals for your next weekend getaway!
-See all deals (https://www.expedia.com/clp/XtvM6jr)
+┌──────────────────────────────────────────────────────────────┐
+│ ┌──────────────────────────────┐  ┌─ Pickup ───────────────┐ │
+│ │ ┌─ ickup location ─────────┐ │  │ ┌────────────────────┐ │ │
+│ │ │ [ Same return location ] │ │  │ │ mm/dd/yyyy         │ │ │
+│ │ └──────────────────────────┘ │  │ │ [ 10/14/2026____ ] │ │ │
+│ │ Pickup location              │  │ │ Oct 14             │ │ │
+│ │ [ ____________ ]             │  │ └────────────────────┘ │ │
+│ │ Return location              │  │ Pick Up Time           │ │
+│ │ [ ____________ ] ‹focused›   │  │ ( noon ▾ )             │ │
+│ └──────────────────────────────┘  └────────────────────────┘ │
+│ ┌─ Return ───────────────┐                                   │
+│ │ ┌────────────────────┐ │                                   │
+│ │ │ mm/dd/yyyy         │ │                                   │
+│ │ │ [ 10/15/2026____ ] │ │                                   │
+│ │ │ Oct 15             │ │                                   │
+│ │ └────────────────────┘ │                                   │
+│ │ Return Time            │                                   │
+│ │ ( noon ▾ )             │                                   │
+│ └────────────────────────┘                                   │
+│ [ Show Cars ]                                                │
+└──────────────────────────────────────────────────────────────┘
+┌───────────────────────────────────────────────┐
+│ ┌─ Renter age is ─┐  ┌─ Resident of ────┐     │
+│ │ ( 25+ ▾ )       │  │ Select Residency │     │
+│ └─────────────────┘  │ ( U.S.A. ▾ )     │     │
+│                      └──────────────────┘     │
+│ [ CloseAdd a customer IDAdd a discount code ] │
+└───────────────────────────────────────────────┘
+┌─ Enter your Fastbreak, RapidRez or o… ──────┐  ┌─ Enter an offer code ─┐
+│ Enter your Fastbreak, RapidRez or online ID │  │ ┌──────────────────┐  │
+│ Res-wizard Number                           │  │ │ BCD Code         │  │
+│ [ ____________ ]                            │  │ │ [ ____________ ] │  │
+│ Last Name                                   │  │ │ Coupon Code      │  │
+│ [ ____________ ]                            │  │ │ [ ____________ ] │  │
+└─────────────────────────────────────────────┘  │ │ [ Select ]       │  │
+                                                 │ └──────────────────┘  │
+                                                 └───────────────────────┘
+┌─ Get a free upgrade with this Fall S… ──────────┐
+│ Get a free upgrade with this Fall Savings offer │
+│ [ Apply Offer ]                                 │
+└─────────────────────────────────────────────────┘
 </pre>
 
 </td>
 <td valign="top">
 
 <pre>
-Expedia logo
-
-Shop travel
-
-USD
-•
-United States
-List your property
-Support
-Trips
-
-A
-Alex
-$0.00 OneKeyCash
-The one place you go to go places
-
-Stays
-
-Flights
-
-Cars
-
-Packages
-
-Things to do
-
-Cruises
-Where to?
-San Francisco, California, United States of America
-DatesTue, Oct 20 - Wed, Oct 21
-Travelers2 travelers, 1 room
-Search
-
-Add a flight to Bundle &amp; Save*
-
-
-Packages under $699
-Get more trip for less when you bundle flight and hotel together
-Book now
-Last-minute weekend deals
-Minimum 20% off deals for your next weekend getaway!
-See all deals
+**ickup location**svgSame return location
+svg
+**Return location**
+svg
+**Pickup**
+svgOct 14
+midnight12:30 AM1:00 AM1:30 AM2:00 AM2:30 AM
+3:00 AM3:30 AM4:00 AM4:30 AM…  <i>[48 options]</i>
+**Return**
+svgOct 15
+midnight12:30 AM1:00 AM1:30 AM2:00 AM2:30 AM
+3:00 AM3:30 AM4:00 AM4:30 AM…  <i>[48 options]</i>
+svgRenter age is
+25+24232221201918svg
+Resident of
+AfghanistanAlbaniaAlgeriaAndorraAngolaAnguilla
+Antigua &amp; BarbudaArgentinaArmeniaArubaAustralia
+AustriaAzerbaijanBahamasBahrainBangladesh
+BarbadosBelarusBelgiumBelize…  <i>[240+ options]</i>
+Close
+**Enter your Fastbreak, RapidRez or online ID**
+**Enter an offer code**
+svg
+Get a free upgrade with this Fall Savings offer
 </pre>
 
 </td>
 </tr>
 </table>
 
-What survives on the left and not on the right:
+The dropdown lists in the right column are truncated here for length —
+mechanically, at the first 20 entries in the page's own order, so no entry is
+singled out. Everything else is verbatim.
 
-- `San Francisco, California, United States of America` is the **value of the
-  destination field**, not a line that happens to follow "Where to?".
-- `DatesTue, Oct 20 - Wed, Oct 21` is a date picker holding a value, and it is
-  `‹focused›` and `‹collapsed›` — live state that exists nowhere in the DOM text.
-- `Search` is a button, not a word.
-- Link targets survive on *Book now* and *See all deals*.
+That truncation is itself the point. Ordinary copy emits **every option of
+every dropdown** as run-on text: 48 time slots, twice; eight renter ages; over
+240 countries. None of it tells you what is actually selected. Copy4Chat emits
+the value:
+
+- `( noon ▾ )`, `( U.S.A. ▾ )`, `( 25+ ▾ )` — the current selection, not the
+  menu it came from.
+- Pickup and Return are distinct groups sitting side by side, with their dates
+  bound to them. On the right, `Oct 14` is a line that happens to follow the
+  word `Pickup`.
+- The return-location field is `‹focused›` — live state that exists nowhere in
+  the DOM text.
+- `svg` appears seven times on the right. Those are icons leaking through as
+  the literal string "svg".
 
 Rough edges are left in rather than cleaned up. They are open bugs, not
 stylistic choices:
 
-- `Shop travelShop travelShop travel` and `AAlex$0.00 OneKeyCash` — inline
-  elements are being concatenated without separators.
-- Three wrapper frames stack up before the search panel. Each holds something
-  of its own, so the pure-wrapper trim does not fire, but it is still noise.
-- `Where to?. Results available.` is a live region echoing its own label.
+- `[ CloseAdd a customer IDAdd a discount code ]` — inline elements
+  concatenated without separators. The same bug drops the spaces in the
+  right-hand column's option lists.
+- `ickup location` is missing its first letter in both columns, so the
+  selection began mid-word. That is the no-expansion rule working as designed,
+  but it reads as a bug and probably wants a word-boundary nudge.
+- An unnamed wrapper frame still sits around each date field.
+- Long titles truncate at 36 characters with `…`.
 
-Account name and balance are replaced with a placeholder in both columns.
-
-Expedia is an independent third party and is not affiliated with, sponsoring,
-or endorsing Copy4Chat. Expedia and its associated trademarks belong to their
+Budget is an independent third party and is not affiliated with, sponsoring,
+or endorsing Copy4Chat. Budget and its associated trademarks belong to their
 respective owners.
 
 ## Icon
