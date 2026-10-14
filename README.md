@@ -9,55 +9,6 @@ Copies browser selections as structured text for LLMs, preserving visual and sem
 1. Open `chrome://extensions`, enable **Developer mode**, and click **Load unpacked** on this directory.
 2. Select text on any page, right-click, and choose **Copy For Chat (Copy4Chat)**.
 
-## Architecture
-
-```
-context-menu click  (service worker — routing only, never sees page content)
-      └─ chrome.scripting.executeScript  (activeTab; no host permissions)
-            ├─ extract.js    selection → IR
-            ├─ render.js     IR → text
-            └─ clipboard.js  write, two paths
-```
-
-Nothing runs on pages until invoked via `activeTab` (no `<all_urls>` content script). The service worker only routes the click and never touches page content.
-
-## Design Rules
-
-- **Selection-only content.** Never expand the selection outward. Surrounding DOM is read only to annotate hierarchy, explicitly marked so agents can distinguish context from selection:
-  ```
-  ‹context: Checkout › Payment Form›
-
-  Error
-    Payment failed
-    Card number is invalid
-  ```
-- **Emit what is visible, never more.** Respect visual presentation (`text-transform`, `::before`, masked passwords) over raw DOM strings. Icons count as visible content: an `<svg>`/`<img>` is transcribed via its accessible name, because the glyph is what tells a sighted reader that `8` means stars.
-- **Never lose to the baseline.** Anything an HTML→Markdown converter preserves — links, headings, list and record boundaries, real tables — we must preserve too. Our output should be a *superset* of the converter's, not an alternative to it.
-- **Semantics → hierarchy → geometry.** HTML/ARIA wins first, then DOM nesting and sibling shape. Geometry never promotes relationships—it only vetoes them or fixes CSS-reordered reading order (`order`, `row-reverse`, absolute positioning).
-- **Degrade to nesting.** Ambiguous structure falls back to nested lists rather than hallucinated tables. Only real `<table>` elements render as Markdown tables.
-
-## Renderers
-
-The extractor produces a renderer-agnostic IR, so output style is a swap, not a rewrite. Set `RENDERER` at the top of `src/content/main.js`.
-
-- **`boxed`** (default) — visual-text. Frames the things whose frame carries meaning: forms, repeated records, side-by-side arrangements. Prose and headings stay Markdown. Output is wrapped in a ``` fence, without which a chat client's proportional font destroys the alignment on arrival.
-- **`text`** — nested Markdown. Cheaper in tokens, and the thing `boxed` has to beat.
-
-```
-┌─ Welcome back ────────────────┐
-│ Email address                 │
-│ [ james@example.com____ ]     │
-│ Password                      │
-│ [ ••••••••••____ ]            │
-│ ☑ Remember me                 │
-│ [ Sign in ]                   │
-│ ⚠ Incorrect email or password │
-└───────────────────────────────┘
-```
-
-Framing is driven by the IR, not by guesswork: a group earns a frame when it directly holds controls or is one of a set of repeated records, and a run of records becomes columns only when the container's measured axis is `row`. Recording the arrangement is not a claim that the items are comparable — `pricing-cards.html` is the fixture that keeps that honest.
-
-**Open question:** boxes roughly double the token count and models have seen far more Markdown than box art, so recognisability may cost comprehension. Score both renderers on the fixtures before treating the default as settled.
 
 ## Real-world example: Expedia
 
@@ -182,6 +133,56 @@ Account name and balance are replaced with a placeholder in both columns.
 Expedia is an independent third party and is not affiliated with, sponsoring,
 or endorsing Copy4Chat. Expedia and its associated trademarks belong to their
 respective owners.
+
+## Architecture
+
+```
+context-menu click  (service worker — routing only, never sees page content)
+      └─ chrome.scripting.executeScript  (activeTab; no host permissions)
+            ├─ extract.js    selection → IR
+            ├─ render.js     IR → text
+            └─ clipboard.js  write, two paths
+```
+
+Nothing runs on pages until invoked via `activeTab` (no `<all_urls>` content script). The service worker only routes the click and never touches page content.
+
+## Design Rules
+
+- **Selection-only content.** Never expand the selection outward. Surrounding DOM is read only to annotate hierarchy, explicitly marked so agents can distinguish context from selection:
+  ```
+  ‹context: Checkout › Payment Form›
+
+  Error
+    Payment failed
+    Card number is invalid
+  ```
+- **Emit what is visible, never more.** Respect visual presentation (`text-transform`, `::before`, masked passwords) over raw DOM strings. Icons count as visible content: an `<svg>`/`<img>` is transcribed via its accessible name, because the glyph is what tells a sighted reader that `8` means stars.
+- **Never lose to the baseline.** Anything an HTML→Markdown converter preserves — links, headings, list and record boundaries, real tables — we must preserve too. Our output should be a *superset* of the converter's, not an alternative to it.
+- **Semantics → hierarchy → geometry.** HTML/ARIA wins first, then DOM nesting and sibling shape. Geometry never promotes relationships—it only vetoes them or fixes CSS-reordered reading order (`order`, `row-reverse`, absolute positioning).
+- **Degrade to nesting.** Ambiguous structure falls back to nested lists rather than hallucinated tables. Only real `<table>` elements render as Markdown tables.
+
+## Renderers
+
+The extractor produces a renderer-agnostic IR, so output style is a swap, not a rewrite. Set `RENDERER` at the top of `src/content/main.js`.
+
+- **`boxed`** (default) — visual-text. Frames the things whose frame carries meaning: forms, repeated records, side-by-side arrangements. Prose and headings stay Markdown. Output is wrapped in a ``` fence, without which a chat client's proportional font destroys the alignment on arrival.
+- **`text`** — nested Markdown. Cheaper in tokens, and the thing `boxed` has to beat.
+
+```
+┌─ Welcome back ────────────────┐
+│ Email address                 │
+│ [ james@example.com____ ]     │
+│ Password                      │
+│ [ ••••••••••____ ]            │
+│ ☑ Remember me                 │
+│ [ Sign in ]                   │
+│ ⚠ Incorrect email or password │
+└───────────────────────────────┘
+```
+
+Framing is driven by the IR, not by guesswork: a group earns a frame when it directly holds controls or is one of a set of repeated records, and a run of records becomes columns only when the container's measured axis is `row`. Recording the arrangement is not a claim that the items are comparable — `pricing-cards.html` is the fixture that keeps that honest.
+
+**Open question:** boxes roughly double the token count and models have seen far more Markdown than box art, so recognisability may cost comprehension. Score both renderers on the fixtures before treating the default as settled.
 
 ## Privacy
 
