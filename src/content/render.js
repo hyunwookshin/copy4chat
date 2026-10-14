@@ -140,7 +140,12 @@
   }
 
   C4C.render = {
-    // Default renderer: nested plain text.
+    // Shared with the boxed renderer: a real table is a real table in both.
+    tableLines(t) {
+      return renderTable(t, 0);
+    },
+
+    // Nested plain text / Markdown.
     text(doc) {
       const out = [];
 

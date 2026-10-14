@@ -1,6 +1,8 @@
 (function () {
   const C4C = globalThis.C4C;
 
+  const RENDERER = "boxed"; // "boxed" | "text"
+
   function toast(message) {
     const el = document.createElement("div");
     el.textContent = message;
@@ -35,7 +37,10 @@
     // so this is invisible unless you go looking.
     console.debug("[copy4chat] IR", doc);
 
-    const text = C4C.render.text(doc);
+    // Switch to "text" to A/B the Markdown renderer on the benchmark. Boxed
+    // is the default because recognisability is the reason to install this;
+    // whether it also helps the agent is what the fixtures are for.
+    const text = C4C.render[RENDERER](doc);
     const path = await C4C.clipboard.write(text);
 
     if (!path) {

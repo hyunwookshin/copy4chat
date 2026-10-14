@@ -14,6 +14,7 @@ const FILES = [
   "src/content/mask.js",
   "src/content/extract.js",
   "src/content/render.js",
+  "src/content/render-boxed.js",
   "src/content/clipboard.js",
   "src/content/main.js",
 ];

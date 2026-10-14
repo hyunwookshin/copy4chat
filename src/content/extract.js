@@ -315,6 +315,27 @@
     return false;
   }
 
+  // Whether a group's children are laid out across or down. Not a claim that
+  // they are *comparable* — just a record of the arrangement, which a column
+  // renderer needs and a nested renderer can ignore.
+  function axisOf(children) {
+    const rects = children
+      .filter((c) => c.kind === "el")
+      .map((c) => c.el.getBoundingClientRect())
+      .filter((r) => r.width > 0 && r.height > 0);
+    if (rects.length < 2) return "column";
+
+    let acrossPairs = 0;
+    for (let i = 1; i < rects.length; i++) {
+      const a = rects[i - 1];
+      const b = rects[i];
+      const yOverlap = Math.min(a.bottom, b.bottom) - Math.max(a.top, b.top);
+      const sideBySide = yOverlap > Math.min(a.height, b.height) * 0.5 && b.left >= a.right - 4;
+      if (sideBySide) acrossPairs++;
+    }
+    return acrossPairs >= rects.length - 1 ? "row" : "column";
+  }
+
   // Geometry's only structural job: the DOM can be flatly wrong about reading
   // order (order:, row-reverse, absolute positioning), and reading order is
   // load-bearing for comprehension.
@@ -419,6 +440,7 @@
 
     let children = node.children;
     markRepeats(children);
+    const axis = axisOf(children);
     children = reorderIfVisuallyReordered(node.el, children);
     children = scopeHeadings(children);
 
@@ -471,6 +493,7 @@
       block: node.block,
       bullet: node.bullet,
       href: node.href,
+      axis,
       children: flat,
     };
   }
