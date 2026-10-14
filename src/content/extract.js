@@ -89,6 +89,28 @@
     return m ? m[1] : "";
   }
 
+  // An icon is visible content whose rendering happens not to be text. A
+  // sighted user reading "★ 8" gets "stars" from the glyph; dropping the glyph
+  // and keeping the number destroys the meaning. So the accessible name is the
+  // icon's transcription, not an exception to "emit what's visible".
+  function iconText(el) {
+    if (el.tagName === "IMG") return (el.getAttribute("alt") || "").trim();
+    if (el.tagName.toLowerCase() === "svg") {
+      const aria = el.getAttribute("aria-label");
+      if (aria) return aria.trim();
+      const title = el.querySelector("title");
+      return title ? title.textContent.trim() : "";
+    }
+    return "";
+  }
+
+  function hrefOf(el) {
+    if (el.tagName !== "A") return null;
+    const raw = el.getAttribute("href");
+    if (!raw || raw.startsWith("javascript:") || raw === "#") return null;
+    return mask.href(raw, location.href);
+  }
+
   function accessibleName(el) {
     const aria = el.getAttribute("aria-label");
     if (aria) return aria.trim();
@@ -222,6 +244,9 @@
     if (isTable(el)) return tableNode(el, range);
     if (isControl(el)) return fieldNode(el);
 
+    const icon = iconText(el);
+    if (icon) return { kind: "text", text: icon, block: false };
+
     const children = [];
 
     const before = pseudoText(el, "::before");
@@ -251,6 +276,7 @@
       heading: headingLevel(el),
       block: isBlockLevel(el),
       bullet: isBullet(el),
+      href: hrefOf(el),
       children,
     };
   }
@@ -279,6 +305,7 @@
 
   function meaningful(n) {
     if (n.kind !== "el") return true;
+    if (n.href) return true; // never collapse a link and lose its target
     if (n.heading) return true;
     if (n.repeated) return true;
     if (n.name) return true;
@@ -351,7 +378,9 @@
         out.push({
           kind: "group",
           name: textOf(node),
-          children: gathered.map(toIR).filter(Boolean),
+          level, // lets the renderer emit a real Markdown heading
+          block: true,
+          children: gathered.map((c) => carryItem(c, toIR(c))).filter(Boolean),
         });
         i = j;
       } else {
@@ -368,28 +397,48 @@
     return "";
   }
 
+  // A repeated sibling shape is a record boundary. Marking it lets the
+  // renderer number them, which is the structure a flat dump loses — you can
+  // no longer tell where one repository card ends and the next begins.
+  // Only applied to multi-part records, so repeated words don't get numbered.
+  //
+  // This deliberately does NOT exclude list items. Real record lists are
+  // usually built from <li>, so skipping bullets skipped the exact case the
+  // rule exists for; a numbered multi-part record beats a bulleted one anyway,
+  // because the number gives an agent something to refer back to.
+  function carryItem(raw, ir) {
+    if (!ir) return ir;
+    if (raw.repeated && ir.kind === "group" && ir.children.length >= 2) {
+      return { ...ir, item: true };
+    }
+    return ir;
+  }
+
   function toIR(node) {
     if (node.kind !== "el") return node;
 
-    let children = node.children.map((c) => (c.kind === "el" ? c : c));
+    let children = node.children;
     markRepeats(children);
     children = reorderIfVisuallyReordered(node.el, children);
     children = scopeHeadings(children);
 
     // scopeHeadings already converted scoped subtrees; convert the rest.
-    children = children.map((c) => (c.kind === "el" ? toIR(c) : c)).filter(Boolean);
+    children = children
+      .map((c) => (c.kind === "el" ? carryItem(c, toIR(c)) : c))
+      .filter(Boolean);
 
     // Collapse non-meaningful wrappers into their parent. Dissolving a node
     // must not dissolve its line semantics with it — an <li> holding one text
     // node is still a list item, not a loose word.
     const flat = [];
     for (const c of children) {
-      if (c.kind === "group" && !c.name && c.children.length === 1) {
+      if (c.kind === "group" && !c.name && c.children.length === 1 && !c.item && !c.bullet) {
         const only = c.children[0];
         flat.push({
           ...only,
           block: only.block || c.block,
           bullet: only.bullet || c.bullet,
+          href: only.href || c.href,
         });
       } else if (c.kind === "group" && !c.name && c.children.length === 0) {
         // nothing survived; drop it
@@ -401,14 +450,27 @@
     if (!meaningful(node) && flat.length <= 1) {
       const only = flat[0] || null;
       if (!only) return null;
-      return { ...only, block: only.block || node.block, bullet: only.bullet || node.bullet };
+      return {
+        ...only,
+        block: only.block || node.block,
+        bullet: only.bullet || node.bullet,
+        href: only.href || node.href,
+      };
+    }
+
+    // A link wrapping only inline text is a link, not a container.
+    if (node.href && flat.every((c) => c.kind === "text" && !c.block)) {
+      const text = flat.map((c) => c.text).join(" ").replace(/\s+/g, " ").trim();
+      if (text) return { kind: "text", text, href: node.href, block: node.block };
     }
 
     return {
       kind: "group",
       name: mask.name(node.name) || "",
+      level: node.heading || 0,
       block: node.block,
       bullet: node.bullet,
+      href: node.href,
       children: flat,
     };
   }

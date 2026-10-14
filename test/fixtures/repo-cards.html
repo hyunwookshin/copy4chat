@@ -1,0 +1,74 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>Fixture: repeated link cards with icon-labelled counts</title>
+<style>
+  body { font: 14px system-ui; padding: 2rem; }
+  .cards { display: grid; grid-template-columns: repeat(2, 320px); gap: 12px; }
+  .card { border: 1px solid #d0d7de; border-radius: 6px; padding: 16px; }
+  .name { font-weight: 600; }
+  .desc { color: #59636e; margin: 8px 0; font-size: 12px; }
+  .meta { display: flex; gap: 16px; font-size: 12px; color: #59636e; align-items: center; }
+  .meta svg { width: 12px; height: 12px; fill: currentColor; vertical-align: -1px; }
+</style>
+
+<h2>Popular repositories</h2>
+
+<!--
+  Regression fixture, derived from a real GitHub profile where ORDINARY COPY
+  BEAT US. Three distinct losses to reproduce and keep fixed:
+
+    1. Links. <a href> targets were dropped entirely.
+    2. Record boundaries. Six cards flattened into one undifferentiated run of
+       lines; you could not tell where one repo ended and the next began.
+    3. Icon-labelled counts. The star and fork glyphs carry the labels. We
+       emitted a bare "8 5", which an agent cannot reliably assign.
+
+  Loss 3 is the conceptually interesting one: an icon is visible content whose
+  rendering is not text, so its accessible name is its transcription — not an
+  exception to "emit what's visible".
+
+  The baseline to beat here is NOT selection.toString(). It is the clipboard's
+  text/html flavour run through an HTML→Markdown converter, which is what a
+  chat client actually does with a paste. That baseline gets links, headings
+  and list structure for free.
+-->
+<div class="cards">
+  <div class="card">
+    <a class="name" href="/hyunwookshin/iodine">iodine</a>
+    <p class="desc">Building the next generation IDE</p>
+    <div class="meta">
+      <span>TypeScript</span>
+      <a href="/hyunwookshin/iodine/stargazers">
+        <svg viewBox="0 0 16 16"><title>stars</title><path d="M8 0l2 5 5 .5-4 3.5 1 5-4-2.5-4 2.5 1-5-4-3.5 5-.5z"/></svg>
+        8
+      </a>
+      <a href="/hyunwookshin/iodine/forks">
+        <svg viewBox="0 0 16 16"><title>forks</title><path d="M5 2v5h6V2h2v7H3V2z"/></svg>
+        5
+      </a>
+    </div>
+  </div>
+
+  <div class="card">
+    <a class="name" href="/hyunwookshin/all_news_dataset_kaggle">all_news_dataset_kaggle</a>
+    <p class="desc">Copy of All News Dataset</p>
+    <div class="meta">
+      <a href="/hyunwookshin/all_news_dataset_kaggle/stargazers">
+        <svg viewBox="0 0 16 16"><title>stars</title><path d="M8 0l2 5 5 .5-4 3.5 1 5-4-2.5-4 2.5 1-5-4-3.5 5-.5z"/></svg>
+        1
+      </a>
+      <a href="/hyunwookshin/all_news_dataset_kaggle/forks">
+        <svg viewBox="0 0 16 16"><title>forks</title><path d="M5 2v5h6V2h2v7H3V2z"/></svg>
+        1
+      </a>
+    </div>
+  </div>
+
+  <div class="card">
+    <a class="name" href="/hyunwookshin/cmpe281p1">cmpe281p1</a>
+    <p class="desc">Project 1 for CMPE 281</p>
+    <div class="meta">
+      <span>Python</span>
+    </div>
+  </div>
+</div>

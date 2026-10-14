@@ -31,7 +31,8 @@ Nothing runs on pages until invoked via `activeTab` (no `<all_urls>` content scr
     Payment failed
     Card number is invalid
   ```
-- **Emit what is visible, never more.** Respect visual presentation (`text-transform`, `::before`, masked passwords) over raw DOM strings.
+- **Emit what is visible, never more.** Respect visual presentation (`text-transform`, `::before`, masked passwords) over raw DOM strings. Icons count as visible content: an `<svg>`/`<img>` is transcribed via its accessible name, because the glyph is what tells a sighted reader that `8` means stars.
+- **Never lose to the baseline.** Anything an HTML→Markdown converter preserves — links, headings, list and record boundaries, real tables — we must preserve too. Our output should be a *superset* of the converter's, not an alternative to it.
 - **Semantics → hierarchy → geometry.** HTML/ARIA wins first, then DOM nesting and sibling shape. Geometry never promotes relationships—it only vetoes them or fixes CSS-reordered reading order (`order`, `row-reverse`, absolute positioning).
 - **Degrade to nesting.** Ambiguous structure falls back to nested lists rather than hallucinated tables. Only real `<table>` elements render as Markdown tables.
 
@@ -42,14 +43,17 @@ Nothing runs on pages until invoked via `activeTab` (no `<all_urls>` content scr
 
 ## Benchmark
 
-`test/fixtures/` and `test/questions.json` evaluate cases where plain-text copy loses or inverts meaning. Every fixture is scored against `selection.toString()`; any fixture that plain copy passes is removed.
+**The control is not `selection.toString()`.** A chat client pastes by reading the clipboard's `text/html` flavour and converting it to Markdown, which gets links, headings, lists and real tables for free. That is the baseline users actually have, so that is the baseline to beat — score every fixture against Turndown + the GFM plugin. Any fixture the control also passes is measuring nothing; delete it rather than keep it as a comfortable win.
 
-| Fixture | Failure mode of plain-text copy |
+What a converter structurally *cannot* see, and where our value therefore lives: live interaction state, visual reading order under CSS reordering, visibility filtering, CSS-rendered text, and masking.
+
+| Fixture | Role |
 |---|---|
-| `feature-matrix.html` | ✓/✗ grid collapses into an unbound run of symbols |
-| `split-labels.html` | Labels and values separate, destroying pairings |
-| `kanban-reordered.html` | DOM order contradicts visual order |
+| `repo-cards.html` | **Regression.** Ordinary copy beat us on a real GitHub profile — links, record boundaries, icon-labelled counts. Must tie at minimum. |
+| `kanban-reordered.html` | Differentiator: DOM order contradicts visual order, so the converter is *wrong*, not vague |
+| `split-labels.html` | Differentiator: live `.value` / `selectedOptions` are invisible to a converter |
 | `pricing-cards.html` | Negative test: must remain nested, not coerced into a table |
+| `feature-matrix.html` | **At risk** — a GFM converter handles real tables, so this may no longer measure anything. Re-score, then likely delete. |
 
 ## Out of Scope (v0.1)
 

@@ -113,5 +113,23 @@
         return "";
       }
     },
+
+    // Link targets can't be query-stripped wholesale — ?v=, ?q= and friends
+    // carry the actual destination. Mask individual params instead, so magic
+    // links and signed URLs don't ride along into a chat.
+    href(raw, base) {
+      try {
+        const u = new URL(raw, base);
+        for (const [k, v] of Array.from(u.searchParams)) {
+          if (/token|secret|auth|sig|signature|password|api[-_]?key|session/i.test(k) || this.looksSecret(v)) {
+            u.searchParams.set(k, DOTS);
+            this.count++;
+          }
+        }
+        return u.href;
+      } catch {
+        return raw;
+      }
+    },
   };
 })();

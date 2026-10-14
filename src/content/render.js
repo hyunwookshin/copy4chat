@@ -57,9 +57,35 @@
     return lines;
   }
 
+  // Anything an HTML→Markdown converter would preserve, we must preserve too:
+  // losing a link or a heading means losing to the baseline on table stakes.
+  function textOf(n) {
+    const t = n.text.trim();
+    return n.href ? `[${t}](${n.href})` : t;
+  }
+
+  // Emit a record on one marker line with its remaining content indented
+  // beneath, so a card reads "1. [iodine](…)" rather than a bare marker with
+  // an orphaned first line. Returns how many lines it produced.
+  function emitRecord(prefix, n, depth, out) {
+    const before = out.length;
+    const pad = INDENT.repeat(depth);
+    const [first, ...rest] = n.children;
+
+    if (first && first.kind === "text") {
+      out.push(pad + prefix + textOf(first));
+      renderNodes(rest, depth + 1, out);
+    } else {
+      out.push(pad + prefix.trimEnd());
+      renderNodes(n.children, depth + 1, out);
+    }
+    return out.length - before;
+  }
+
   function renderNodes(nodes, depth, out) {
     const pad = INDENT.repeat(depth);
     let inlineRun = [];
+    let itemNo = 0;
 
     const flushInline = () => {
       if (inlineRun.length) {
@@ -72,21 +98,38 @@
       // Inline fragments join their neighbours; block-level content owns its
       // line, so sibling list items stay distinct instead of running together.
       if (n.kind === "text" && !n.block) {
-        inlineRun.push(n.text);
+        inlineRun.push(textOf(n));
         continue;
       }
       flushInline();
 
+      // Repeated records get numbered so boundaries survive. Reset the
+      // counter whenever the run of records is interrupted.
+      if (!n.item) itemNo = 0;
+
       if (n.kind === "text") {
-        out.push(pad + (n.bullet ? "- " : "") + n.text.trim());
+        out.push(pad + (n.bullet ? "- " : "") + textOf(n));
       } else if (n.kind === "field") {
         out.push(pad + renderField(n));
       } else if (n.kind === "table") {
         out.push(...renderTable(n, depth));
       } else if (n.kind === "group") {
-        if (n.name) {
+        if (n.item) {
+          itemNo++;
+          const lines = emitRecord(`${itemNo}. `, n, depth, out);
+          // Multi-line records get breathing room, so a long card doesn't
+          // bleed into the next one.
+          if (lines > 1) out.push("");
+        } else if (n.name && n.level) {
+          out.push(pad + "#".repeat(Math.min(n.level, 6)) + " " + n.name);
+          renderNodes(n.children, depth + 1, out);
+        } else if (n.name) {
           out.push(pad + (n.bullet ? "- " : "") + n.name);
           renderNodes(n.children, depth + 1, out);
+        } else if (n.bullet) {
+          // An unnamed list item is still a list item. Falling through to the
+          // flat case here is what dissolved repo cards into a loose run.
+          emitRecord("- ", n, depth, out);
         } else {
           renderNodes(n.children, depth, out);
         }

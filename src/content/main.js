@@ -29,6 +29,12 @@
     const doc = C4C.extract(range);
     if (!doc) return;
 
+    // When output looks wrong, the question is always "what did the extractor
+    // actually see?" — guessing at a site's DOM from the rendered text is how
+    // you end up fixing the wrong layer. console.debug sits at Verbose level,
+    // so this is invisible unless you go looking.
+    console.debug("[copy4chat] IR", doc);
+
     const text = C4C.render.text(doc);
     const path = await C4C.clipboard.write(text);
 

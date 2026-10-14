@@ -1,33 +1,34 @@
 {
-  "_method": [
-    "Every fixture is scored twice: once on Copy4Chat output, once on the",
-    "control (plain selection.toString(), i.e. an ordinary Ctrl+C).",
-    "A fixture the control also passes is not measuring anything and should be",
-    "deleted from the suite rather than kept as a comfortable win.",
-    "The bar for v0.1 is not prettier output. It is: does the agent get the",
-    "relationship right where plain text loses or inverts it?"
+  "_control": [
+    "CORRECTED after the GitHub profile test.",
+    "",
+    "The control is NOT selection.toString(). When you paste into a chat",
+    "client, it reads the clipboard's text/html flavour and runs it through an",
+    "HTML→Markdown converter — which gets links, headings, lists and real",
+    "tables for free. That is the baseline people actually have, so that is the",
+    "baseline to beat.",
+    "",
+    "Score every fixture twice: Copy4Chat output, and the text/html flavour",
+    "converted to Markdown (Turndown + the GFM plugin is a fair stand-in).",
+    "Any fixture the control also passes is not measuring anything — delete it",
+    "rather than keep it as a comfortable win.",
+    "",
+    "Copy4Chat's output should be a SUPERSET of the converter's: everything it",
+    "preserves, plus the things it structurally cannot see — live interaction",
+    "state, visual reading order, visibility filtering, CSS-rendered text, and",
+    "masking."
   ],
 
-  "feature-matrix.html": {
-    "select": "the whole table",
+  "repo-cards.html": {
+    "select": "the whole Popular repositories block",
     "questions": [
-      { "q": "Which plans include SSO?", "a": ["Team"] },
-      { "q": "Does Pro include an audit log?", "a": ["yes"] },
-      { "q": "Which feature is available on every plan?", "a": ["API access"] }
+      { "q": "How many stars does iodine have, and how many forks?", "a": ["8 stars", "5 forks"] },
+      { "q": "What is the URL of the iodine repository?", "a": ["/hyunwookshin/iodine"] },
+      { "q": "How many repositories are listed?", "a": ["3"] },
+      { "q": "Which repository has no language label?", "a": ["all_news_dataset_kaggle"] }
     ],
-    "control_expected_to_fail": true,
-    "why": "Plain text gives an unbound run of ✓/✗ with no row or column binding."
-  },
-
-  "split-labels.html": {
-    "select": "the whole form",
-    "questions": [
-      { "q": "What city is this shipping to?", "a": ["Lisbon"] },
-      { "q": "What shipping speed is selected?", "a": ["Express"] },
-      { "q": "Which field is flagged invalid?", "a": ["Delivery notes"] }
-    ],
-    "control_expected_to_fail": true,
-    "why": "DOM order emits all labels, then all values; pairing is destroyed."
+    "control_expected_to_fail": false,
+    "why": "REGRESSION FIXTURE — ordinary copy beat us here. The converter wins links and boundaries for free, so this is parity work, not a differentiator. We must TIE at minimum; losing means a regression."
   },
 
   "kanban-reordered.html": {
@@ -38,7 +39,18 @@
       { "q": "Reading left to right, what is the order of the columns?", "a": ["To Do, In Progress, Done"] }
     ],
     "control_expected_to_fail": true,
-    "why": "DOM order is Done / To Do / In Progress; plain text is confidently wrong, not merely vague."
+    "why": "A converter walks the DOM, which here says Done / To Do / In Progress. It is confidently wrong, not merely vague. Still a genuine differentiator."
+  },
+
+  "split-labels.html": {
+    "select": "the whole form",
+    "questions": [
+      { "q": "What city is this shipping to?", "a": ["Lisbon"] },
+      { "q": "What shipping speed is selected?", "a": ["Express"] },
+      { "q": "Which field is flagged invalid?", "a": ["Delivery notes"] }
+    ],
+    "control_expected_to_fail": true,
+    "why": "A converter emits label text but cannot read live .value or selectedOptions, so the values simply are not there. Still a genuine differentiator."
   },
 
   "pricing-cards.html": {
@@ -48,6 +60,16 @@
       { "q": "Are these three cards a pricing comparison?", "a": ["no", "one of them is unrelated news"] }
     ],
     "control_expected_to_fail": false,
-    "why": "Negative test. Output must NOT be a comparison table. Passing by inventing a tidy table is a failure, even if the first question is answered correctly."
+    "why": "Negative test. Output must NOT become a comparison table. Passing by inventing a tidy table is a failure even if question 1 is answered."
+  },
+
+  "feature-matrix.html": {
+    "select": "the whole table",
+    "questions": [
+      { "q": "Which plans include SSO?", "a": ["Team"] },
+      { "q": "Does Pro include an audit log?", "a": ["yes"] }
+    ],
+    "control_expected_to_fail": false,
+    "why": "AT RISK under the corrected control. A GFM-capable converter renders a real <table> as a Markdown table, so this probably measures nothing any more. Re-score it; if the control passes, delete it per our own rule."
   }
 }
