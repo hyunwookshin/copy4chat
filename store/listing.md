@@ -119,8 +119,8 @@ accurate as the code changes.
 
 ## 8. Listing assets still needed
 
-- [ ] Screenshot, 1280×800 or 640×400. `img/screenshot.png` is 1787×827,
-      which is neither — recapture or pad it to an accepted size.
+- [x] Screenshot, 1280×800 — `store/screenshot-1280x800.png`
+      (also `store/screenshot-640x400.png` if the smaller size is preferred)
 - [ ] Small promo tile, 440×280
 - [x] Store icon, 128×128 — `icons/icon128.png`
 - [ ] Category: Productivity
@@ -138,3 +138,12 @@ accurate as the code changes.
 - [x] Version is a valid dotted-integer string
 
 Build and verify with `./tools/package.sh`.
+
+## 10. How the screenshot was produced
+
+`img/screenshot.png` is 1787×827 (2.16:1); the store wants 1.6:1. Scaling and
+padding left the content small inside white bars, and a centred crop sliced
+the form's left-hand labels mid-word. So the crop is offset instead — source
+window x 190–1513, which is exactly 1.6:1 at full height, keeping the labels
+intact and letting the bleed fall on the panel's right edge. Rendered with
+headless Chrome, since `sips` only crops from the centre.
