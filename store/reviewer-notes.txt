@@ -1,0 +1,53 @@
+HOW TO TEST
+
+The extension has no toolbar button, popup, or options page. Its only entry
+point is a context menu item, so it will appear to do nothing until a text
+selection exists.
+
+  1. Open any page with a form — https://www.budget.com is a good example.
+  2. Select some text with the mouse (the menu item only appears for a
+     selection; "contexts": ["selection"]).
+  3. Right-click and choose "Copy For Chat (Copy4Chat)".
+  4. A small notification confirms the copy and reports how many values were
+     masked.
+  5. Paste into any text field. The result is a plain-text rendering of the
+     selected region that preserves form values, control state, and layout
+     relationships.
+
+PERMISSIONS
+
+  contextMenus    Adds the menu item. The extension's only entry point.
+  activeTab       Access to the current tab, granted only at the moment the
+                  user clicks the menu item.
+  scripting       Injects the extraction code into that tab on demand. There
+                  is no persistent content script and no host permission, so
+                  nothing runs on any page until the user invokes the item.
+  clipboardWrite  Writes the result to the clipboard. This is the only output.
+
+DATA HANDLING
+
+No data is collected or transmitted. The extension makes no network requests
+of any kind: there is no fetch, XMLHttpRequest, WebSocket, or sendBeacon
+anywhere in the source, and no analytics or error reporting. Nothing is
+written to chrome.storage, localStorage, cookies, or IndexedDB.
+
+The selection is read inside the tab, formatted inside the tab, and written
+to the clipboard from inside the tab. The background service worker only
+routes the menu click and never receives page content.
+
+Password fields, sensitive autocomplete values (cc-number, cc-csc,
+one-time-code), credential-like field names, token-shaped values, and
+Luhn-valid card numbers are masked rather than copied. Credential-like
+parameters are stripped from link URLs.
+
+REMOTE CODE
+
+None. All logic ships in the package. There is no eval, no new Function, no
+importScripts, and no externally hosted script. The default Manifest V3
+content security policy is unmodified.
+
+SOURCE
+
+The extension is open source and unminified; the uploaded package is the
+source. https://github.com/hyunwookshin/copy4chat
+Privacy policy: https://github.com/hyunwookshin/copy4chat/blob/main/PRIVACY.md
