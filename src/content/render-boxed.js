@@ -365,6 +365,13 @@
   }
 
   function renderList(nodes, budget, parentAxis, depth) {
+    // A container holding nothing but buttons is a tab strip or a button bar
+    // whatever its measured axis says, and reads as one. Restricted to
+    // buttons on purpose: stacked checkboxes and radio groups are lists, and
+    // packing those onto a line would misrepresent them.
+    const buttonBar =
+      nodes.length > 1 && nodes.every((n) => n.kind === "field" && n.control === "button");
+
     const blocks = [];
     let inlineRun = [];
 
@@ -392,7 +399,7 @@
 
       if (n.kind === "field") {
         // A row of controls (tabs, a button bar) packs onto shared lines.
-        if (parentAxis === "row") {
+        if (parentAxis === "row" || buttonBar) {
           const items = [];
           let j = i;
           while (j < nodes.length && nodes[j].kind === "field") {
