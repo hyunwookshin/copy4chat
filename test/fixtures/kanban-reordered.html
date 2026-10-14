@@ -1,0 +1,42 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>Fixture: board where DOM order contradicts visual order</title>
+<style>
+  body { font: 14px system-ui; padding: 2rem; }
+  .board { display: flex; gap: 24px; }
+  .col { flex: 1; border: 1px solid #ddd; border-radius: 8px; padding: 12px; }
+  .col h3 { margin: 0 0 8px; font-size: 13px; text-transform: uppercase; color: #666; }
+  ul { margin: 0; padding-left: 18px; }
+
+  /* The three columns render in an order the DOM does not state. */
+  .todo   { order: 1; }
+  .doing  { order: 2; }
+  .done   { order: 3; }
+</style>
+
+<h1>Sprint board</h1>
+
+<!--
+  Why this fixture discriminates:
+  visually the columns read To Do / In Progress / Done, but the DOM lists them
+  Done / To Do / In Progress. Plain-text copy is not merely vague here, it is
+  confidently *wrong* about what is in progress. This is the one structural job
+  geometry is allowed to do: correct a reading order the DOM gets wrong.
+
+  Note the uppercase column headings are CSS-only — the DOM says "Done", the
+  user sees "DONE".
+-->
+<div class="board">
+  <section class="col done">
+    <h3>Done</h3>
+    <ul><li>Update docs</li><li>Release v2</li></ul>
+  </section>
+  <section class="col todo">
+    <h3>To Do</h3>
+    <ul><li>Fix login</li><li>Add dark mode</li></ul>
+  </section>
+  <section class="col doing">
+    <h3>In Progress</h3>
+    <ul><li>Refactor auth</li></ul>
+  </section>
+</div>

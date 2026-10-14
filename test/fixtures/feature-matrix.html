@@ -1,0 +1,31 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>Fixture: feature matrix</title>
+<style>
+  body { font: 14px system-ui; padding: 2rem; }
+  table { border-collapse: collapse; }
+  th, td { border: 1px solid #ccc; padding: 6px 12px; text-align: center; }
+  th:first-child, td:first-child { text-align: left; }
+</style>
+
+<h1>Compare plans</h1>
+
+<!--
+  Why this fixture discriminates:
+  plain-text copy serialises the checkmark grid as a bare run of symbols
+  ("✓ ✓ ✗ ✓ ✗ ✗") with nothing binding each one to its row or column.
+  Column alignment *is* the meaning here, so this is the case where
+  passthrough of a real <table> should beat the control outright.
+-->
+<table>
+  <caption>Plan features</caption>
+  <thead>
+    <tr><th>Feature</th><th>Free</th><th>Pro</th><th>Team</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>SSO</td><td>✗</td><td>✗</td><td>✓</td></tr>
+    <tr><td>Audit log</td><td>✗</td><td>✓</td><td>✓</td></tr>
+    <tr><td>API access</td><td>✓</td><td>✓</td><td>✓</td></tr>
+    <tr><td>Priority support</td><td>✗</td><td>✓</td><td>✓</td></tr>
+  </tbody>
+</table>

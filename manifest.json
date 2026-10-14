@@ -1,0 +1,10 @@
+{
+  "manifest_version": 3,
+  "name": "Copy4Chat",
+  "version": "0.1.0",
+  "description": "Copy a selection as structured text an LLM can understand.",
+  "permissions": ["contextMenus", "scripting", "activeTab", "clipboardWrite"],
+  "background": {
+    "service_worker": "src/background.js"
+  }
+}

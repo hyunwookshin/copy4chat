@@ -1,0 +1,37 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>Fixture: side-by-side cards that must NOT become a table</title>
+<style>
+  body { font: 14px system-ui; padding: 2rem; }
+  .cards { display: flex; gap: 16px; }
+  .card { border: 1px solid #ddd; border-radius: 10px; padding: 16px; width: 180px; }
+  .card h3 { margin: 0 0 4px; }
+  .price { font-size: 20px; font-weight: 600; }
+  .muted { color: #666; }
+</style>
+
+<h1>Team news</h1>
+
+<!--
+  This is the negative test. Three visually aligned cards, but their internal
+  fields do not line up and nothing semantic says they are comparable — the
+  arrangement is decorative. Correct behaviour is a nested list with an
+  arrangement note, NOT a comparison table. A fixture that passes by producing
+  a tidy table has failed.
+-->
+<div class="cards">
+  <article class="card">
+    <h3>Starter</h3>
+    <p class="price">$0</p>
+    <p class="muted">1 seat</p>
+  </article>
+  <article class="card">
+    <h3>Office relocation</h3>
+    <p>We move to the 4th floor on Friday.</p>
+  </article>
+  <article class="card">
+    <h3>Pro</h3>
+    <p class="price">$20</p>
+    <p class="muted">10 seats</p>
+  </article>
+</div>

@@ -1,0 +1,53 @@
+{
+  "_method": [
+    "Every fixture is scored twice: once on Copy4Chat output, once on the",
+    "control (plain selection.toString(), i.e. an ordinary Ctrl+C).",
+    "A fixture the control also passes is not measuring anything and should be",
+    "deleted from the suite rather than kept as a comfortable win.",
+    "The bar for v0.1 is not prettier output. It is: does the agent get the",
+    "relationship right where plain text loses or inverts it?"
+  ],
+
+  "feature-matrix.html": {
+    "select": "the whole table",
+    "questions": [
+      { "q": "Which plans include SSO?", "a": ["Team"] },
+      { "q": "Does Pro include an audit log?", "a": ["yes"] },
+      { "q": "Which feature is available on every plan?", "a": ["API access"] }
+    ],
+    "control_expected_to_fail": true,
+    "why": "Plain text gives an unbound run of ✓/✗ with no row or column binding."
+  },
+
+  "split-labels.html": {
+    "select": "the whole form",
+    "questions": [
+      { "q": "What city is this shipping to?", "a": ["Lisbon"] },
+      { "q": "What shipping speed is selected?", "a": ["Express"] },
+      { "q": "Which field is flagged invalid?", "a": ["Delivery notes"] }
+    ],
+    "control_expected_to_fail": true,
+    "why": "DOM order emits all labels, then all values; pairing is destroyed."
+  },
+
+  "kanban-reordered.html": {
+    "select": "the whole board",
+    "questions": [
+      { "q": "Which tasks are in progress?", "a": ["Refactor auth"] },
+      { "q": "Which column is Fix login in?", "a": ["To Do"] },
+      { "q": "Reading left to right, what is the order of the columns?", "a": ["To Do, In Progress, Done"] }
+    ],
+    "control_expected_to_fail": true,
+    "why": "DOM order is Done / To Do / In Progress; plain text is confidently wrong, not merely vague."
+  },
+
+  "pricing-cards.html": {
+    "select": "all three cards",
+    "questions": [
+      { "q": "How many seats does Pro include?", "a": ["10"] },
+      { "q": "Are these three cards a pricing comparison?", "a": ["no", "one of them is unrelated news"] }
+    ],
+    "control_expected_to_fail": false,
+    "why": "Negative test. Output must NOT be a comparison table. Passing by inventing a tidy table is a failure, even if the first question is answered correctly."
+  }
+}

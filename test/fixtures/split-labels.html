@@ -1,0 +1,38 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>Fixture: labels and values in separate subtrees</title>
+<style>
+  body { font: 14px system-ui; padding: 2rem; }
+  .grid { display: grid; grid-template-columns: max-content 1fr; gap: 8px 24px; max-width: 420px; }
+  .labels, .values { display: contents; }
+  label { grid-column: 1; }
+  input, select { grid-column: 2; }
+</style>
+
+<h1>Shipping details</h1>
+
+<!--
+  Why this fixture discriminates:
+  the DOM holds every label in one subtree and every value in another, and CSS
+  grid pairs them visually. Plain-text copy therefore yields all four labels
+  followed by all four values, and the association is gone. Recovering it needs
+  label[for] — semantics beating DOM order, which is the priority rule we
+  committed to.
+-->
+<form class="grid">
+  <div class="labels">
+    <label for="recipient">Recipient</label>
+    <label for="city">City</label>
+    <label for="speed">Shipping speed</label>
+    <label for="notes">Delivery notes</label>
+  </div>
+  <div class="values">
+    <input id="recipient" value="Dana Okafor">
+    <input id="city" value="Lisbon">
+    <select id="speed">
+      <option>Standard</option>
+      <option selected>Express</option>
+    </select>
+    <input id="notes" value="Leave at the front desk" aria-invalid="true">
+  </div>
+</form>
