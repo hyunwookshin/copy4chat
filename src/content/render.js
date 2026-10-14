@@ -84,13 +84,19 @@
 
   function renderNodes(nodes, depth, out) {
     const pad = INDENT.repeat(depth);
-    let inlineRun = [];
+    let inlineRun = "";
     let itemNo = 0;
 
+    // Glued runs are rendered as one word by the page, so they join with no
+    // separator: <span>$</span><span>20</span> is "$20", not "$ 20".
+    const addInline = (n, s) => {
+      inlineRun += inlineRun && !n.glue ? " " + s : s;
+    };
+
     const flushInline = () => {
-      if (inlineRun.length) {
-        out.push(pad + inlineRun.join(" ").replace(/\s+/g, " ").trim());
-        inlineRun = [];
+      if (inlineRun) {
+        out.push(pad + inlineRun.replace(/\s+/g, " ").trim());
+        inlineRun = "";
       }
     };
 
@@ -98,7 +104,7 @@
       // Inline fragments join their neighbours; block-level content owns its
       // line, so sibling list items stay distinct instead of running together.
       if (n.kind === "text" && !n.block) {
-        inlineRun.push(textOf(n));
+        addInline(n, textOf(n));
         continue;
       }
       flushInline();

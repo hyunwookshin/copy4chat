@@ -72,6 +72,37 @@
     return text;
   }
 
+  // Document-order cursors for glue detection, reset per extraction.
+  let lastRunRect = null;
+  let lastRunEndedWithSpace = true;
+
+  function textRects(node) {
+    const probe = node.ownerDocument.createRange();
+    probe.selectNodeContents(node);
+    const rects = probe.getClientRects();
+    return rects.length ? rects : null;
+  }
+
+  // True when this run starts exactly where the previous one ended, i.e. the
+  // page renders them as one word. <span>$</span><span>20</span> is "$20",
+  // not "$ 20".
+  function gluedToPrevious(node, raw) {
+    const rects = textRects(node);
+    if (!rects) return false;
+    const first = rects[0];
+    // A text node s rect spans its own trailing whitespace, so geometry alone
+    // reports "contiguous" across a real space. The source settles it.
+    const separated = lastRunEndedWithSpace || /^\s/.test(raw);
+    const glued =
+      !separated &&
+      !!lastRunRect &&
+      Math.abs(first.top - lastRunRect.top) <= 1 &&
+      Math.abs(first.left - lastRunRect.right) <= 0.5;
+    lastRunRect = rects[rects.length - 1];
+    lastRunEndedWithSpace = /\s$/.test(raw);
+    return glued;
+  }
+
   function sliceText(node, range) {
     const whole = node.data;
     const start = node === range.startContainer ? range.startOffset : 0;
@@ -79,6 +110,68 @@
     const parent = node.parentElement;
     if (!parent) return "";
     return shownText(collapseWs(whole.slice(start, end), parent), parent);
+  }
+
+  // textContent concatenates across element boundaries with no separator, so
+  // <span>Close</span><span>Add a customer ID</span> reads back as
+  // "CloseAdd a customer ID". Real sites stack spans like this constantly —
+  // a visible label, a screen-reader label, an avatar initial.
+  //
+  // innerText is not the fix: it also returns "CloseAdd a customer ID" for
+  // inline-block siblings separated by a margin, which is exactly the case
+  // that matters. Blindly joining with a space is not the fix either — it
+  // turns <b>re</b>ally into "re ally".
+  //
+  // So measure. Separate two runs when the rendering separates them: a line
+  // break between, or a horizontal gap. Same rule as everywhere else in this
+  // file — emit what is visible.
+  function renderedText(el) {
+    if (!el) return "";
+
+    if (!(el instanceof HTMLElement) || !el.isConnected) {
+      // Detached clones and SVG nodes cannot be measured; join on boundaries.
+      const parts = [];
+      (function walk(n) {
+        if (n.nodeType === Node.TEXT_NODE) parts.push(n.data);
+        else n.childNodes.forEach(walk);
+      })(el);
+      return parts.join(" ").replace(/\s+/g, " ").trim();
+    }
+
+    const walker = el.ownerDocument.createTreeWalker(el, NodeFilter.SHOW_TEXT);
+    const probe = el.ownerDocument.createRange();
+    let out = "";
+    let prev = null;
+    let prevClipped = false;
+
+    for (let n = walker.nextNode(); n; n = walker.nextNode()) {
+      if (!n.data.trim()) {
+        out += " ";
+        continue;
+      }
+      probe.selectNodeContents(n);
+      const rects = probe.getClientRects();
+      if (!rects.length) continue; // not rendered at all
+
+      const first = rects[0];
+      // Measure the containing box, not the text: an sr-only span is 1px
+      // but its text overflows, so the text rect looks perfectly normal.
+      const host = n.parentElement && n.parentElement.getBoundingClientRect();
+      const clipped = !!host && (host.width <= 1 || host.height <= 1);
+      if (prev) {
+        const brokeLine = Math.abs(first.top - prev.top) > 1;
+        // Absolute value: an out-of-flow run can start to the LEFT of where
+        // the previous one ended.
+        const moved = Math.abs(first.left - prev.right) > 0.5;
+        // A visually-hidden label renders at its static position, so it
+        // measures as contiguous even though nothing is drawn there.
+        if (brokeLine || moved || clipped || prevClipped) out += " ";
+      }
+      out += n.data;
+      prev = rects[rects.length - 1];
+      prevClipped = clipped;
+    }
+    return out.replace(/\s+/g, " ").trim();
   }
 
   function pseudoText(el, which) {
@@ -99,7 +192,7 @@
       const aria = el.getAttribute("aria-label");
       if (aria) return aria.trim();
       const title = el.querySelector("title");
-      return title ? title.textContent.trim() : "";
+      return title ? renderedText(title) : "";
     }
     return "";
   }
@@ -119,7 +212,7 @@
     if (labelledBy) {
       const text = labelledBy
         .split(/\s+/)
-        .map((id) => el.ownerDocument.getElementById(id)?.textContent || "")
+        .map((id) => renderedText(el.ownerDocument.getElementById(id)))
         .join(" ")
         .trim();
       if (text) return text;
@@ -127,11 +220,11 @@
 
     if (el.tagName === "FIELDSET") {
       const legend = el.querySelector(":scope > legend");
-      if (legend) return legend.textContent.trim();
+      if (legend) return renderedText(legend);
     }
     if (el.tagName === "TABLE") {
       const caption = el.querySelector(":scope > caption");
-      if (caption) return caption.textContent.trim();
+      if (caption) return renderedText(caption);
     }
     return "";
   }
@@ -163,14 +256,14 @@
     const doc = el.ownerDocument;
     if (el.id) {
       const forLabel = doc.querySelector(`label[for="${CSS.escape(el.id)}"]`);
-      if (forLabel) return forLabel.textContent.trim();
+      if (forLabel) return renderedText(forLabel);
     }
     const wrapping = el.closest("label");
     if (wrapping) {
       // Strip the control's own text so a wrapping label doesn't echo it.
       const clone = wrapping.cloneNode(true);
       clone.querySelectorAll("input, textarea, select, button").forEach((n) => n.remove());
-      const t = clone.textContent.trim();
+      const t = renderedText(clone);
       if (t) return t;
     }
     if (el.placeholder) return el.placeholder.trim();
@@ -197,7 +290,7 @@
 
     if (el.tagName === "BUTTON" || el.type === "submit" || el.type === "button") {
       control = "button";
-      value = (el.textContent || el.value || "").trim();
+      value = renderedText(el) || (el.value || "").trim();
     } else if (el.type === "checkbox" || el.type === "radio") {
       control = el.type;
       states.push(el.checked ? "checked" : "unchecked");
@@ -223,7 +316,7 @@
     let headers = [];
     const first = rows[0];
     if (first && cellsOf(first).every((c) => c.tagName === "TH" || c.getAttribute("role") === "columnheader")) {
-      headers = cellsOf(first).map((c) => c.textContent.trim());
+      headers = cellsOf(first).map(renderedText);
     }
 
     const body = headers.length ? rows.slice(1) : rows;
@@ -231,7 +324,7 @@
     for (const row of body) {
       if (!range.intersectsNode(row)) continue;
       // Cells outside the selection stay blank rather than being pulled in.
-      out.push(cellsOf(row).map((c) => (range.intersectsNode(c) ? c.textContent.trim() : "")));
+      out.push(cellsOf(row).map((c) => (range.intersectsNode(c) ? renderedText(c) : "")));
     }
     if (!out.length) return null;
     return { kind: "table", headers, rows: out, note: headers.length ? "header row shown as context" : "" };
@@ -255,8 +348,10 @@
     for (const child of el.childNodes) {
       if (child.nodeType === Node.TEXT_NODE) {
         if (!range.intersectsNode(child)) continue;
-        const t = sliceText(child, range).trim();
-        if (t) children.push({ kind: "text", text: t });
+        const raw = sliceText(child, range);
+        const t = raw.trim();
+        const glue = gluedToPrevious(child, raw);
+        if (t) children.push({ kind: "text", text: t, glue });
       } else if (child.nodeType === Node.ELEMENT_NODE) {
         if (!range.intersectsNode(child)) continue;
         const n = visitElement(child, range);
@@ -286,8 +381,13 @@
   // Repeated sibling shape is the strongest signal that a generic wrapper is
   // actually a record rather than a spacer.
   function markRepeats(children) {
-    const sig = (n) =>
-      n.kind === "el" ? `${n.el.tagName}.${Array.from(n.el.classList).sort().join(".")}` : null;
+    // Require a class: without one the signature is just the tag name, so
+    // any two sibling paragraphs read as "repeated records" and get framed.
+    // Component-built records essentially always carry a class.
+    const sig = (n) => {
+      if (n.kind !== "el" || !n.el.classList.length) return null;
+      return `${n.el.tagName}.${Array.from(n.el.classList).sort().join(".")}`;
+    };
     const counts = new Map();
     for (const c of children) {
       const s = sig(c);
@@ -509,7 +609,7 @@
       const name =
         accessibleName(el) ||
         (SEMANTIC_TAGS.has(el.tagName) || el.getAttribute("role")
-          ? el.querySelector(":scope > h1, :scope > h2, :scope > h3, :scope > h4")?.textContent.trim() || ""
+          ? renderedText(el.querySelector(":scope > h1, :scope > h2, :scope > h3, :scope > h4"))
           : "");
       if (name) names.push(mask.name(name.replace(/\s+/g, " ").slice(0, 80)));
       el = el.parentElement;
@@ -521,6 +621,8 @@
 
   C4C.extract = function extract(range) {
     mask.reset();
+    lastRunRect = null;
+    lastRunEndedWithSpace = true;
 
     const root =
       range.commonAncestorContainer.nodeType === Node.ELEMENT_NODE

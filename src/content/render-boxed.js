@@ -387,12 +387,18 @@
       nodes.length > 1 && nodes.every((n) => n.kind === "field" && n.control === "button");
 
     const blocks = [];
-    let inlineRun = [];
+    let inlineRun = "";
+
+    // Glued runs are rendered as one word by the page, so they join with no
+    // separator: <span>$</span><span>20</span> is "$20", not "$ 20".
+    const addInline = (n, s) => {
+      inlineRun += inlineRun && !n.glue ? " " + s : s;
+    };
 
     const flushInline = () => {
-      if (!inlineRun.length) return;
-      const s = inlineRun.join(" ");
-      inlineRun = [];
+      if (!inlineRun) return;
+      const s = inlineRun;
+      inlineRun = "";
       const r = textRect(s, budget);
       if (r.lines.length) blocks.push(r);
     };
@@ -401,7 +407,7 @@
       const n = nodes[i];
 
       if (n.kind === "text" && !n.block) {
-        inlineRun.push(linkText(n));
+        addInline(n, linkText(n));
         continue;
       }
       flushInline();

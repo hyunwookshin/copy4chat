@@ -1,0 +1,50 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>Fixture: text runs separated by layout rather than by whitespace</title>
+<style>
+  body { font: 14px system-ui; padding: 2rem; }
+  button { font: inherit; padding: 8px 14px; }
+  /* The real-world pattern: siblings held apart by CSS, with no whitespace
+     between them in the source. */
+  .pill   { display: inline-block; margin-right: 12px; }
+  .stacked{ display: block; }
+  .sr-only{ position: absolute; width: 1px; height: 1px;
+            clip-path: inset(50%); overflow: hidden; white-space: nowrap; }
+  table { border-collapse: collapse; margin-top: 12px; }
+  td, th { border: 1px solid #ccc; padding: 4px 10px; }
+  .cell span { display: inline-block; margin-right: 8px; }
+</style>
+
+<h2>Account</h2>
+
+<!--
+  textContent concatenates across element boundaries, so stacked spans read
+  back as "CloseAdd a customer ID". innerText does not fix it: for
+  inline-block siblings separated by a margin it returns the same run-on
+  string. Blindly joining on boundaries is also wrong — it turns
+  <b>re</b>ally into "re ally".
+  The rule is geometric: separate two runs when the rendering separates them.
+
+  Note the deliberate absence of whitespace between these elements. Adding
+  any would hide the bug.
+-->
+
+<!-- Separated by margin: MUST gain spaces. -->
+<button type="button"><span class="pill">Close</span><span class="pill">Add a customer ID</span><span class="pill">Add a discount code</span></button>
+
+<!-- Separated by line break: MUST gain spaces. -->
+<button type="button"><span class="stacked">Alex</span><span class="stacked">$0.00 OneKeyCash</span></button>
+
+<!-- Visually hidden sibling: MUST gain a space. -->
+<button type="button"><span>Shop travel</span><span class="sr-only">opens menu</span></button>
+
+<!-- Genuinely contiguous inline markup: MUST NOT gain a space. -->
+<p>That was <b>re</b>ally the whole bug.</p>
+
+<!-- display:none: must not appear at all. -->
+<p>Visible text<span style="display:none">SHOULD-NOT-APPEAR</span></p>
+
+<table>
+  <tr><th>Name</th><th>Status</th></tr>
+  <tr><td class="cell"><span>Dana</span><span>Okafor</span></td><td>Active</td></tr>
+</table>
