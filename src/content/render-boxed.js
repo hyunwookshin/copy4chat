@@ -29,6 +29,7 @@
   const MAX_TITLE = 36;
   const FIELD_PAD = 12;
   const MIN_SOFT = 16; // narrowest column worth squeezing prose into
+  const MAX_NEST = 3; // frames deeper than this must earn their border
 
   // Lines that must survive intact: buttons, inputs, checkboxes, radios.
   const ATOMIC = /^(\[|☑|☐|\(•\)|\( \)|\( )/;
@@ -97,7 +98,10 @@
   }
 
   function frame(title, body, budget) {
-    const inner = Math.max(Math.min(body.w, budget - 4), 6);
+    // Widen for the title before resorting to truncating it; a box only
+    // squeezes its label when the budget genuinely has no room.
+    const want = Math.max(body.w, title ? width(title) + 2 : 0, 6);
+    const inner = Math.min(want, budget - 4);
     const t = title ? truncate(title, Math.max(0, inner - 1)) : "";
 
     const top = t
@@ -229,6 +233,29 @@
     return true;
   }
 
+  // A container with no label, no controls and no text of its own, which
+  // exists only to hold another container. Its border draws a box around a
+  // box and says nothing — tolerable near the surface, noise once nested.
+  function isPureWrapper(n) {
+    if (titleOf(n)) return false;
+    if (holdsControls(n)) return false;
+    if ((n.children || []).some((c) => c.kind === "text" && c.text.trim())) return false;
+    return (n.children || []).some((c) => c.kind === "group");
+  }
+
+  // Set per render: true when the selection nests boxes deeper than
+  // MAX_NEST anywhere. Deciding once, up front, matters — if each wrapper
+  // re-measured as its ancestors were dropped, the subtree would shrink back
+  // under the threshold and the remaining wrappers would survive.
+  let trimWrappers = false;
+
+  // How many frames deep this subtree goes.
+  function frameDepth(n) {
+    if (!n || n.kind !== "group") return 0;
+    const inner = Math.max(0, ...(n.children || []).map(frameDepth));
+    return (framed(n) ? 1 : 0) + inner;
+  }
+
   // Soft content wraps gracefully, so it can be squeezed into a narrow column.
   // Controls and nested frames cannot.
   function isSoft(n) {
@@ -267,13 +294,19 @@
 
   // ---------------------------------------------------------------- render
 
-  function renderGroup(n, budget) {
+  function renderGroup(n, budget, depth) {
     const title = titleNodeOf(n);
     const kids = dropEchoes(n.children || [], title.text);
 
     if (framed(n)) {
+      // Once a stack of boxes runs deeper than MAX_NEST, wrappers that
+      // contribute nothing of their own are dropped rather than drawn. The
+      // nesting they show is already visible from the frames inside them.
+      if (trimWrappers && isPureWrapper(n)) {
+        return renderList(kids, budget, n.axis, depth);
+      }
       const inner = budget - 4;
-      const body = renderList(kids, inner, n.axis);
+      const body = renderList(kids, inner, n.axis, depth + 1);
       // A frame cannot hold a link, so a titled link keeps its target inside.
       const full = title.href ? stack([textRect(title.href, inner), body]) : body;
       // A frame around one untitled line says nothing the line doesn't.
@@ -285,7 +318,7 @@
     if (n.name && n.level) head.push(textRect("#".repeat(Math.min(n.level, 6)) + " " + n.name, budget));
     else if (n.name) head.push(textRect(n.name, budget));
 
-    const sub = renderList(kids, head.length ? budget - 2 : budget, n.axis);
+    const sub = renderList(kids, head.length ? budget - 2 : budget, n.axis, depth);
     return stack([...head, head.length ? indent(sub, 2) : sub]);
   }
 
@@ -313,15 +346,15 @@
     return rows.length === 1 ? rows[0] : stack(rows);
   }
 
-  function composeRow(run, budget) {
-    const natural = run.map((g) => renderGroup(g, budget));
+  function composeRow(run, budget, depth) {
+    const natural = run.map((g) => renderGroup(g, budget, depth));
     if (widthOf(natural) <= budget) return row(natural);
 
     // Prose tolerates a narrower column; controls and nested frames do not.
     if (run.every(isSoft)) {
       const share = Math.floor((budget - GAP * (run.length - 1)) / run.length);
       if (share >= MIN_SOFT) {
-        const squeezed = run.map((g) => renderGroup(g, share));
+        const squeezed = run.map((g) => renderGroup(g, share, depth));
         if (widthOf(squeezed) <= budget) return row(squeezed);
       }
     }
@@ -331,7 +364,7 @@
     return packRows(natural, budget);
   }
 
-  function renderList(nodes, budget, parentAxis) {
+  function renderList(nodes, budget, parentAxis, depth) {
     const blocks = [];
     let inlineRun = [];
 
@@ -388,13 +421,13 @@
         let j = i;
         while (j < nodes.length && framed(nodes[j])) run.push(nodes[j++]);
         if (run.length > 1) {
-          blocks.push(composeRow(run, budget));
+          blocks.push(composeRow(run, budget, depth));
           i = j - 1;
           continue;
         }
       }
 
-      blocks.push(renderGroup(n, budget));
+      blocks.push(renderGroup(n, budget, depth));
     }
 
     flushInline();
@@ -406,7 +439,8 @@
     if (doc.context.length) {
       parts.push(textRect(`‹context: ${doc.context.join(" › ")}›`, MAX));
     }
-    parts.push(renderList(doc.children, MAX, "column"));
+    trimWrappers = Math.max(0, ...doc.children.map(frameDepth)) > MAX_NEST;
+    parts.push(renderList(doc.children, MAX, "column", 0));
     const r = stack(parts);
     const body = r.lines.map((l) => l.replace(/\s+$/, "")).join("\n").trim();
     return "```\n" + body + "\n```";
