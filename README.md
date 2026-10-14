@@ -155,6 +155,9 @@ Sizes are the ones Chrome asks for: 16 and 32 for the context menu and
 favicon slots, 48 for `chrome://extensions`, 128 for installation and the
 Web Store listing.
 
+`./tools/make-promo.sh` renders the 440×280 Web Store promo tile the same
+way, so the artwork lives in one place.
+
 ## Architecture
 
 ```

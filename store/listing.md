@@ -121,7 +121,8 @@ accurate as the code changes.
 
 - [x] Screenshot, 1280×800 — `store/screenshot-1280x800.png`
       (also `store/screenshot-640x400.png` if the smaller size is preferred)
-- [ ] Small promo tile, 440×280
+- [x] Small promo tile, 440×280 — `store/promo-440x280.png`, opaque as
+      required (regenerate with `./tools/make-promo.sh`)
 - [x] Store icon, 128×128 — `icons/icon128.png`
 - [ ] Category: Productivity
 - [ ] Support / homepage URL
