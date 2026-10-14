@@ -1,0 +1,39 @@
+=== boxed ===
+```
+┌─ Account ───────────────────────────────────────┐
+│ [ Close Add a customer ID Add a discount code ] │
+│ [ Alex $0.00 OneKeyCash ]                       │
+│ [ Shop travel opens menu ]                      │
+│ That was really the whole bug.                  │
+│ Visible text                                    │
+│ | Name | Status |                               │
+│ | --- | --- |                                   │
+│ | Dana Okafor | Active |                        │
+│ ‹header row shown as context›                   │
+└─────────────────────────────────────────────────┘
+```
+
+=== text ===
+## Account
+  [ Close Add a customer ID Add a discount code ]
+  [ Alex $0.00 OneKeyCash ]
+  [ Shop travel opens menu ]
+  That was really the whole bug.
+  Visible text
+  | Name | Status |
+  | --- | --- |
+  | Dana Okafor | Active |
+  ‹header row shown as context›
+
+=== control: selection.toString() ===
+Account
+CloseAdd a customer IDAdd a discount code 
+Alex
+$0.00 OneKeyCash
+ Shop travelopens menu
+That was really the whole bug.
+
+Visible text
+
+Name	Status
+DanaOkafor	Active

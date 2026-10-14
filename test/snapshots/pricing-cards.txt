@@ -1,0 +1,38 @@
+=== boxed ===
+```
+# Team news
+  ### Starter
+    $0
+    1 seat
+  ### Office relocation
+    We move to the 4th floor on Friday.
+  ### Pro
+    $20
+    10 seats
+```
+
+=== text ===
+# Team news
+  ### Starter
+    $0
+    1 seat
+  ### Office relocation
+    We move to the 4th floor on Friday.
+  ### Pro
+    $20
+    10 seats
+
+=== control: selection.toString() ===
+Team news
+Starter
+$0
+
+1 seat
+
+Office relocation
+We move to the 4th floor on Friday.
+
+Pro
+$20
+
+10 seats

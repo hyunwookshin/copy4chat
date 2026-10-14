@@ -1,0 +1,39 @@
+=== boxed ===
+```
+┌─ Shipping details ────────────────────────────────┐
+│ ┌───────────────────────────────────────────────┐ │
+│ │ Recipient                                     │ │
+│ │ City                                          │ │
+│ │ Shipping speed                                │ │
+│ │ Delivery notes                                │ │
+│ │ ┌───────────────────────────────────────────┐ │ │
+│ │ │ Recipient                                 │ │ │
+│ │ │ [ Dana Okafor____ ]                       │ │ │
+│ │ │ City                                      │ │ │
+│ │ │ [ Lisbon______ ]                          │ │ │
+│ │ │ Shipping speed                            │ │ │
+│ │ │ ( Express ▾ )                             │ │ │
+│ │ │ Delivery notes                            │ │ │
+│ │ │ [ Leave at the front desk____ ] ‹invalid› │ │ │
+│ │ └───────────────────────────────────────────┘ │ │
+│ └───────────────────────────────────────────────┘ │
+└───────────────────────────────────────────────────┘
+```
+
+=== text ===
+# Shipping details
+  Recipient
+  City
+  Shipping speed
+  Delivery notes
+  Recipient  [Dana Okafor]
+  City  [Lisbon]
+  Shipping speed  (Express ▾)
+  Delivery notes  [Leave at the front desk]  ‹invalid›
+
+=== control: selection.toString() ===
+Shipping details
+Recipient
+City
+Shipping speed
+Delivery notes

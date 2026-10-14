@@ -1,0 +1,34 @@
+=== boxed ===
+```
+# Sprint board
+  ### TO DO
+    - Fix login
+    - Add dark mode
+  ### IN PROGRESS
+    - Refactor auth
+  ### DONE
+    - Update docs
+    - Release v2
+```
+
+=== text ===
+# Sprint board
+  ### TO DO
+    - Fix login
+    - Add dark mode
+  ### IN PROGRESS
+    - Refactor auth
+  ### DONE
+    - Update docs
+    - Release v2
+
+=== control: selection.toString() ===
+Sprint board
+DONE
+Update docs
+Release v2
+TO DO
+Fix login
+Add dark mode
+IN PROGRESS
+Refactor auth

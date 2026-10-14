@@ -230,9 +230,27 @@ What a converter structurally *cannot* see, and where our value therefore lives:
 ## Tests
 
 ```
-node test/render-invariants.js          # geometry
-node test/render-invariants.js --print  # geometry + rendered output
+./tools/check.sh                        # everything
+node test/render-invariants.js          # renderer geometry
+node test/run-fixtures.js               # fixture snapshots, in a real browser
+node test/run-fixtures.js --update      # re-record snapshots after an intended change
+node test/run-fixtures.js kanban --print  # look at one fixture
 ```
+
+### Snapshots
+
+`test/run-fixtures.js` loads every fixture in headless Chrome with the content
+scripts injected, selects the whole body, and compares the boxed output, the
+text output and `selection.toString()` against `test/snapshots/`. Any
+difference fails.
+
+This is the regression guard. Nothing else asserts on what the extractor and
+renderers actually produce — the invariant tests only check that the boxes are
+well-formed, which stayed true even when the boxed renderer was silently
+dropping every list item. When a change is intended, re-record with
+`--update` and let the snapshot diff show up in the commit.
+
+### Geometry invariants
 
 The boxed renderer holds one invariant, and the United regression was a
 violation of it rather than a tuning problem:

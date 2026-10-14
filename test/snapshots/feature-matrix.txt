@@ -1,0 +1,30 @@
+=== boxed ===
+```
+# Compare plans
+  | Feature | Free | Pro | Team |
+  | --- | --- | --- | --- |
+  | SSO | ✗ | ✗ | ✓ |
+  | Audit log | ✗ | ✓ | ✓ |
+  | API access | ✓ | ✓ | ✓ |
+  | Priority support | ✗ | ✓ | ✓ |
+  ‹header row shown as context›
+```
+
+=== text ===
+# Compare plans
+  | Feature | Free | Pro | Team |
+  | --- | --- | --- | --- |
+  | SSO | ✗ | ✗ | ✓ |
+  | Audit log | ✗ | ✓ | ✓ |
+  | API access | ✓ | ✓ | ✓ |
+  | Priority support | ✗ | ✓ | ✓ |
+  ‹header row shown as context›
+
+=== control: selection.toString() ===
+Compare plans
+Plan features
+Feature	Free	Pro	Team
+SSO	✗	✗	✓
+Audit log	✗	✓	✓
+API access	✓	✓	✓
+Priority support	✗	✓	✓

@@ -9,7 +9,14 @@
 // a selection over the whole body, and prints the result via --dump-dom. No
 // CDP client or npm dependency needed.
 //
-//   node test/run-fixtures.js [name ...] [--ir]
+// By default it compares against the golden snapshots in test/snapshots/ and
+// fails on any difference. That is the regression guard: nothing else asserts
+// on what the extractor and renderers actually produce.
+//
+//   node test/run-fixtures.js                 # check against snapshots
+//   node test/run-fixtures.js --update        # re-record them
+//   node test/run-fixtures.js kanban --print  # show one fixture
+//   node test/run-fixtures.js --ir            # include the IR
 
 const fs = require("fs");
 const os = require("os");
@@ -28,7 +35,10 @@ const SCRIPTS = [
 ];
 
 const showIR = process.argv.includes("--ir");
+const update = process.argv.includes("--update");
+const print = process.argv.includes("--print") || showIR;
 const wanted = process.argv.slice(2).filter((a) => !a.startsWith("--"));
+const SNAP = path.join(__dirname, "snapshots");
 
 function decode(s) {
   return s
@@ -124,22 +134,101 @@ const fixtures = fs
   .filter((f) => f.endsWith(".html"))
   .filter((f) => !wanted.length || wanted.some((w) => f.includes(w)));
 
-let failed = 0;
-for (const fixture of fixtures) {
-  console.log("\n" + "=".repeat(74));
-  console.log(fixture);
-  console.log("=".repeat(74));
-
-  const r = run(fixture);
-  if (r.error || r.ERROR) {
-    failed++;
-    console.log("\n--- FAILED ---\n" + (r.error || r.ERROR));
-    continue;
-  }
-  console.log("\n--- Copy4Chat (boxed) ---\n" + r.BOXED);
-  console.log("\n--- Copy4Chat (text) ---\n" + r.TEXT);
-  console.log("\n--- control: selection.toString() ---\n" + r.PLAIN);
-  if (showIR) console.log("\n--- IR ---\n" + r.IR);
+// The IR is deliberately not snapshotted: it carries a temp-directory URL and
+// is an implementation detail. Output is what must not regress.
+function asSnapshot(r) {
+  return [
+    "=== boxed ===",
+    r.BOXED,
+    "",
+    "=== text ===",
+    r.TEXT,
+    "",
+    "=== control: selection.toString() ===",
+    r.PLAIN,
+    "",
+  ].join("\n");
 }
 
-process.exit(failed ? 1 : 0);
+function diff(expected, actual) {
+  const a = expected.split("\n");
+  const b = actual.split("\n");
+  const out = [];
+  for (let i = 0; i < Math.max(a.length, b.length); i++) {
+    if (a[i] === b[i]) continue;
+    if (a[i] !== undefined) out.push("  - " + a[i]);
+    if (b[i] !== undefined) out.push("  + " + b[i]);
+    if (out.length > 40) {
+      out.push("  ... (truncated)");
+      break;
+    }
+  }
+  return out.join("\n");
+}
+
+fs.mkdirSync(SNAP, { recursive: true });
+
+let failed = 0;
+let changed = 0;
+
+for (const fixture of fixtures) {
+  const r = run(fixture);
+
+  if (r.error || r.ERROR) {
+    failed++;
+    console.error("FAIL  " + fixture + "\n" + (r.error || r.ERROR).replace(/^/gm, "      "));
+    continue;
+  }
+
+  if (print) {
+    console.log("\n" + "=".repeat(74) + "\n" + fixture + "\n" + "=".repeat(74));
+    console.log("\n--- Copy4Chat (boxed) ---\n" + r.BOXED);
+    console.log("\n--- Copy4Chat (text) ---\n" + r.TEXT);
+    console.log("\n--- control: selection.toString() ---\n" + r.PLAIN);
+    if (showIR) console.log("\n--- IR ---\n" + r.IR);
+    continue;
+  }
+
+  const file = path.join(SNAP, fixture.replace(/\.html$/, "") + ".txt");
+  const actual = asSnapshot(r);
+
+  if (update) {
+    const prior = fs.existsSync(file) ? fs.readFileSync(file, "utf8") : null;
+    fs.writeFileSync(file, actual);
+    if (prior !== actual) {
+      changed++;
+      console.log((prior === null ? "new   " : "upd   ") + fixture);
+    } else {
+      console.log("same  " + fixture);
+    }
+    continue;
+  }
+
+  if (!fs.existsSync(file)) {
+    failed++;
+    console.error("FAIL  " + fixture + " - no snapshot; run with --update");
+    continue;
+  }
+
+  const expected = fs.readFileSync(file, "utf8");
+  if (expected === actual) {
+    console.log("ok    " + fixture);
+  } else {
+    failed++;
+    console.error("FAIL  " + fixture + " - output changed\n" + diff(expected, actual));
+  }
+}
+
+if (print) process.exit(0);
+if (update) {
+  console.log("\n" + changed + " snapshot(s) written.");
+  process.exit(0);
+}
+if (failed) {
+  console.error(
+    "\n" + failed + " fixture(s) differ. If the change is intended, re-record" +
+    " with --update and review the diff in the commit."
+  );
+  process.exit(1);
+}
+console.log("\n" + fixtures.length + " fixture(s) match their snapshots.");

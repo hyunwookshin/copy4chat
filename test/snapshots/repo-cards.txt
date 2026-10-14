@@ -1,0 +1,57 @@
+=== boxed ===
+```
+## Popular repositories
+  ┌─ iodine ─────────────────────────────────────────┐
+  │ file:///hyunwookshin/iodine                      │
+  │ Building the next generation IDE                 │
+  │ TypeScript                                       │
+  │ stars 8 (file:///hyunwookshin/iodine/stargazers) │
+  │ forks 5 (file:///hyunwookshin/iodine/forks)      │
+  └──────────────────────────────────────────────────┘
+  ┌─ all_news_dataset_kaggle ─────────────────────────────────────────┐
+  │ file:///hyunwookshin/all_news_dataset_kaggle                      │
+  │ Copy of All News Dataset                                          │
+  │ stars 1 (file:///hyunwookshin/all_news_dataset_kaggle/stargazers) │
+  │ forks 1 (file:///hyunwookshin/all_news_dataset_kaggle/forks)      │
+  └───────────────────────────────────────────────────────────────────┘
+  ┌─ cmpe281p1 ────────────────────┐
+  │ file:///hyunwookshin/cmpe281p1 │
+  │ Project 1 for CMPE 281         │
+  │ Python                         │
+  └────────────────────────────────┘
+```
+
+=== text ===
+## Popular repositories
+  1. [iodine](file:///hyunwookshin/iodine)
+    Building the next generation IDE
+    TypeScript
+    [stars 8](file:///hyunwookshin/iodine/stargazers)
+    [forks 5](file:///hyunwookshin/iodine/forks)
+
+  2. [all_news_dataset_kaggle](file:///hyunwookshin/all_news_dataset_kaggle)
+    Copy of All News Dataset
+    [stars 1](file:///hyunwookshin/all_news_dataset_kaggle/stargazers)
+    [forks 1](file:///hyunwookshin/all_news_dataset_kaggle/forks)
+
+  3. [cmpe281p1](file:///hyunwookshin/cmpe281p1)
+    Project 1 for CMPE 281
+    Python
+
+=== control: selection.toString() ===
+Popular repositories
+iodine
+Building the next generation IDE
+
+TypeScript
+ 8
+ 5
+all_news_dataset_kaggle
+Copy of All News Dataset
+
+ 1
+ 1
+cmpe281p1
+Project 1 for CMPE 281
+
+Python
