@@ -1,0 +1,27 @@
+Copy4Chat copies your selection as structured text that preserves what you were actually looking at, so an AI assistant understands the page without needing a screenshot.
+
+Ordinary copy flattens a page into a stream of words. Which value sits in which field, which option is selected, what is checked, what order things appear in on screen — all of it is gone by the time you paste. You end up describing the page back to the assistant by hand, or taking a screenshot.
+
+Select some text, right-click, and choose "Copy For Chat". Paste anywhere.
+
+WHAT IT PRESERVES
+
+• Current form values — what is actually typed in the box, not the placeholder
+• Control state — checked, selected, disabled, focused, expanded, invalid
+• Visual reading order — correct even when CSS reorders the page, where plain copy is confidently wrong
+• Headings, lists, real tables, and link targets
+• Icon meaning — a star glyph beside "8" becomes "stars 8" rather than a bare number
+• Layout relationships — a form still reads as a form, side-by-side cards still read as side by side
+• Only what you selected. The selection is never quietly widened to grab more of the page
+
+PRIVACY
+
+Nothing leaves your device. No servers, no analytics, no telemetry, no storage of any kind. The extension reads your selection inside the page, formats it there, and writes it to your clipboard. That is the whole operation.
+
+Nothing runs on any page until you invoke the menu item. There are no host permissions and no persistent content script, so the extension is not watching the sites you visit.
+
+Because a selection can overlap sensitive fields, passwords, card numbers, one-time codes, and token-shaped values are masked rather than copied, and credential-like parameters are stripped from link URLs. A notification after each copy tells you how many values were masked.
+
+ABOUT THIS RELEASE
+
+This is version 0.1. It works well on conventional markup and has rough edges on heavily component-generated pages. Bug reports and suggestions are welcome on the project page.

@@ -62,3 +62,44 @@ HTML
   "file://$STAGE/promo.html" >/dev/null 2>&1
 
 echo "store/promo-440x280.png"
+
+# Marquee tile: same artwork, wider canvas, larger type.
+sed -e "s/width:440px;height:280px/width:1400px;height:560px/" \
+    -e "s/gap:22px;padding:0 34px/gap:70px;padding:0 110px/" \
+    -e "s/gap:22px;padding:0 30px/gap:70px;padding:0 110px/" \
+    -e "s/width:196px;flex:0 0 196px/width:620px;flex:0 0 620px/" \
+    -e "s/font-size:36px/font-size:112px/" \
+    -e "s/font-size:14px;line-height:1.35/font-size:40px;line-height:1.35/" \
+    -e "s/font-size:11px;line-height:1.5/font-size:33px;line-height:1.5/" \
+    -e "s/width=\"44\" height=\"44\"/width=\"132\" height=\"132\"/" \
+    "$STAGE/promo.html" > "$STAGE/marquee.html"
+
+"$CHROME" --headless=new --disable-gpu --hide-scrollbars \
+  --user-data-dir="$STAGE/chrome2" \
+  --force-device-scale-factor=1 \
+  --window-size=1400,560 \
+  --screenshot="store/marquee-1400x560.png" \
+  "file://$STAGE/marquee.html" >/dev/null 2>&1
+
+echo "store/marquee-1400x560.png"
+
+# Store-listing icon. The manifest icon is full-bleed, which is right in the
+# toolbar; the Web Store expects the artwork at 96x96 inside a 128x128 canvas
+# or it renders oversized beside other listings.
+cat > "$STAGE/storeicon.html" <<HTML
+<!doctype html><meta charset="utf-8">
+<style>html,body{margin:0;padding:0;width:128px;height:128px;background:transparent}
+  img{position:absolute;left:16px;top:16px;width:96px;height:96px}</style>
+<img src="icon.svg">
+HTML
+cp icons/icon.svg "$STAGE/icon.svg"
+
+"$CHROME" --headless=new --disable-gpu --hide-scrollbars \
+  --user-data-dir="$STAGE/chrome3" \
+  --default-background-color=00000000 \
+  --force-device-scale-factor=1 \
+  --window-size=128,128 \
+  --screenshot="store/icon-128.png" \
+  "file://$STAGE/storeicon.html" >/dev/null 2>&1
+
+echo "store/icon-128.png"
