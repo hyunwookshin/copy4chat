@@ -140,7 +140,15 @@ accurate as the code changes.
 
 Build and verify with `./tools/package.sh`.
 
-## 10. How the screenshot was produced
+## 10. Screenshot notes
+
+All listing images must be 24-bit PNG **without an alpha channel**. A capture
+exported with transparency will be rejected, so flatten before uploading:
+render it onto an opaque background at the target size (the same headless
+Chrome step used for the icons works), then re-derive the 640×400 from the
+flattened 1280×800 rather than from the original.
+
+### Deriving an accepted size from an over-wide capture
 
 `img/screenshot.png` is 1787×827 (2.16:1); the store wants 1.6:1. Scaling and
 padding left the content small inside white bars, and a centred crop sliced
