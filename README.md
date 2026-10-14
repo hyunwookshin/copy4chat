@@ -7,7 +7,7 @@ Copies browser selections as structured text for LLMs, preserving visual and sem
 ## Install
 
 1. Open `chrome://extensions`, enable **Developer mode**, and click **Load unpacked** on this directory.
-2. Select text on any page, right-click, and choose **Copy For Chat (CopyForChat)**.
+2. Select text on any page, right-click, and choose **Copy For Chat (Copy4Chat)**.
 
 ## Architecture
 
@@ -61,15 +61,66 @@ Framing is driven by the IR, not by guesswork: a group earns a frame when it dir
 
 ## Real-world example: Expedia
 
-The page as a person sees it, and what lands on the clipboard.
+<p align="center">
+  <img src="img/screenshot.png" alt="Expedia homepage search panel" width="900">
+</p>
+
+The same selection, copied both ways.
 
 <table>
 <tr>
-<th width="45%">What you're looking at</th>
-<th width="55%">What Copy4Chat pastes</th>
+<th width="50%">Ordinary copy</th>
+<th width="50%">Copy4Chat</th>
 </tr>
 <tr>
-<td valign="top"><img src="img/screenshot.png" alt="Expedia homepage search panel"></td>
+<td valign="top">
+
+<pre>
+Expedia logo
+
+Shop travel
+
+USD
+•
+United States
+List your property
+Support
+Trips
+
+A
+Alex
+$0.00 OneKeyCash
+The one place you go to go places
+
+Stays
+
+Flights
+
+Cars
+
+Packages
+
+Things to do
+
+Cruises
+Where to?
+San Francisco, California, United States of America
+DatesTue, Oct 20 - Wed, Oct 21
+Travelers2 travelers, 1 room
+Search
+
+Add a flight to Bundle &amp; Save*
+
+
+Packages under $699
+Get more trip for less when you bundle flight and hotel together
+Book now
+Last-minute weekend deals
+Minimum 20% off deals for your next weekend getaway!
+See all deals
+</pre>
+
+</td>
 <td valign="top">
 
 <pre>
@@ -108,24 +159,25 @@ See all deals (https://www.expedia.com/clp/XtvM6jr)
 </tr>
 </table>
 
-What survives that ordinary copy drops:
+What survives on the right and not on the left:
 
 - `San Francisco, California, United States of America` is the **value of the
   destination field**, not a line that happens to follow "Where to?".
-- The date and traveler pickers are `‹collapsed›`, and the date picker is
-  `‹focused›` — live state that exists nowhere in the DOM text.
+- `DatesTue, Oct 20 - Wed, Oct 21` is a date picker holding a value, and it is
+  `‹focused›` and `‹collapsed›` — live state that exists nowhere in the DOM text.
 - `Search` is a button, not a word.
 - Link targets survive on *Book now* and *See all deals*.
 
-Rough edges are left in rather than cleaned up for the screenshot. They are
-open bugs, not stylistic choices:
+Rough edges are left in rather than cleaned up. They are open bugs, not
+stylistic choices:
 
-- `Shop travelShop travelShop travel` and `AAlex$0.00 OneKeyCash` —
-  inline elements are being concatenated without separators.
-- Three wrapper frames stack up before the search panel. Each one holds
-  something of its own, so the pure-wrapper trim does not fire, but the
-  nesting is still noise.
+- `Shop travelShop travelShop travel` and `AAlex$0.00 OneKeyCash` — inline
+  elements are being concatenated without separators.
+- Three wrapper frames stack up before the search panel. Each holds something
+  of its own, so the pure-wrapper trim does not fire, but it is still noise.
 - `Where to?. Results available.` is a live region echoing its own label.
+
+Account name and balance are replaced with a placeholder in both columns.
 
 Expedia is an independent third party and is not affiliated with, sponsoring,
 or endorsing Copy4Chat. Expedia and its associated trademarks belong to their

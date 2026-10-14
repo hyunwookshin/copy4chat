@@ -23,7 +23,7 @@ chrome.runtime.onInstalled.addListener(() => {
   chrome.contextMenus.removeAll(() => {
     chrome.contextMenus.create({
       id: MENU_ID,
-      title: "Copy For Chat (CopyForChat)",
+      title: "Copy For Chat (Copy4Chat)",
       contexts: ["selection"],
     });
   });
