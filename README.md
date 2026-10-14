@@ -69,10 +69,45 @@ The same selection, copied both ways.
 
 <table>
 <tr>
-<th width="50%">Ordinary copy</th>
-<th width="50%">Copy4Chat</th>
+<th width="55%">Copy4Chat</th>
+<th width="45%">Ordinary copy</th>
 </tr>
 <tr>
+<td valign="top">
+
+<pre>
+┌─ Expedia logo ────────────────────────────────────┐
+│ https://www.expedia.com/                          │
+│ [ Shop travelShop travelShop travel ] ‹collapsed› │
+│ [ USD• ]                                          │
+│ [ AAlex$0.00 OneKeyCash ] ‹collapsed›             │
+└───────────────────────────────────────────────────┘
+┌─ The one place you go to go places ─────────────────────────────────────┐
+│ ┌─────────────────────────────────────────────────────────────────────┐ │
+│ │ ┌─────────────────────────────────────────────────────────────────┐ │ │
+│ │ │ ┌─ Where to? ─────────────────────────────────────────────────┐ │ │ │
+│ │ │ │ Where to?. Results available.                               │ │ │ │
+│ │ │ │ [ San Francisco, California, United States of America____ ] │ │ │ │
+│ │ │ └─────────────────────────────────────────────────────────────┘ │ │ │
+│ │ │ ┌─ Dates ────────────────────────────────────────────┐          │ │ │
+│ │ │ │ [ Tue, Oct 20 - Wed, Oct 21 ] ‹focused, collapsed› │          │ │ │
+│ │ │ └────────────────────────────────────────────────────┘          │ │ │
+│ │ │ ┌─ Travelers ─────────────────────────┐                         │ │ │
+│ │ │ │ [ 2 travelers, 1 room ] ‹collapsed› │                         │ │ │
+│ │ │ └─────────────────────────────────────┘                         │ │ │
+│ │ │ [ Search ]                                                      │ │ │
+│ │ └─────────────────────────────────────────────────────────────────┘ │ │
+│ │ Add a flight to Bundle &amp; Save*                                      │ │
+│ └─────────────────────────────────────────────────────────────────────┘ │
+└─────────────────────────────────────────────────────────────────────────┘
+Get more trip for less when you bundle flight and hotel together
+Book now (https://www.expedia.com/deals/bundle-for-less)
+#### Last-minute weekend deals
+  Minimum 20% off deals for your next weekend getaway!
+See all deals (https://www.expedia.com/clp/XtvM6jr)
+</pre>
+
+</td>
 <td valign="top">
 
 <pre>
@@ -121,45 +156,10 @@ See all deals
 </pre>
 
 </td>
-<td valign="top">
-
-<pre>
-┌─ Expedia logo ────────────────────────────────────┐
-│ https://www.expedia.com/                          │
-│ [ Shop travelShop travelShop travel ] ‹collapsed› │
-│ [ USD• ]                                          │
-│ [ AAlex$0.00 OneKeyCash ] ‹collapsed›             │
-└───────────────────────────────────────────────────┘
-┌─ The one place you go to go places ─────────────────────────────────────┐
-│ ┌─────────────────────────────────────────────────────────────────────┐ │
-│ │ ┌─────────────────────────────────────────────────────────────────┐ │ │
-│ │ │ ┌─ Where to? ─────────────────────────────────────────────────┐ │ │ │
-│ │ │ │ Where to?. Results available.                               │ │ │ │
-│ │ │ │ [ San Francisco, California, United States of America____ ] │ │ │ │
-│ │ │ └─────────────────────────────────────────────────────────────┘ │ │ │
-│ │ │ ┌─ Dates ────────────────────────────────────────────┐          │ │ │
-│ │ │ │ [ Tue, Oct 20 - Wed, Oct 21 ] ‹focused, collapsed› │          │ │ │
-│ │ │ └────────────────────────────────────────────────────┘          │ │ │
-│ │ │ ┌─ Travelers ─────────────────────────┐                         │ │ │
-│ │ │ │ [ 2 travelers, 1 room ] ‹collapsed› │                         │ │ │
-│ │ │ └─────────────────────────────────────┘                         │ │ │
-│ │ │ [ Search ]                                                      │ │ │
-│ │ └─────────────────────────────────────────────────────────────────┘ │ │
-│ │ Add a flight to Bundle &amp; Save*                                      │ │
-│ └─────────────────────────────────────────────────────────────────────┘ │
-└─────────────────────────────────────────────────────────────────────────┘
-Get more trip for less when you bundle flight and hotel together
-Book now (https://www.expedia.com/deals/bundle-for-less)
-#### Last-minute weekend deals
-  Minimum 20% off deals for your next weekend getaway!
-See all deals (https://www.expedia.com/clp/XtvM6jr)
-</pre>
-
-</td>
 </tr>
 </table>
 
-What survives on the right and not on the left:
+What survives on the left and not on the right:
 
 - `San Francisco, California, United States of America` is the **value of the
   destination field**, not a line that happens to follow "Where to?".
