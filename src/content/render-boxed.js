@@ -14,9 +14,10 @@
   const C4C = (globalThis.C4C = globalThis.C4C || {});
 
   const MAX_WIDTH = 76; // fits most chat composers without wrapping
-  const MIN_FIELD = 22;
+  const MIN_FIELD = 12;
   const MIN_COLUMN = 18; // narrower than this and columns read worse than a stack
   const MIN_COLUMN_TEXT = 12; // prose wraps, so text-only records tolerate more
+  const MAX_TITLE = 36;
 
   // Lines that must survive intact: buttons, inputs, checkboxes, radios.
   const ATOMIC = /^(\[|☑|☐|\(•\)|\( \)|\( )/;
@@ -144,8 +145,8 @@
 
   // ----------------------------------------------------------------- fields
 
-  function field(f) {
-    const label = (f.label || "").replace(/\s+/g, " ").trim();
+  function field(f, omitLabel) {
+    const label = omitLabel ? "" : (f.label || "").replace(/\s+/g, " ").trim();
     const extra = f.states.filter((s) => !["checked", "unchecked"].includes(s));
     const note = extra.length ? `  ‹${extra.join(", ")}›` : "";
 
@@ -159,7 +160,9 @@
       case "select":
         return [label, `( ${f.value} ▾ )${note}`].filter(Boolean);
       default: {
-        // An input reads as an input: a filled slot with room left in it.
+        // An input reads as an input from a few trailing underscores; padding
+        // every field to a fixed minimum just made them too wide to sit side
+        // by side, which cost far more than the visual cue was worth.
         const fill = Math.max(MIN_FIELD - width(f.value), 4);
         const box = `[ ${f.value}${"_".repeat(fill)} ]`;
         return label ? [label, box + note] : [box + note];
@@ -175,11 +178,21 @@
     return (n.children || []).some((c) => c.kind === "field");
   }
 
+  // Accessible names are often whole instruction paragraphs ("a tabs widget:
+  // Book, Flight status…; use arrow keys to navigate"). The leading clause is
+  // the part that works as a label; the rest wrecks the frame.
+  function shortTitle(name) {
+    const head = name.split(/[:;]|\s[–—-]\s/)[0].trim();
+    if (!head) return "";
+    if (width(head) <= MAX_TITLE) return head;
+    return head.slice(0, MAX_TITLE - 1).trimEnd() + "…";
+  }
+
   function titleNodeOf(n) {
-    if (n.name) return { text: n.name, href: null };
+    if (n.name) return { text: shortTitle(n.name), href: null };
     const first = (n.children || [])[0];
     return first && first.kind === "text"
-      ? { text: first.text.trim(), href: first.href || null }
+      ? { text: shortTitle(first.text.trim()), href: first.href || null }
       : { text: "", href: null };
   }
 
@@ -189,8 +202,34 @@
 
   // A group earns a frame when the frame says something: it holds controls, or
   // it is one of a set of repeated records. Prose stays unframed.
+  //
+  // An untitled group whose children are all themselves framed earns nothing:
+  // the children's own frames already show the grouping, and the extra box is
+  // pure nesting noise.
   function framed(n) {
-    return n.kind === "group" && (n.item || holdsControls(n));
+    if (n.kind !== "group") return false;
+    if (!(n.item || holdsControls(n) || (n.children || []).some(framed))) return false;
+    const kids = (n.children || []).filter((c) => c.kind !== "text" || c.text.trim());
+    if (!titleOf(n) && kids.length > 1 && kids.every(framed)) return false;
+    return true;
+  }
+
+  // Collapse echoes: a label that a neighbouring control already displays, and
+  // consecutive identical lines. Real forms emit the same string two or three
+  // times (a <label>, the control's accessible name, a visible span).
+  function dedupe(lines) {
+    const out = [];
+    for (const line of lines) {
+      const prev = out[out.length - 1];
+      if (prev === line) continue;
+      if (prev && ATOMIC.test(prev) && !ATOMIC.test(line) && prev.includes(line)) continue;
+      if (prev && ATOMIC.test(line) && !ATOMIC.test(prev) && prev && line.includes(prev)) {
+        out[out.length - 1] = line;
+        continue;
+      }
+      out.push(line);
+    }
+    return out;
   }
 
   // parentAxis comes from the container's measured layout: whether these
@@ -219,6 +258,24 @@
         continue;
       }
       if (n.kind === "field") {
+        // A row of controls (tabs, a button bar) belongs on one line.
+        // Only single-line controls qualify; a labelled input is two lines
+        // and reads worse side by side.
+        if (parentAxis === "row") {
+          const run = [];
+          let j = i;
+          while (j < nodes.length && nodes[j].kind === "field") {
+            const rendered = field(nodes[j]);
+            if (rendered.length !== 1) break;
+            run.push(rendered[0]);
+            j++;
+          }
+          if (run.length > 1 && width(run.join("  ")) <= MAX_WIDTH) {
+            out.push(run.join("  "));
+            i = j - 1;
+            continue;
+          }
+        }
         out.push(...field(n));
         continue;
       }
@@ -229,21 +286,33 @@
 
       const bodyOf = (g) => {
         const title = titleNodeOf(g);
-        // Don't repeat the title inside its own frame — but a frame can't hold
-        // a link, so a titled link keeps its target as the first body line.
-        const body = block(
-          g.children.filter((c) => c.kind !== "text" || c.text.trim() !== title.text),
-          g.axis
+        // Don't repeat the title inside its own frame — as a text node, or as
+        // a control's label. A frame can't hold a link, so a titled link keeps
+        // its target as the first body line.
+        const kids = g.children.filter(
+          (c) => c.kind !== "text" || c.text.trim() !== title.text
+        );
+        const body = dedupe(
+          block(
+            kids.map((c) =>
+              c.kind === "field" && (c.label || "").trim() === title.text
+                ? { ...c, label: "" }
+                : c
+            ),
+            g.axis
+          )
         );
         return title.href ? [title.href, ...body] : body;
       };
 
-      // A run of framed records sitting across the page becomes columns —
-      // the one case where 2D genuinely carries the meaning.
-      if (framed(n) && n.item && parentAxis === "row") {
+      // Any run of framed siblings can sit across when the container is laid
+      // out that way. Gating this on repeated records was the bug: From/To
+      // and Departure/Return are side by side but are not repeats, so they
+      // could never reach the column path at all.
+      if (framed(n) && parentAxis === "row") {
         const run = [];
         let j = i;
-        while (j < nodes.length && nodes[j].item && framed(nodes[j])) run.push(nodes[j++]);
+        while (j < nodes.length && framed(nodes[j])) run.push(nodes[j++]);
         if (run.length > 1) {
           const cells = run.map((r) => ({ title: titleOf(r), lines: bodyOf(r) }));
           const widths = columnWidths(cells);
@@ -277,7 +346,7 @@
       out.push(...(n.name ? inner.map((l) => "  " + l) : inner));
     }
     flush();
-    return out;
+    return dedupe(out);
   }
 
   C4C.render.boxed = function boxed(doc) {
