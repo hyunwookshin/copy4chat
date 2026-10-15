@@ -304,6 +304,9 @@ The code is public so the privacy claims above can be verified rather than
 taken on faith. Copyright covers this expression, not the idea — writing your
 own extension that does something similar is entirely fair.
 
+For commercial use or distribution, ask — it is negotiable, it just needs
+separate written authorization. [Open an issue](https://github.com/hyunwookshin/copy4chat/issues).
+
 ## Out of Scope (v0.1)
 
 - **Shadow DOM** — requires `Selection.getComposedRanges()`.
