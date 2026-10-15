@@ -1,0 +1,40 @@
+Copyright (c) 2026 Hyunwook Shin. All rights reserved.
+
+The source of this project is public so that anyone can verify what the
+extension does with their page content. A clipboard tool's privacy claims
+should be checkable rather than taken on faith, and that only works if the
+code can be read. Publishing it is not a grant of redistribution rights.
+
+
+YOU MAY
+
+  - read, study, and audit this source code
+  - build it and install it in a browser you control
+  - modify it for your own personal use
+
+
+YOU MAY NOT
+
+  - distribute this software, or any modified version of it
+  - publish it, or anything derived from it, to the Chrome Web Store or any
+    other extension gallery or distribution channel
+  - sublicense, rent, or sell it
+
+All rights not expressly granted above are reserved.
+
+
+SCOPE
+
+Copyright covers this particular expression, not the idea behind it. Writing
+your own extension that does something similar is entirely fair. Taking these
+files and shipping them is not.
+
+
+NO WARRANTY
+
+This software is provided "as is", without warranty of any kind, express or
+implied, including but not limited to the warranties of merchantability,
+fitness for a particular purpose, and noninfringement. In no event shall the
+author be liable for any claim, damages, or other liability, whether in an
+action of contract, tort, or otherwise, arising from, out of, or in
+connection with this software or its use.

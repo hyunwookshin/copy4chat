@@ -278,6 +278,32 @@ string index — they diverge under CJK), no orphaned border fragments, and
 balanced verticals. `test/ir/*.json` are IR fixtures replayed through the same
 checks; `united-search.json` is the page that broke it.
 
+## License
+
+None — all rights reserved.
+
+The source is public so that anyone can check what the extension does with
+their page content. Privacy claims about a clipboard tool should be
+verifiable rather than taken on faith, and that only works if the code can be
+read.
+
+Public is not the same as permissively licensed. You may read this code. You
+may not copy, modify, or redistribute it, and in particular not repackage it
+as a competing Web Store listing.
+
+Building your own extension that does something similar is entirely fair —
+copyright covers this particular expression, not the idea. Do the work.
+
+## License
+
+Source-available, not open source. You may read it, build it, and install it
+in your own browser; you may not redistribute it or publish it to an
+extension store. See [LICENSE](LICENSE).
+
+The code is public so the privacy claims above can be verified rather than
+taken on faith. Copyright covers this expression, not the idea — writing your
+own extension that does something similar is entirely fair.
+
 ## Out of Scope (v0.1)
 
 - **Shadow DOM** — requires `Selection.getComposedRanges()`.
