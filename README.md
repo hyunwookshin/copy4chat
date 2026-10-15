@@ -1,10 +1,16 @@
 # Copy4Chat
 
+[![Chrome Web Store](https://img.shields.io/chrome-web-store/v/jfcmdbgodjiacadofiacehfmnnonfjec?logo=googlechrome&logoColor=white&label=Chrome%20Web%20Store&color=4285F4)](https://chromewebstore.google.com/detail/copy4chat/jfcmdbgodjiacadofiacehfmnnonfjec)
+
 Copies browser selections as structured text for LLMs, preserving visual and semantic relationships that plain-text copy drops.
 
-**Status: v0.1 spike.** Built strictly to test whether structured copy outperforms `selection.toString()` on downstream agent tasks.
+**Status: v0.1.0, published.** Works well on conventional markup; rough edges remain on heavily component-generated pages.
 
 ## Install
+
+### [**Add to Chrome**](https://chromewebstore.google.com/detail/copy4chat/jfcmdbgodjiacadofiacehfmnnonfjec)
+
+Or load it unpacked for development:
 
 1. Open `chrome://extensions`, enable **Developer mode**, and click **Load unpacked** on this directory.
 2. Select text on any page, right-click, and choose **Copy For Chat (Copy4Chat)**.
