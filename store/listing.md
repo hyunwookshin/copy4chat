@@ -119,8 +119,11 @@ accurate as the code changes.
 
 ## 8. Listing assets still needed
 
-- [x] Screenshot, 1280×800 — `store/screenshot-1280x800.png`
-      (also `store/screenshot-640x400.png` if the smaller size is preferred)
+- [x] Screenshots, 1280×800 (up to 5 allowed)
+      1. `store/screenshot2-1280x800.png` — annotated Select / Copy / Paste
+         walkthrough. Put this first; it explains the product in one glance.
+      2. `store/screenshot-1280x800.png` — page beside the pasted output
+      640×400 variants exist alongside each if the smaller size is preferred.
 - [x] Small promo tile, 440×280 — `store/promo-440x280.png`, opaque as
       required (regenerate with `./tools/make-promo.sh`)
 - [x] Store icon, 128×128 — `icons/icon128.png`
@@ -142,14 +145,19 @@ Build and verify with `./tools/package.sh`.
 
 ## 10. Screenshot notes
 
-Source is `img/screenshot_overlay.png` — the page with the pasted output
-overlaid and a callout to the menu item.
+Sources are `img/screenshot_overlay.png` (page beside pasted output) and
+`store/screenshot2.png` (the annotated Select / Copy / Paste walkthrough).
 
 **No alpha.** Listing images must be 24-bit PNG without an alpha channel; a
 capture exported with transparency is rejected. Compositing onto an opaque
 background at the target size handles it.
 
-**Getting to 1.6:1.** The capture is 1787×827 (2.16:1). Content spans roughly
+**Getting to 1.6:1.** Neither source is 1.6:1, and neither can simply be
+cropped to it. screenshot2 is 16:9 with content flush to both edges, so it is
+scaled to width and letterboxed in the brand navy, matching the other one.
+The original Budget capture is handled as follows.
+
+ The capture is 1787×827 (2.16:1). Content spans roughly
 x 150–1700 once the decorative tree margins are discounted, which is 1550
 wide — still too wide to crop to 1.6:1 at this height without slicing the
 overlay panel. So it is scaled to fit the width and centred vertically, with
