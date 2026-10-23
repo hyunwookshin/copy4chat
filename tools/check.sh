@@ -18,6 +18,10 @@ echo "== fixture snapshots (real browser) =="
 node test/run-fixtures.js
 
 echo
+echo "== control selections (real browser) =="
+node test/control-selection.js
+
+echo
 echo "== package =="
 ./tools/package.sh >/dev/null
 node tools/verify-package.js "dist/copy4chat-$(node -p "require('./manifest.json').version").zip"

@@ -239,6 +239,7 @@ What a converter structurally *cannot* see, and where our value therefore lives:
 ./tools/check.sh                        # everything
 node test/render-invariants.js          # renderer geometry
 node test/run-fixtures.js               # fixture snapshots, in a real browser
+node test/control-selection.js          # selections inside input/textarea
 node test/run-fixtures.js --update      # re-record snapshots after an intended change
 node test/run-fixtures.js kanban --print  # look at one fixture
 ```
