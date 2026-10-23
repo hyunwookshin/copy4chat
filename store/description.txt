@@ -1,8 +1,8 @@
-Copy4Chat copies your selection as structured text that preserves what you were actually looking at, so an AI assistant understands the page without needing a screenshot.
+Copy4Chat copies your selection as structured text that preserves what you were actually looking at, so an LLM assistant (e.g. ChatGPT, Gemini) understands the page without needing a screenshot.
 
 Ordinary copy flattens a page into a stream of words. Which value sits in which field, which option is selected, what is checked, what order things appear in on screen — all of it is gone by the time you paste. You end up describing the page back to the assistant by hand, or taking a screenshot.
 
-Select some text, right-click, and choose "Copy For Chat". Paste anywhere.
+Just select, right-click, select Copy4Chat, paste into ChatGPT, Claude, Gemini, or any other AI chat.
 
 WHAT IT PRESERVES
 
@@ -22,6 +22,12 @@ Nothing runs on any page until you invoke the menu item. There are no host permi
 
 Because a selection can overlap sensitive fields, passwords, card numbers, one-time codes, and token-shaped values are masked rather than copied, and credential-like parameters are stripped from link URLs. A notification after each copy tells you how many values were masked.
 
+WHAT'S NEW
+
+0.1.2 — Long tracking URLs are no longer split mid-link. They move to a footnote, so the layout stays narrow and the address stays usable.
+
+0.1.1 — Fixed copying from text boxes and from GitHub's code view, which previously copied nothing at all. Every action now reports what it did, so a copy can no longer fail silently and leave stale clipboard contents behind.
+
 ABOUT THIS RELEASE
 
-This is version 0.1. It works well on conventional markup and has rough edges on heavily component-generated pages. Bug reports and suggestions are welcome on the project page.
+Works well on conventional markup; rough edges remain on heavily component-generated pages. Bug reports and suggestions are welcome on the project page.
