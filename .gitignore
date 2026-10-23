@@ -1,2 +1,10 @@
 **/.DS_Store
 dist/
+
+# TLS material. Never commit — the archive contains an unencrypted private key.
+*.zip
+*.key
+*.pem
+*.crt
+*.p12
+*.pfx
