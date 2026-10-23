@@ -1,0 +1,45 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>Fixture: tracking URLs longer than the line budget</title>
+<style>
+  body { font: 14px system-ui; padding: 2rem; }
+  .panel { border: 1px solid #ccc; padding: 12px; max-width: 420px; }
+  button { font: inherit; }
+</style>
+
+<h2>Offers</h2>
+
+<!--
+  Real pages carry URLs of 150-250 characters: utm parameters, click ids,
+  session and promo tokens. Inline, such a link either widens its frame past
+  anything usable in a chat window, or gets split mid-URL into something that
+  no longer resolves.
+
+  Over-long links therefore become references, with targets collected in a
+  footnote block below every frame. Short links must stay inline — that is
+  the negative case, and the reason this change cannot disturb output that
+  was already fine.
+
+  The duplicated link checks that one target gets one number.
+-->
+
+<p>
+  See the
+  <a href="https://example.com/campaigns/autumn/offers?utm_source=newsletter&utm_medium=email&utm_campaign=autumn_sale_2026&utm_content=hero_button&gclid=Cj0KCQjwAutumn2026ExampleClickIdentifier&session=a1b2c3d4e5f6&promo=SAVE20">autumn offers</a>
+  or the <a href="/deals">weekly deals</a>.
+</p>
+
+<div class="panel">
+  <p>
+    Terms apply. Read the
+    <a href="https://example.com/legal/terms-and-conditions/full?utm_source=newsletter&utm_medium=email&utm_campaign=autumn_sale_2026&revision=2026-10-01&locale=en-US&tracking=9f8e7d6c5b4a">full terms</a>
+    before booking.
+  </p>
+  <button type="button">Apply offer</button>
+</div>
+
+<p>
+  The same campaign link
+  <a href="https://example.com/campaigns/autumn/offers?utm_source=newsletter&utm_medium=email&utm_campaign=autumn_sale_2026&utm_content=hero_button&gclid=Cj0KCQjwAutumn2026ExampleClickIdentifier&session=a1b2c3d4e5f6&promo=SAVE20">appears twice</a>
+  and should be numbered once.
+</p>

@@ -174,9 +174,33 @@
     return rectOf(lines);
   }
 
-  function linkText(n) {
+  // Tracking URLs run to hundreds of characters. Inline, they either blow the
+  // frame open or get split mid-URL into something unusable. Neither is
+  // acceptable, so an over-long link becomes a reference and its target moves
+  // to a footnote block below every frame, where length costs nothing.
+  //
+  // Only over-long links are moved. A short URL stays inline exactly as
+  // before, so this cannot churn output that was already fine.
+  let footnotes = [];
+
+  function footnote(href) {
+    let i = footnotes.indexOf(href);
+    if (i < 0) i = footnotes.push(href) - 1;
+    return i + 1;
+  }
+
+  function linkText(n, budget) {
     const t = n.text.trim();
-    return n.href ? `${t} (${n.href})` : t;
+    if (!n.href) return t;
+    const inline = `${t} (${n.href})`;
+    if (budget == null || width(inline) <= budget) return inline;
+    return `${t} [${footnote(n.href)}]`;
+  }
+
+  // A link whose text became a frame title keeps its target as a body line,
+  // which has the same overflow problem.
+  function hrefLine(href, budget) {
+    return width(href) <= budget ? href : `[${footnote(href)}]`;
   }
 
   // ---------------------------------------------------------------- fields
@@ -322,7 +346,9 @@
       const inner = budget - 4;
       const body = renderList(kids, inner, n.axis, depth + 1);
       // A frame cannot hold a link, so a titled link keeps its target inside.
-      const full = title.href ? stack([textRect(title.href, inner), body]) : body;
+      const full = title.href
+        ? stack([textRect(hrefLine(title.href, inner), inner), body])
+        : body;
       // A frame around one untitled line says nothing the line doesn't.
       if (!title.text && full.lines.length <= 1) return full;
       return frame(title.text, full, budget);
@@ -407,13 +433,13 @@
       const n = nodes[i];
 
       if (n.kind === "text" && !n.block) {
-        addInline(n, linkText(n));
+        addInline(n, linkText(n, budget));
         continue;
       }
       flushInline();
 
       if (n.kind === "text") {
-        const r = textRect(linkText(n), n.bullet ? budget - 2 : budget);
+        const r = textRect(linkText(n, n.bullet ? budget - 2 : budget), n.bullet ? budget - 2 : budget);
         blocks.push(n.bullet ? bulletize(r) : r);
         continue;
       }
@@ -464,6 +490,7 @@
   }
 
   C4C.render.boxed = function boxed(doc) {
+    footnotes = [];
     const parts = [];
     if (doc.context.length) {
       parts.push(textRect(`‹context: ${doc.context.join(" › ")}›`, MAX));
@@ -472,7 +499,11 @@
     parts.push(renderList(doc.children, MAX, "column", 0));
     const r = stack(parts);
     const body = r.lines.map((l) => l.replace(/\s+$/, "")).join("\n").trim();
-    return "```\n" + body + "\n```";
+
+    // Appended as raw lines rather than stacked: stacking would pad every
+    // line in the document out to the width of the longest URL.
+    const notes = footnotes.map((href, i) => `[${i + 1}] ${href}`).join("\n");
+    return "```\n" + body + (notes ? "\n\n" + notes : "") + "\n```";
   };
 
   // Exposed for the invariant tests.

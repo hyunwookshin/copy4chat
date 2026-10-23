@@ -122,7 +122,9 @@
         const u = new URL(raw, base);
         for (const [k, v] of Array.from(u.searchParams)) {
           if (/token|secret|auth|sig|signature|password|api[-_]?key|session/i.test(k) || this.looksSecret(v)) {
-            u.searchParams.set(k, DOTS);
+            // ASCII, not the bullet character: URL encoding turns a bullet
+            // into %E2%80%A2 repeated, which is unreadable in a footnote.
+            u.searchParams.set(k, "REDACTED");
             this.count++;
           }
         }

@@ -32,7 +32,13 @@ function verify(name, doc) {
 
   // 1. Nothing exceeds the global budget. A line over MAX means some block
   //    was composed without respecting the budget handed to it.
-  const over = lines.filter((l) => width(l) > MAX);
+  //
+  //    Footnote lines are the deliberate exception: a tracking URL can run to
+  //    hundreds of characters, and wrapping it is what the footnotes exist to
+  //    avoid. They sit below every frame, so an over-long one cannot disturb
+  //    any box geometry.
+  const isFootnote = (l) => /^\[\d+\] \S+$/.test(l);
+  const over = lines.filter((l) => width(l) > MAX && !isFootnote(l));
   check(`${name}: within ${MAX} columns`, over.length === 0, over.join("\n"));
 
   // 2. Every opening corner has a closing corner in the same column. This is

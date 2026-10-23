@@ -1,0 +1,30 @@
+=== boxed ===
+```
+┌─ Offers ──────────────────────────────────────────────────────────────┐
+│ See the autumn offers [1] or the weekly deals (file:///deals).        │
+│ ┌──────────────────────────────────────────────────────┐              │
+│ │ Terms apply. Read the full terms [2] before booking. │              │
+│ │ [ Apply offer ]                                      │              │
+│ └──────────────────────────────────────────────────────┘              │
+│ The same campaign link appears twice [1] and should be numbered once. │
+└───────────────────────────────────────────────────────────────────────┘
+
+[1] https://example.com/campaigns/autumn/offers?utm_source=newsletter&utm_medium=email&utm_campaign=autumn_sale_2026&utm_content=hero_button&gclid=REDACTED&session=REDACTED&promo=SAVE20
+[2] https://example.com/legal/terms-and-conditions/full?utm_source=newsletter&utm_medium=email&utm_campaign=autumn_sale_2026&revision=2026-10-01&locale=en-US&tracking=9f8e7d6c5b4a
+```
+
+=== text ===
+## Offers
+  See the [autumn offers](https://example.com/campaigns/autumn/offers?utm_source=newsletter&utm_medium=email&utm_campaign=autumn_sale_2026&utm_content=hero_button&gclid=REDACTED&session=REDACTED&promo=SAVE20) or the [weekly deals](file:///deals).
+  Terms apply. Read the [full terms](https://example.com/legal/terms-and-conditions/full?utm_source=newsletter&utm_medium=email&utm_campaign=autumn_sale_2026&revision=2026-10-01&locale=en-US&tracking=9f8e7d6c5b4a) before booking.
+  [ Apply offer ]
+  The same campaign link [appears twice](https://example.com/campaigns/autumn/offers?utm_source=newsletter&utm_medium=email&utm_campaign=autumn_sale_2026&utm_content=hero_button&gclid=REDACTED&session=REDACTED&promo=SAVE20) and should be numbered once.
+
+=== control: selection.toString() ===
+Offers
+See the autumn offers or the weekly deals.
+
+Terms apply. Read the full terms before booking.
+
+Apply offer
+The same campaign link appears twice and should be numbered once.
