@@ -1,0 +1,387 @@
+<!doctype html>
+<html lang="en" data-theme="auto">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Copy4Chat — copy webpages the way AI understands them</title>
+<meta name="description" content="Copy4Chat is a Chrome extension that copies a web page selection as structured text, preserving form values, control states, tabs, tables and visual reading order so ChatGPT, Claude and Gemini understand what you were looking at. Try the live comparison against ordinary copy and paste.">
+<link rel="canonical" href="https://copy4chat.com/">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://copy4chat.com/">
+<meta property="og:title" content="Copy4Chat — copy webpages the way AI understands them">
+<meta property="og:description" content="Ordinary copy and paste loses form values, selections and layout. Copy4Chat preserves the structure. Try the live comparison.">
+<meta property="og:image" content="https://copy4chat.com/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" type="image/png" href="icon.png">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<a class="skip" href="#roadshow">Skip to the demos</a>
+
+<header class="site-header">
+  <div class="bar">
+    <a class="brand" href="/">
+      <img src="icon.png" alt="" width="28" height="28">
+      <span class="brand-name">Copy4Chat</span>
+      <span class="pill version" data-version>v0.0.0</span>
+    </a>
+    <nav class="bar-actions">
+      <button class="pill ghost theme-toggle" type="button" data-theme-toggle aria-label="Switch colour theme">
+        <span data-theme-label>Auto</span>
+      </button>
+      <a class="pill ghost" href="https://github.com/hyunwookshin/copy4chat" rel="noopener">GitHub</a>
+      <a class="pill primary" data-store-link="header" href="#">Add to Chrome</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <section class="intro">
+    <h1>Copy webpages the way AI understands them</h1>
+
+    <p class="lede">
+      Copy4Chat is a Chrome extension that copies your selection as
+      <strong>structured text</strong> — preserving the values typed into form
+      fields, which options are selected, which tabs are active, and the order
+      things actually appear on screen — so ChatGPT, Claude, Gemini and other
+      assistants understand the page without needing a screenshot.
+    </p>
+
+    <p>
+      When you select part of a web page and press ⌘C, the browser keeps the
+      words but throws away almost everything that gives them meaning. A chat
+      assistant receives a flat run of text in which <em>San Francisco</em> is
+      no longer the value of the destination field, merely a line that happens
+      to follow the word “Where to?”. It cannot tell that a checkbox is ticked,
+      that a dropdown reads “Economy”, that a date picker is open, or that a
+      form reported an error. If a stylesheet reordered the columns, the copied
+      text is not vague about the ordering — it is confidently wrong.
+    </p>
+
+    <p>
+      So you end up doing the work by hand: describing the page back to the
+      assistant in your own words, or taking a screenshot and hoping it reads
+      the small print correctly. Both are slower than copying, and both
+      introduce exactly the kind of transcription error you were trying to
+      avoid. Screenshots in particular are expensive for a model to process and
+      can silently misread numbers, dates and field labels.
+    </p>
+
+    <p>
+      Copy4Chat takes a different route. It reads the live page — the actual
+      values in the inputs, the computed layout, the accessibility information
+      that describes icon-only buttons — and renders a compact textual
+      representation of what you are looking at. Forms still read as forms.
+      Tables stay tables. Side-by-side cards stay side by side. A password
+      field is never copied; it is masked, along with card numbers, one-time
+      codes and credential-shaped values.
+    </p>
+
+    <p class="intro-note">
+      Everything below runs the <strong>real extension code</strong> in your
+      browser, right now, on this page. The widgets are live: type into them,
+      switch the tabs, tick the boxes, and the output updates. Nothing here is
+      a screenshot or a canned example.
+    </p>
+  </section>
+
+  <div class="layout">
+    <nav class="toc" aria-label="Demos">
+      <p class="toc-title">Demos</p>
+      <ol>
+        <li><a href="#account">Account form</a></li>
+        <li><a href="#booking">Flight booking</a></li>
+        <li><a href="#dashboard">Dashboard</a></li>
+      </ol>
+    </nav>
+
+    <div id="roadshow" class="roadshow">
+
+      <!-- ============================= Example 1 ============================= -->
+      <section id="account" class="demo" data-demo>
+        <header class="demo-head">
+          <h2>Account form</h2>
+          <p>Typed-in values, a validation error, and which field you last touched. None of it survives an ordinary copy.</p>
+        </header>
+
+        <div class="demo-body">
+          <div class="panel widget-panel">
+            <p class="panel-label">Live widget — interact with it</p>
+            <div class="chrome" aria-hidden="true">
+              <span class="dot"></span><span class="dot"></span><span class="dot"></span>
+              <span class="url">northwind-mobile.example/account</span>
+            </div>
+            <div class="widget" data-brand="telecom" data-widget>
+              <form class="acct" onsubmit="return false">
+                <div class="brandbar"><span class="logo"></span>Northwind Mobile</div>
+                <h3>Find my account</h3>
+                <p class="acct-sub">Enter the details on your most recent bill.</p>
+
+                <div class="row two">
+                  <label>First name
+                    <input type="text" name="first" value="Dana" autocomplete="off">
+                  </label>
+                  <label>Last name
+                    <input type="text" name="last" value="Okafor" autocomplete="off">
+                  </label>
+                </div>
+
+                <label>Email address
+                  <input type="email" name="email" value="dana.okafor@example.com" autocomplete="off">
+                </label>
+
+                <div class="row two">
+                  <label>Mobile number
+                    <input type="tel" name="phone" value="555 0137" autocomplete="off">
+                  </label>
+                  <label>ZIP code
+                    <input type="text" name="zip" value="9411" aria-invalid="true" autocomplete="off">
+                  </label>
+                </div>
+                <p class="err" role="alert">ZIP code must be 5 digits.</p>
+
+                <label class="check">
+                  <input type="checkbox" name="paperless" checked>
+                  <span>Send statements by email instead of post</span>
+                </label>
+
+                <label>Plan
+                  <select name="plan">
+                    <option>Pay monthly</option>
+                    <option selected>Pay as you go</option>
+                    <option>Business</option>
+                  </select>
+                </label>
+
+                <div class="actions">
+                  <button type="button" class="btn">Back</button>
+                  <button type="button" class="btn solid">Find account</button>
+                </div>
+              </form>
+            </div>
+          </div>
+
+          <div class="panel out-panel">
+            <div class="panel-head">
+              <div class="seg" role="tablist" aria-label="Output mode">
+                <button role="tab" type="button" data-mode="regular">Regular copy</button>
+                <button role="tab" type="button" data-mode="c4c" aria-selected="true">Copy4Chat</button>
+              </div>
+              <button class="pill ghost tiny" type="button" data-copy>Copy output</button>
+            </div>
+            <pre class="out" data-out tabindex="0"></pre>
+            <p class="out-note" data-note></p>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============================= Example 2 ============================= -->
+      <section id="booking" class="demo" data-demo>
+        <header class="demo-head">
+          <h2>Flight booking</h2>
+          <p>Nested tabs, a trip-type selection and a date range. Ordinary copy flattens the hierarchy and drops every value.</p>
+        </header>
+
+        <div class="demo-body">
+          <div class="panel widget-panel">
+            <p class="panel-label">Live widget — interact with it</p>
+            <div class="chrome" aria-hidden="true">
+              <span class="dot"></span><span class="dot"></span><span class="dot"></span>
+              <span class="url">skyline-air.example/book</span>
+            </div>
+            <div class="widget" data-brand="air" data-widget>
+              <div class="bk">
+                <div class="brandbar"><span class="logo"></span>Skyline Air</div>
+                <div class="tabs" role="tablist" aria-label="Booking sections">
+                  <button role="tab" aria-selected="true" type="button">Book</button>
+                  <button role="tab" aria-selected="false" type="button">Flight status</button>
+                  <button role="tab" aria-selected="false" type="button">Check in</button>
+                  <button role="tab" aria-selected="false" type="button">My trips</button>
+                </div>
+
+                <div class="subtabs" role="tablist" aria-label="Within the Book tab">
+                  <button role="tab" aria-selected="true" type="button">Flights</button>
+                  <button role="tab" aria-selected="false" type="button">Hotels</button>
+                  <button role="tab" aria-selected="false" type="button">Cars</button>
+                </div>
+
+                <fieldset class="trip">
+                  <legend>Trip type</legend>
+                  <label class="radio"><input type="radio" name="trip" checked><span>Round trip</span></label>
+                  <label class="radio"><input type="radio" name="trip"><span>One way</span></label>
+                </fieldset>
+
+                <div class="row two">
+                  <label>From
+                    <input type="text" name="from" value="San Francisco SFO" autocomplete="off">
+                  </label>
+                  <label>To
+                    <input type="text" name="to" value="" placeholder="Where to?" autocomplete="off">
+                  </label>
+                </div>
+
+                <div class="row two">
+                  <label>Departing
+                    <input type="date" name="depart" value="2026-12-14" required>
+                  </label>
+                  <label>Returning
+                    <input type="date" name="return" value="2026-12-21" required>
+                  </label>
+                </div>
+
+                <div class="row two">
+                  <label>Travellers
+                    <select name="pax">
+                      <option>1 adult</option>
+                      <option selected>2 adults</option>
+                      <option>2 adults, 1 child</option>
+                    </select>
+                  </label>
+                  <label>Cabin
+                    <select name="cabin">
+                      <option selected>Economy</option>
+                      <option>Premium economy</option>
+                      <option>Business</option>
+                    </select>
+                  </label>
+                </div>
+
+                <label class="check">
+                  <input type="checkbox" name="miles">
+                  <span>Pay with miles</span>
+                </label>
+
+                <div class="actions">
+                  <button type="button" class="btn solid">Search flights</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="panel out-panel">
+            <div class="panel-head">
+              <div class="seg" role="tablist" aria-label="Output mode">
+                <button role="tab" type="button" data-mode="regular">Regular copy</button>
+                <button role="tab" type="button" data-mode="c4c" aria-selected="true">Copy4Chat</button>
+              </div>
+              <button class="pill ghost tiny" type="button" data-copy>Copy output</button>
+            </div>
+            <pre class="out" data-out tabindex="0"></pre>
+            <p class="out-note" data-note></p>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============================= Example 3 ============================= -->
+      <section id="dashboard" class="demo" data-demo>
+        <header class="demo-head">
+          <h2>Dashboard</h2>
+          <p>A filtered table. Ordinary copy keeps the numbers but loses which column each one belongs to.</p>
+        </header>
+
+        <div class="demo-body">
+          <div class="panel widget-panel">
+            <p class="panel-label">Live widget — interact with it</p>
+            <div class="chrome" aria-hidden="true">
+              <span class="dot"></span><span class="dot"></span><span class="dot"></span>
+              <span class="url">app.ledgerworks.example/invoices</span>
+            </div>
+            <div class="widget" data-brand="dash" data-widget>
+              <div class="dash">
+                <div class="brandbar"><span class="logo"></span>LedgerWorks</div>
+                <div class="tabs" role="tablist" aria-label="Views">
+                  <button role="tab" aria-selected="false" type="button">Overview</button>
+                  <button role="tab" aria-selected="true" type="button">Invoices</button>
+                  <button role="tab" aria-selected="false" type="button">Usage</button>
+                </div>
+
+                <div class="filters">
+                  <label>Status
+                    <select name="status">
+                      <option>All</option>
+                      <option selected>Overdue</option>
+                      <option>Paid</option>
+                    </select>
+                  </label>
+                  <label>Period
+                    <select name="period">
+                      <option>Last 7 days</option>
+                      <option selected>Last 30 days</option>
+                      <option>This quarter</option>
+                    </select>
+                  </label>
+                  <label class="check inline">
+                    <input type="checkbox" name="mine" checked>
+                    <span>Only mine</span>
+                  </label>
+                </div>
+
+                <table>
+                  <caption>Invoices — overdue, last 30 days</caption>
+                  <thead>
+                    <tr><th scope="col">Invoice</th><th scope="col">Client</th><th scope="col">Due</th><th scope="col">Amount</th><th scope="col">Days late</th></tr>
+                  </thead>
+                  <tbody>
+                    <tr><td>INV-2041</td><td>Harbour Logistics</td><td>28 Sep</td><td>$4,200</td><td>26</td></tr>
+                    <tr><td>INV-2038</td><td>Brightline Media</td><td>02 Oct</td><td>$880</td><td>22</td></tr>
+                    <tr><td>INV-2033</td><td>Okafor &amp; Sons</td><td>11 Oct</td><td>$12,750</td><td>13</td></tr>
+                    <tr><td>INV-2029</td><td>Nordvik Foods</td><td>19 Oct</td><td>$640</td><td>5</td></tr>
+                  </tbody>
+                </table>
+
+                <div class="actions">
+                  <button type="button" class="btn">Export</button>
+                  <button type="button" class="btn solid">Send reminders</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="panel out-panel">
+            <div class="panel-head">
+              <div class="seg" role="tablist" aria-label="Output mode">
+                <button role="tab" type="button" data-mode="regular">Regular copy</button>
+                <button role="tab" type="button" data-mode="c4c" aria-selected="true">Copy4Chat</button>
+              </div>
+              <button class="pill ghost tiny" type="button" data-copy>Copy output</button>
+            </div>
+            <pre class="out" data-out tabindex="0"></pre>
+            <p class="out-note" data-note></p>
+          </div>
+        </div>
+      </section>
+
+      <section class="closing">
+        <h2>Try it on a real page</h2>
+        <p>
+          Select anything, right-click, and choose <strong>Copy For Chat</strong>.
+          Free, no account, nothing leaves your device.
+        </p>
+        <a class="pill primary big" data-store-link="closing" href="#">Add to Chrome</a>
+      </section>
+    </div>
+  </div>
+</main>
+
+<footer class="site-footer">
+  <p>
+    <span data-version-long>Copy4Chat</span> ·
+    <a href="https://github.com/hyunwookshin/copy4chat" rel="noopener">Source on GitHub</a> ·
+    <a href="https://github.com/hyunwookshin/copy4chat/blob/main/PRIVACY.md" rel="noopener">Privacy</a>
+  </p>
+  <p class="fine">
+    Nothing on this page is sent anywhere. The comparison runs entirely in your
+    browser using the extension's own code.
+  </p>
+</footer>
+
+<script src="vendor/turndown.js"></script>
+<script src="vendor/turndown-plugin-gfm.js"></script>
+<script src="lib/mask.js"></script>
+<script src="lib/extract.js"></script>
+<script src="lib/render.js"></script>
+<script src="lib/render-boxed.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

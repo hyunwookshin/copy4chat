@@ -279,6 +279,15 @@
     if (el.getAttribute("aria-invalid") === "true") states.push("invalid");
     const expanded = el.getAttribute("aria-expanded");
     if (expanded) states.push(expanded === "true" ? "expanded" : "collapsed");
+
+    // Which tab is open, which toggle is on, which page you are on. These are
+    // the states a tabbed interface conveys entirely through styling, so they
+    // vanish from any text copy that is not reading ARIA.
+    if (el.getAttribute("aria-selected") === "true") states.push("selected");
+    if (el.getAttribute("aria-pressed") === "true") states.push("pressed");
+    const current = el.getAttribute("aria-current");
+    if (current && current !== "false") states.push("current");
+
     return states;
   }
 

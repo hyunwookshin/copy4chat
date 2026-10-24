@@ -1,0 +1,45 @@
+name: Deploy copy4chat.com
+
+# Only when the site or the extension code it embeds actually changes — the
+# demo runs the real extract.js, so an extension fix is a site change too.
+on:
+  push:
+    branches: [main]
+    paths:
+      - "site/**"
+      - "src/content/**"
+      - "icons/icon128.png"
+      - "manifest.json"
+      - "tools/build-site.sh"
+      - "tools/deploy-site.sh"
+      - ".github/workflows/deploy-site.yml"
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-site
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+  id-token: write   # required to request the OIDC token
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Verify the extension code the site embeds still parses
+        run: |
+          for f in src/content/*.js site/app.js; do node --check "$f"; done
+
+      # OIDC: GitHub mints a short-lived token and AWS exchanges it for
+      # temporary credentials. No access keys are stored in this repository.
+      - name: Assume deploy role
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::417681847926:role/copy4chat-site-deploy
+          aws-region: us-east-1
+
+      - name: Build and deploy
+        run: ./tools/deploy-site.sh

@@ -1,0 +1,10 @@
+Third-party code bundled with the copy4chat.com landing page.
+
+turndown (v7.2.4) and turndown-plugin-gfm (v1.0.2)
+Copyright (c) 2017 Dom Christie
+MIT License — https://github.com/mixmark-io/turndown
+
+Used to convert the clipboard's text/html flavour to Markdown, which is what
+a chat client actually receives from an ordinary copy and paste. Using the
+recognised converter rather than a hand-written one keeps the "Regular Copy"
+side of the comparison honest.
