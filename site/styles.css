@@ -117,7 +117,7 @@ a { color: inherit; }
   border-bottom: 1px solid var(--line);
 }
 .bar {
-  max-width: 1180px; margin: 0 auto;
+  max-width: 1320px; margin: 0 auto;
   display: flex; align-items: center; justify-content: space-between; gap: 16px;
   padding: 12px 24px;
 }
@@ -163,8 +163,8 @@ a { color: inherit; }
 /* ----------------------------------------------------------------- layout */
 
 .layout {
-  max-width: 1180px; margin: 0 auto; padding: 0 24px 40px;
-  display: grid; grid-template-columns: 184px minmax(0, 1fr); gap: 44px;
+  max-width: 1320px; margin: 0 auto; padding: 0 24px 40px;
+  display: grid; grid-template-columns: 176px minmax(0, 1fr); gap: 40px;
   align-items: start;
 }
 
@@ -189,7 +189,7 @@ a { color: inherit; }
 .demo-head h2 { font-size: 25px; letter-spacing: -.02em; margin: 0 0 6px; font-weight: 640; }
 .demo-head p { margin: 0 0 20px; color: var(--muted); font-size: 15px; max-width: 62ch; }
 
-.demo-body { display: grid; grid-template-columns: minmax(0,1fr) minmax(0,1fr); gap: 18px; }
+.demo-body { display: grid; grid-template-columns: minmax(0, .85fr) minmax(0, 1.15fr); gap: 18px; align-items: start; }
 
 .panel {
   border: 1px solid var(--line); border-radius: var(--radius);
@@ -209,6 +209,7 @@ a { color: inherit; }
   display: inline-flex; padding: 3px; gap: 2px;
   background: var(--panel-2); border-radius: var(--pill);
 }
+.seg button img { vertical-align: -2px; margin-right: 5px; border-radius: 3px; }
 .seg button {
   border: 0; background: transparent; color: var(--muted);
   font: 500 13px/1 var(--ui); padding: 8px 15px; border-radius: var(--pill);
@@ -222,10 +223,20 @@ a { color: inherit; }
 
 .out {
   margin: 0; padding: 18px;
-  font: 12.5px/1.5 var(--mono);
-  white-space: pre; overflow: auto; max-height: 460px;
+  /* Sized so an 80-column block fits without a horizontal scrollbar at the
+     desktop layout width; it still scrolls rather than clipping if it must. */
+  font: 11.5px/1.5 var(--mono);
+  white-space: pre; overflow: auto; max-height: 70vh;
   background: var(--bg); color: var(--fg);
 }
+.out-empty {
+  margin: 0; padding: 34px 18px; text-align: center;
+  color: var(--muted); font-size: 13.5px;
+}
+.out-panel.has-output .out-empty { display: none; }
+.out-panel:not(.has-output) .out { display: none; }
+.hl-hint { color: var(--fg); font-weight: 560; }
+
 .out-note {
   margin: 0; padding: 10px 18px 13px; font-size: 12px; color: var(--muted);
   border-top: 1px solid var(--line);
@@ -259,21 +270,38 @@ a { color: inherit; }
   --w-brand-fg: #ffffff;
   --w-danger: #b42318;
 
-  padding: 20px; background: var(--w-bg); color: var(--w-fg);
+  padding: 20px; color: var(--w-fg);
   font: 14px/1.55 var(--ui);
+  background:
+    radial-gradient(1200px 320px at 12% -8%, color-mix(in srgb, var(--w-brand) 13%, transparent), transparent 62%),
+    linear-gradient(180deg, color-mix(in srgb, var(--w-brand) 5%, var(--w-bg)), var(--w-bg) 42%);
 }
+
+/* Content sits on a card so it lifts off the tinted page behind it. */
+.widget .acct, .widget .bk, .widget .dash, .widget .pdp,
+.widget .msgs, .widget .thread, .widget .eps { position: relative; }
+.widget > form, .widget > .bk, .widget > .dash {
+  background: #fff; border: 1px solid var(--w-line); border-radius: 16px;
+  padding: 18px; box-shadow: 0 1px 2px rgba(16,19,26,.05), 0 10px 26px rgba(16,19,26,.06);
+}
+.widget[data-brand="stream"] > .bk { background: #15161b; }
 .widget[data-brand="telecom"] { --w-brand: #cd040b; --w-soft: #fff5f5; --w-line: #f0dada; }
 .widget[data-brand="air"]     { --w-brand: #0b4a8f; --w-soft: #f2f7fd; --w-line: #d6e4f5; }
 .widget[data-brand="dash"]    { --w-brand: #1f6f54; --w-soft: #f3faf7; --w-line: #d8ebe3; }
 
+/* A full-bleed coloured banner, the way a real site wears its brand. */
 .widget .brandbar {
-  display: flex; align-items: center; gap: 9px;
+  display: flex; align-items: center; gap: 10px;
+  margin: -20px -20px 18px; padding: 13px 20px;
   font-weight: 680; font-size: 15px; letter-spacing: -.01em;
-  color: var(--w-brand); margin-bottom: 16px;
+  color: #fff;
+  background: linear-gradient(135deg, var(--w-brand), color-mix(in srgb, var(--w-brand) 68%, #000));
+  box-shadow: inset 0 -1px 0 rgba(0,0,0,.14);
 }
 .widget .brandbar .logo {
   width: 20px; height: 20px; border-radius: 6px; display: inline-block;
-  background: linear-gradient(135deg, var(--w-brand), color-mix(in srgb, var(--w-brand) 55%, #ffffff));
+  background: rgba(255,255,255,.94);
+  box-shadow: inset 0 0 0 3px color-mix(in srgb, var(--w-brand) 72%, #000);
 }
 
 .widget h3 { margin: 0 0 4px; font-size: 17px; font-weight: 640; color: var(--w-fg); }
@@ -525,7 +553,7 @@ a { color: inherit; }
 .closing p { margin: 0 0 24px; color: var(--muted); }
 
 .site-footer {
-  max-width: 1180px; margin: 0 auto; padding: 36px 24px 60px;
+  max-width: 1320px; margin: 0 auto; padding: 36px 24px 60px;
   border-top: 1px solid var(--line); color: var(--muted); font-size: 13.5px;
 }
 .site-footer p { margin: 0 0 6px; }

@@ -140,10 +140,18 @@
     if (window.turndownPluginGfm) turndown.use(window.turndownPluginGfm.gfm);
   }
 
+  // If the visitor has highlighted something inside this widget, copy exactly
+  // that — the same ragged, partial selection the extension would see on a
+  // real page. Otherwise fall back to the whole widget.
   function rangeOf(widget) {
-    var r = document.createRange();
-    r.selectNodeContents(widget);
-    return r;
+    var sel = window.getSelection();
+    if (sel && sel.rangeCount && !sel.isCollapsed) {
+      var r = sel.getRangeAt(0);
+      if (widget.contains(r.commonAncestorContainer) && r.toString().trim()) return r;
+    }
+    var full = document.createRange();
+    full.selectNodeContents(widget);
+    return full;
   }
 
   // What a chat client actually receives: the clipboard's text/html flavour,
@@ -169,12 +177,8 @@
   }
 
   var NOTES = {
-    regular:
-      "The clipboard's HTML, converted to Markdown with Turndown — what ChatGPT " +
-      "receives from an ordinary copy and paste.",
-    c4c:
-      "Produced live by the extension's own extract.js and render-boxed.js, " +
-      "running on this page against the widget on the left.",
+    regular: "What a chat assistant receives from an ordinary copy and paste.",
+    c4c: "Generated just now by Copy4Chat itself, running on this page.",
   };
 
   // ------------------------------------------------------------------ demos
@@ -199,6 +203,7 @@
       out.textContent = text;
     }
     if (note) note.textContent = NOTES[mode];
+    demo.querySelector(".out-panel").classList.add("has-output");
   }
 
   var REDUCED = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -215,7 +220,14 @@
     var outPanel = demo.querySelector(".out-panel");
     var seg = demo.querySelector(".seg");
     var copyBtn = demo.querySelector("[data-copy]");
-    var toast = demo.querySelector(".stage-toast");
+    // Built on demand and removed afterwards: left in the DOM it would be
+    // copied by the extension itself whenever it happened to be on screen,
+    // which is exactly the artefact this demo should not produce.
+    var toast = document.createElement("div");
+    toast.className = "stage-toast";
+    toast.setAttribute("aria-hidden", "true");
+    toast.innerHTML = '<img src="icon.png" alt=""><span data-toast-text></span>';
+    var toastText = toast.querySelector("[data-toast-text]");
     var timers = [];
 
     function finish() {
@@ -224,7 +236,7 @@
       panel.classList.remove("is-selecting");
       outPanel.classList.remove("is-busy");
       seg.classList.remove("is-busy");
-      if (toast) toast.classList.remove("show");
+      if (toast.parentNode) toast.parentNode.removeChild(toast);
       refresh(demo, !REDUCED);
     }
     demo.dataset.cancel = "";
@@ -236,17 +248,19 @@
 
     // Clear only now, so the output was already on screen for anyone whose
     // browser never fires the observer.
+    outPanel.classList.remove("has-output");
     demo.querySelector("[data-out]").textContent = "";
     panel.classList.add("is-selecting");
-    if (toast) { toast.querySelector("[data-toast-text]").textContent = "Select the page"; toast.classList.add("show"); }
+    toastText.textContent = "Select the page";
+    panel.appendChild(toast);
+    requestAnimationFrame(function () { toast.classList.add("show"); });
 
-    at(900, function () {
-      if (toast) toast.querySelector("[data-toast-text]").textContent = "Copy For Chat";
-    });
+    at(900, function () { toastText.textContent = "Copy For Chat"; });
 
     at(1700, function () {
       panel.classList.remove("is-selecting");
-      if (toast) toast.classList.remove("show");
+      toast.classList.remove("show");
+      setTimeout(function () { if (toast.parentNode) toast.parentNode.removeChild(toast); }, 260);
       outPanel.classList.add("is-busy");
       seg.classList.add("is-busy");
     });
@@ -289,6 +303,12 @@
     ["input", "change", "focusin", "focusout"].forEach(function (evt) {
       widget.addEventListener(evt, schedule);
     });
+    ["mouseup", "keyup", "touchend"].forEach(function (evt) {
+      widget.addEventListener(evt, function () {
+        var sel = window.getSelection();
+        if (sel && !sel.isCollapsed && widget.contains(sel.anchorNode)) schedule();
+      });
+    });
 
     var copyBtn = demo.querySelector("[data-copy]");
     if (copyBtn) {
@@ -306,29 +326,47 @@
       });
     }
 
-    refresh(demo);
+    // Left blank on purpose: the output appears only once something has been
+    // highlighted, which is the whole point being demonstrated.
+    if (REDUCED) refresh(demo);
   });
 
-  // Play when a demo is meaningfully on screen, once each.
+  // Play when a demo reaches the reading area, once each.
+  //
+  // Belt and braces: the observer is the normal path, but the panel starts
+  // blank, so a browser that never delivers a callback would leave the demo
+  // permanently empty. A cheap rect check on scroll guarantees it plays.
+  var pending = document.querySelectorAll("[data-demo]");
+  var queue = Array.prototype.slice.call(pending);
+
+  function play(demo) {
+    var i = queue.indexOf(demo);
+    if (i < 0) return;
+    queue.splice(i, 1);
+    choreograph(demo);
+  }
+
   if ("IntersectionObserver" in window) {
-    // Trigger on entering the middle band of the viewport rather than on a
-    // visibility ratio. Ratio is measured against the element, so a section
-    // taller than the viewport can never reach a 25% threshold — which left
-    // tall demos permanently blank, and would have hit almost every section
-    // on mobile where the panels stack.
     var player = new IntersectionObserver(
       function (entries) {
         entries.forEach(function (e) {
-          if (e.isIntersecting) {
-            choreograph(e.target);
-            player.unobserve(e.target);
-          }
+          if (e.isIntersecting) { play(e.target); player.unobserve(e.target); }
         });
       },
-      { threshold: 0, rootMargin: "-25% 0px -25% 0px" }
+      { threshold: 0, rootMargin: "-20% 0px -20% 0px" }
     );
-    document.querySelectorAll("[data-demo]").forEach(function (d) { player.observe(d); });
-  } else {
-    document.querySelectorAll("[data-demo]").forEach(function (d) { refresh(d); });
+    queue.forEach(function (d) { player.observe(d); });
   }
+
+  function sweep() {
+    if (!queue.length) return;
+    var h = window.innerHeight || document.documentElement.clientHeight;
+    queue.slice().forEach(function (d) {
+      var r = d.getBoundingClientRect();
+      if (r.top < h * 0.8 && r.bottom > h * 0.2) play(d);
+    });
+  }
+  window.addEventListener("scroll", sweep, { passive: true });
+  window.addEventListener("resize", sweep, { passive: true });
+  sweep();
 })();
