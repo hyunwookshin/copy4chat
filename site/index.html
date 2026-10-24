@@ -14,6 +14,16 @@
 <meta name="twitter:card" content="summary_large_image">
 <link rel="icon" type="image/png" href="icon.png">
 <link rel="stylesheet" href="styles.css">
+
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-4G4XZH5HE5"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-4G4XZH5HE5');
+</script>
 </head>
 <body>
 
@@ -49,6 +59,9 @@
       assistants understand the page without needing a screenshot.
     </p>
 
+    <details class="more">
+      <summary>Why ordinary copy loses this</summary>
+      <div class="more-body">
     <p>
       When you select part of a web page and press ⌘C, the browser keeps the
       words but throws away almost everything that gives them meaning. A chat
@@ -78,6 +91,8 @@
       field is never copied; it is masked, along with card numbers, one-time
       codes and credential-shaped values.
     </p>
+      </div>
+    </details>
 
     <p class="intro-note">
       Everything below runs the <strong>real extension code</strong> in your
@@ -94,6 +109,11 @@
         <li><a href="#account">Account form</a></li>
         <li><a href="#booking">Flight booking</a></li>
         <li><a href="#dashboard">Dashboard</a></li>
+        <li><a href="#shopping">Product page</a></li>
+        <li><a href="#streaming">Streaming</a></li>
+        <li><a href="#tickets">Tickets</a></li>
+        <li><a href="#inbox">Inbox</a></li>
+        <li><a href="#thread">Chat thread</a></li>
       </ol>
     </nav>
 
@@ -108,14 +128,15 @@
 
         <div class="demo-body">
           <div class="panel widget-panel">
+            <div class="stage-toast"><img src="icon.png" alt=""><span data-toast-text>Select the page</span></div>
             <p class="panel-label">Live widget — interact with it</p>
             <div class="chrome" aria-hidden="true">
               <span class="dot"></span><span class="dot"></span><span class="dot"></span>
-              <span class="url">northwind-mobile.example/account</span>
+              <span class="url">verizone.example/account</span>
             </div>
             <div class="widget" data-brand="telecom" data-widget>
               <form class="acct" onsubmit="return false">
-                <div class="brandbar"><span class="logo"></span>Northwind Mobile</div>
+                <div class="brandbar"><span class="logo"></span>Verizone Wireless</div>
                 <h3>Find my account</h3>
                 <p class="acct-sub">Enter the details on your most recent bill.</p>
 
@@ -172,6 +193,7 @@
               <button class="pill ghost tiny" type="button" data-copy>Copy output</button>
             </div>
             <pre class="out" data-out tabindex="0"></pre>
+            <div class="spinner" aria-hidden="true"><i></i>Generating…</div>
             <p class="out-note" data-note></p>
           </div>
         </div>
@@ -186,14 +208,15 @@
 
         <div class="demo-body">
           <div class="panel widget-panel">
+            <div class="stage-toast"><img src="icon.png" alt=""><span data-toast-text>Select the page</span></div>
             <p class="panel-label">Live widget — interact with it</p>
             <div class="chrome" aria-hidden="true">
               <span class="dot"></span><span class="dot"></span><span class="dot"></span>
-              <span class="url">skyline-air.example/book</span>
+              <span class="url">untied.example/book</span>
             </div>
             <div class="widget" data-brand="air" data-widget>
               <div class="bk">
-                <div class="brandbar"><span class="logo"></span>Skyline Air</div>
+                <div class="brandbar"><span class="logo"></span>Untied Airways</div>
                 <div class="tabs" role="tablist" aria-label="Booking sections">
                   <button role="tab" aria-selected="true" type="button">Book</button>
                   <button role="tab" aria-selected="false" type="button">Flight status</button>
@@ -269,6 +292,7 @@
               <button class="pill ghost tiny" type="button" data-copy>Copy output</button>
             </div>
             <pre class="out" data-out tabindex="0"></pre>
+            <div class="spinner" aria-hidden="true"><i></i>Generating…</div>
             <p class="out-note" data-note></p>
           </div>
         </div>
@@ -283,14 +307,15 @@
 
         <div class="demo-body">
           <div class="panel widget-panel">
+            <div class="stage-toast"><img src="icon.png" alt=""><span data-toast-text>Select the page</span></div>
             <p class="panel-label">Live widget — interact with it</p>
             <div class="chrome" aria-hidden="true">
               <span class="dot"></span><span class="dot"></span><span class="dot"></span>
-              <span class="url">app.ledgerworks.example/invoices</span>
+              <span class="url">app.quickledger.example/invoices</span>
             </div>
             <div class="widget" data-brand="dash" data-widget>
               <div class="dash">
-                <div class="brandbar"><span class="logo"></span>LedgerWorks</div>
+                <div class="brandbar"><span class="logo"></span>Quickledger</div>
                 <div class="tabs" role="tablist" aria-label="Views">
                   <button role="tab" aria-selected="false" type="button">Overview</button>
                   <button role="tab" aria-selected="true" type="button">Invoices</button>
@@ -348,6 +373,306 @@
               <button class="pill ghost tiny" type="button" data-copy>Copy output</button>
             </div>
             <pre class="out" data-out tabindex="0"></pre>
+            <div class="spinner" aria-hidden="true"><i></i>Generating…</div>
+            <p class="out-note" data-note></p>
+          </div>
+        </div>
+      </section>
+
+
+
+      <section id="shopping" class="demo" data-demo>
+        <header class="demo-head">
+          <h2>Product page</h2>
+          <p>Which variant is chosen, how many, and which delivery option. Copy the page and the price is there — but not what it is the price of.</p>
+        </header>
+        <div class="demo-body">
+          <div class="panel widget-panel">
+            <div class="stage-toast"><img src="icon.png" alt=""><span data-toast-text>Select the page</span></div>
+            <p class="panel-label">Live widget — interact with it</p>
+            <div class="chrome" aria-hidden="true">
+              <span class="dot"></span><span class="dot"></span><span class="dot"></span>
+              <span class="url">amazing.example/dp/B09TRAILRUNNER</span>
+            </div>
+            <div class="widget" data-brand="shop" data-widget>
+              <div class="brandbar"><span class="logo"></span>Amazing</div>
+              <div class="pdp">
+                <div class="pdp-art" aria-hidden="true"></div>
+                <div class="pdp-main">
+                  <h3>Fellrunner Trail Shoe — Unisex</h3>
+                  <p class="stars">★★★★☆ <span>4.3 · 2,841 ratings</span></p>
+                  <p class="price"><strong>$118.40</strong> <s>$149.00</s> <span class="save">Save 21%</span></p>
+                  <p class="deliv">Free delivery <strong>Thursday 30 October</strong></p>
+                </div>
+              </div>
+              <div class="tabs" role="tablist" aria-label="Product sections">
+                <button role="tab" aria-selected="true" type="button">Overview</button>
+                <button role="tab" aria-selected="false" type="button">Specifications</button>
+                <button role="tab" aria-selected="false" type="button">Reviews</button>
+              </div>
+              <div class="row two">
+                <label>Size
+                  <select name="size"><option>UK 7</option><option>UK 8</option><option selected>UK 9</option><option>UK 10</option></select>
+                </label>
+                <label>Colour
+                  <select name="colour"><option selected>Slate / lime</option><option>Black / black</option><option>Clay / sand</option></select>
+                </label>
+              </div>
+              <div class="row two">
+                <label>Quantity
+                  <select name="qty"><option selected>1</option><option>2</option><option>3</option></select>
+                </label>
+                <label>Delivery
+                  <select name="ship"><option selected>Standard — free</option><option>Next day — $5.99</option></select>
+                </label>
+              </div>
+              <label class="check"><input type="checkbox" name="gift"><span>This is a gift — hide prices on the packing slip</span></label>
+              <div class="actions"><button type="button" class="btn">Add to basket</button><button type="button" class="btn solid">Buy now</button></div>
+            </div>
+          </div>
+          <div class="panel out-panel">
+            <div class="panel-head">
+              <div class="seg" role="tablist" aria-label="Output mode">
+                <button role="tab" type="button" data-mode="regular">Regular copy</button>
+                <button role="tab" type="button" data-mode="c4c" aria-selected="true">Copy4Chat</button>
+              </div>
+              <button class="pill ghost tiny" type="button" data-copy>Copy output</button>
+            </div>
+            <pre class="out" data-out tabindex="0"></pre>
+            <div class="spinner" aria-hidden="true"><i></i>Generating…</div>
+            <p class="out-note" data-note></p>
+          </div>
+        </div>
+      </section>
+      <section id="streaming" class="demo" data-demo>
+        <header class="demo-head">
+          <h2>Streaming title</h2>
+          <p>Which season is showing, which episode you are on, and whether subtitles are on. A dark interface copies as an undifferentiated run of titles and durations.</p>
+        </header>
+        <div class="demo-body">
+          <div class="panel widget-panel">
+            <div class="stage-toast"><img src="icon.png" alt=""><span data-toast-text>Select the page</span></div>
+            <p class="panel-label">Live widget — interact with it</p>
+            <div class="chrome" aria-hidden="true">
+              <span class="dot"></span><span class="dot"></span><span class="dot"></span>
+              <span class="url">netflux.example/title/the-long-winter</span>
+            </div>
+            <div class="widget" data-brand="stream" data-widget>
+              <div class="brandbar"><span class="logo"></span>Netflux</div>
+              <div class="sv-hero">
+                <div class="sv-art" aria-hidden="true"></div>
+                <div>
+                  <h3>The Long Winter</h3>
+                  <p class="sv-meta">Season 2 · 2026 · 8 episodes · Drama</p>
+                  <div class="actions">
+                    <button type="button" class="btn solid">Resume episode 4</button>
+                    <button type="button" class="btn">Add to list</button>
+                  </div>
+                </div>
+              </div>
+              <div class="tabs" role="tablist" aria-label="Title sections">
+                <button role="tab" aria-selected="true" type="button">Episodes</button>
+                <button role="tab" aria-selected="false" type="button">More like this</button>
+                <button role="tab" aria-selected="false" type="button">Details</button>
+              </div>
+              <label>Season
+                <select name="season">
+                  <option>Season 1</option>
+                  <option selected>Season 2</option>
+                </select>
+              </label>
+              <ul class="eps">
+                <li><span class="n">3</span><div><strong>Blackthaw</strong><p>Mara breaks the embargo.</p></div><span class="dur">51m</span></li>
+                <li class="on"><span class="n">4</span><div><strong>The Ridge</strong><p>A signal from the north.</p></div><span class="dur">48m</span></li>
+                <li><span class="n">5</span><div><strong>Ash Lake</strong><p>Two convoys, one road.</p></div><span class="dur">55m</span></li>
+              </ul>
+              <label class="check"><input type="checkbox" name="subs" checked><span>Subtitles — English</span></label>
+            </div>
+          </div>
+          <div class="panel out-panel">
+            <div class="panel-head">
+              <div class="seg" role="tablist" aria-label="Output mode">
+                <button role="tab" type="button" data-mode="regular">Regular copy</button>
+                <button role="tab" type="button" data-mode="c4c" aria-selected="true">Copy4Chat</button>
+              </div>
+              <button class="pill ghost tiny" type="button" data-copy>Copy output</button>
+            </div>
+            <pre class="out" data-out tabindex="0"></pre>
+            <div class="spinner" aria-hidden="true"><i></i>Generating…</div>
+            <p class="out-note" data-note></p>
+          </div>
+        </div>
+      </section>
+
+      <section id="tickets" class="demo" data-demo>
+        <header class="demo-head">
+          <h2>Event tickets</h2>
+          <p>Tier, quantity, delivery method and a promo code. The total means nothing without the selections that produced it.</p>
+        </header>
+        <div class="demo-body">
+          <div class="panel widget-panel">
+            <div class="stage-toast"><img src="icon.png" alt=""><span data-toast-text>Select the page</span></div>
+            <p class="panel-label">Live widget — interact with it</p>
+            <div class="chrome" aria-hidden="true">
+              <span class="dot"></span><span class="dot"></span><span class="dot"></span>
+              <span class="url">ticketmonster.example/event/hollow-coast</span>
+            </div>
+            <div class="widget" data-brand="tix" data-widget>
+              <div class="brandbar"><span class="logo"></span>Ticketmonster</div>
+              <h3>Hollow Coast — Live</h3>
+              <p class="acct-sub">Friday 12 December · 8:00pm · Dockside Hall</p>
+              <div class="tabs" role="tablist" aria-label="Purchase steps">
+                <button role="tab" aria-selected="true" type="button">Tickets</button>
+                <button role="tab" aria-selected="false" type="button">Seat map</button>
+                <button role="tab" aria-selected="false" type="button">Venue info</button>
+              </div>
+              <fieldset class="trip">
+                <legend>Ticket type</legend>
+                <label class="radio tier"><input type="radio" name="tier"><span>General admission — $62.00</span></label>
+                <label class="radio tier"><input type="radio" name="tier" checked><span>Balcony reserved — $89.00</span></label>
+                <label class="radio tier"><input type="radio" name="tier"><span>Front standing — $140.00</span></label>
+              </fieldset>
+              <div class="row two">
+                <label>Quantity
+                  <select name="qty"><option>1</option><option selected>2</option><option>3</option><option>4</option></select>
+                </label>
+                <label>Delivery
+                  <select name="delivery"><option selected>Mobile ticket</option><option>Print at home</option><option>Box office pickup</option></select>
+                </label>
+              </div>
+              <label>Promo code
+                <input type="text" name="promo" value="EARLY10" autocomplete="off">
+              </label>
+              <label class="check"><input type="checkbox" name="protect"><span>Add ticket protection (+$6.50)</span></label>
+              <div class="total"><span>Total</span><strong>$178.00</strong></div>
+              <div class="actions"><button type="button" class="btn solid">Continue to checkout</button></div>
+            </div>
+          </div>
+          <div class="panel out-panel">
+            <div class="panel-head">
+              <div class="seg" role="tablist" aria-label="Output mode">
+                <button role="tab" type="button" data-mode="regular">Regular copy</button>
+                <button role="tab" type="button" data-mode="c4c" aria-selected="true">Copy4Chat</button>
+              </div>
+              <button class="pill ghost tiny" type="button" data-copy>Copy output</button>
+            </div>
+            <pre class="out" data-out tabindex="0"></pre>
+            <div class="spinner" aria-hidden="true"><i></i>Generating…</div>
+            <p class="out-note" data-note></p>
+          </div>
+        </div>
+      </section>
+
+      <section id="inbox" class="demo" data-demo>
+        <header class="demo-head">
+          <h2>Inbox</h2>
+          <p>Which messages are unread, how they are labelled, and what you searched for. Ordinary copy returns the words with none of the state.</p>
+        </header>
+        <div class="demo-body">
+          <div class="panel widget-panel">
+            <div class="stage-toast"><img src="icon.png" alt=""><span data-toast-text>Select the page</span></div>
+            <p class="panel-label">Live widget — interact with it</p>
+            <div class="chrome" aria-hidden="true">
+              <span class="dot"></span><span class="dot"></span><span class="dot"></span>
+              <span class="url">hotmeal.example/mail/inbox</span>
+            </div>
+            <div class="widget" data-brand="mail" data-widget>
+              <div class="brandbar"><span class="logo"></span>Hotmeal</div>
+              <div class="tabs" role="tablist" aria-label="Folders">
+                <button role="tab" aria-selected="true" type="button">Inbox</button>
+                <button role="tab" aria-selected="false" type="button">Starred</button>
+                <button role="tab" aria-selected="false" type="button">Archive</button>
+              </div>
+              <div class="row two">
+                <label>Search
+                  <input type="text" name="q" value="invoice" autocomplete="off">
+                </label>
+                <label>Show
+                  <select name="filter"><option>Everything</option><option selected>Unread only</option><option>Has attachment</option></select>
+                </label>
+              </div>
+              <ul class="msgs">
+                <li class="unread">
+                  <input type="checkbox" name="m1" checked aria-label="Select message from Harbour Logistics">
+                  <div><p class="from">Harbour Logistics <span class="tag">Billing</span></p>
+                  <p class="subj">Invoice INV-2041 is now overdue</p>
+                  <p class="prev">The payment due 28 September has not yet been received.</p></div>
+                  <span class="when">09:12</span>
+                </li>
+                <li class="unread">
+                  <input type="checkbox" name="m2" aria-label="Select message from Nordvik Foods">
+                  <div><p class="from">Nordvik Foods <span class="tag alt">Contracts</span></p>
+                  <p class="subj">Re: renewal terms for Q1</p>
+                  <p class="prev">Happy to extend at the current rate if we sign before…</p></div>
+                  <span class="when">08:41</span>
+                </li>
+                <li>
+                  <input type="checkbox" name="m3" aria-label="Select message from Brightline Media">
+                  <div><p class="from">Brightline Media</p>
+                  <p class="subj">Invoice paid — thank you</p>
+                  <p class="prev">Reference INV-2038 settled by bank transfer.</p></div>
+                  <span class="when">Tue</span>
+                </li>
+              </ul>
+              <div class="actions"><button type="button" class="btn">Archive</button><button type="button" class="btn solid">Mark as read</button></div>
+            </div>
+          </div>
+          <div class="panel out-panel">
+            <div class="panel-head">
+              <div class="seg" role="tablist" aria-label="Output mode">
+                <button role="tab" type="button" data-mode="regular">Regular copy</button>
+                <button role="tab" type="button" data-mode="c4c" aria-selected="true">Copy4Chat</button>
+              </div>
+              <button class="pill ghost tiny" type="button" data-copy>Copy output</button>
+            </div>
+            <pre class="out" data-out tabindex="0"></pre>
+            <div class="spinner" aria-hidden="true"><i></i>Generating…</div>
+            <p class="out-note" data-note></p>
+          </div>
+        </div>
+      </section>
+
+      <section id="thread" class="demo" data-demo>
+        <header class="demo-head">
+          <h2>Chat thread</h2>
+          <p>Who said what, in what order, and the half-written reply still sitting in the composer — which no ordinary copy will ever pick up.</p>
+        </header>
+        <div class="demo-body">
+          <div class="panel widget-panel">
+            <div class="stage-toast"><img src="icon.png" alt=""><span data-toast-text>Select the page</span></div>
+            <p class="panel-label">Live widget — interact with it</p>
+            <div class="chrome" aria-hidden="true">
+              <span class="dot"></span><span class="dot"></span><span class="dot"></span>
+              <span class="url">slakk.example/w/acme/design-review</span>
+            </div>
+            <div class="widget" data-brand="chat" data-widget>
+              <div class="brandbar"><span class="logo"></span>Slakk</div>
+              <div class="tabs" role="tablist" aria-label="Channels">
+                <button role="tab" aria-selected="true" type="button">#design-review</button>
+                <button role="tab" aria-selected="false" type="button">#general</button>
+                <button role="tab" aria-selected="false" type="button">Direct messages</button>
+              </div>
+              <ul class="thread">
+                <li><span class="av a" aria-hidden="true"></span><div><p class="who">Priya <span>10:02</span></p><p>The narrow variant breaks below 320px — the labels wrap under the inputs.</p></div></li>
+                <li><span class="av b" aria-hidden="true"></span><div><p class="who">Sam <span>10:05</span></p><p>Do we support 320 any more? Analytics says 0.4% of sessions.</p></div></li>
+                <li><span class="av c" aria-hidden="true"></span><div><p class="who">Priya <span>10:06</span></p><p>Small, but it is the checkout page. I would rather not break it.</p></div></li>
+              </ul>
+              <label>Message #design-review
+                <textarea name="compose" rows="2">Agreed — can we ship the narrow variant first and</textarea>
+              </label>
+              <div class="actions"><button type="button" class="btn">Attach</button><button type="button" class="btn solid">Send</button></div>
+            </div>
+          </div>
+          <div class="panel out-panel">
+            <div class="panel-head">
+              <div class="seg" role="tablist" aria-label="Output mode">
+                <button role="tab" type="button" data-mode="regular">Regular copy</button>
+                <button role="tab" type="button" data-mode="c4c" aria-selected="true">Copy4Chat</button>
+              </div>
+              <button class="pill ghost tiny" type="button" data-copy>Copy output</button>
+            </div>
+            <pre class="out" data-out tabindex="0"></pre>
+            <div class="spinner" aria-hidden="true"><i></i>Generating…</div>
             <p class="out-note" data-note></p>
           </div>
         </div>
@@ -372,8 +697,11 @@
     <a href="https://github.com/hyunwookshin/copy4chat/blob/main/PRIVACY.md" rel="noopener">Privacy</a>
   </p>
   <p class="fine">
-    Nothing on this page is sent anywhere. The comparison runs entirely in your
-    browser using the extension's own code.
+    The comparison runs entirely in your browser using the extension's own
+    code — the widgets and the text they produce are never sent anywhere.
+    This page uses Google Analytics to count visits. The extension itself
+    makes no network requests at all; see its
+    <a href="https://github.com/hyunwookshin/copy4chat/blob/main/PRIVACY.md" rel="noopener">privacy policy</a>.
   </p>
 </footer>
 
