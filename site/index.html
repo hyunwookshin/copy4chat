@@ -37,19 +37,68 @@
       <span class="pill version" data-version>v0.0.0</span>
     </a>
     <nav class="bar-actions">
-      <button class="pill ghost theme-toggle" type="button" data-theme-toggle aria-label="Switch colour theme">
-        <span data-theme-label>Auto</span>
+      <button class="pill ghost theme-toggle" type="button" data-theme-toggle>
+        <span class="theme-glyph" data-theme-glyph aria-hidden="true">◑</span>
+        <span data-theme-label>System</span>
       </button>
       <a class="pill ghost" href="https://github.com/hyunwookshin/copy4chat" rel="noopener">GitHub</a>
-      <a class="pill primary" data-store-link="header" href="#">Add to Chrome</a>
+      <a class="pill primary" data-store-link="header" href="#"><svg class="cws" viewBox="0 0 48 48" width="17" height="17" aria-hidden="true"><path fill="#DB4437" d="M24 4a20 20 0 0 1 17.32 10H24a10 10 0 0 0-8.66 5L9.2 8.4A19.93 19.93 0 0 1 24 4z"/><path fill="#0F9D58" d="M6.68 34A20 20 0 0 1 9.2 8.4l6.14 10.6a10 10 0 0 0 0 10z"/><path fill="#FFCD40" d="M24 44a20 20 0 0 1-17.32-10h12.26a10 10 0 0 0 8.66 5h.08L21.5 43.8z"/><path fill="#FFCD40" d="M41.32 14A20 20 0 0 1 24 44l6.14-10.6A10 10 0 0 0 34 24a9.9 9.9 0 0 0-1.34-5z"/><circle fill="#F1F1F1" cx="24" cy="24" r="10"/><circle fill="#4285F4" cx="24" cy="24" r="7.5"/></svg>Add to Chrome</a>
     </nav>
   </div>
 </header>
 
 <main>
   <section class="intro">
-    <p class="kicker">Demonstrating Copy4Chat</p>
-    <h1>Copy webpages exactly the way you see them</h1>
+    <div class="hero">
+      <div class="hero-icon" aria-hidden="true">
+        <svg viewBox="0 0 220 220" width="132" height="132">
+          <defs>
+            <linearGradient id="body" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0" stop-color="#3b4760"/>
+              <stop offset=".42" stop-color="#161d2b"/>
+              <stop offset="1" stop-color="#070a11"/>
+            </linearGradient>
+            <linearGradient id="gloss" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0" stop-color="#ffffff" stop-opacity=".40"/>
+              <stop offset=".55" stop-color="#ffffff" stop-opacity=".06"/>
+              <stop offset="1" stop-color="#ffffff" stop-opacity="0"/>
+            </linearGradient>
+            <linearGradient id="bar" x1="0" y1="0" x2="1" y2="0">
+              <stop offset="0" stop-color="#8ec5ff"/>
+              <stop offset="1" stop-color="#4f8ef7"/>
+            </linearGradient>
+            <radialGradient id="glow" cx=".5" cy=".28" r=".75">
+              <stop offset="0" stop-color="#7fb3ff" stop-opacity=".30"/>
+              <stop offset="1" stop-color="#7fb3ff" stop-opacity="0"/>
+            </radialGradient>
+            <filter id="soft" x="-30%" y="-30%" width="160%" height="170%">
+              <feDropShadow dx="0" dy="14" stdDeviation="14" flood-color="#060a14" flood-opacity=".45"/>
+            </filter>
+          </defs>
+
+          <g filter="url(#soft)">
+            <rect x="18" y="14" width="184" height="184" rx="46" fill="url(#body)"/>
+            <rect x="18" y="14" width="184" height="184" rx="46" fill="url(#glow)"/>
+            <!-- specular sheen across the top third -->
+            <path d="M18 60 A46 46 0 0 1 64 14 h92 a46 46 0 0 1 46 46 v26 q-92 34 -184 0 z" fill="url(#gloss)"/>
+            <rect x="18.8" y="14.8" width="182.4" height="182.4" rx="45.2" fill="none" stroke="#ffffff" stroke-opacity=".22"/>
+
+            <g stroke="#f7fafc" stroke-width="11" fill="none" stroke-linecap="round">
+              <path d="M66 84 V70 a4 4 0 0 1 4-4 h14"/>
+              <path d="M136 66 h14 a4 4 0 0 1 4 4 v14"/>
+              <path d="M154 128 v14 a4 4 0 0 1 -4 4 h-14"/>
+              <path d="M84 146 H70 a4 4 0 0 1 -4-4 v-14"/>
+            </g>
+            <rect x="82" y="96" width="56" height="11" rx="5.5" fill="url(#bar)"/>
+            <rect x="82" y="116" width="34" height="11" rx="5.5" fill="url(#bar)" opacity=".8"/>
+          </g>
+        </svg>
+      </div>
+      <div class="hero-text">
+        <p class="kicker">Test Drive Copy4Chat</p>
+        <h1>Copy webpages exactly the way you see them</h1>
+      </div>
+    </div>
 
     <p class="lede">
       Copy4Chat is a Chrome extension that copies your selection as
@@ -684,7 +733,7 @@
           Select anything, right-click, and choose <strong>Copy For Chat</strong>.
           Free, no account, nothing leaves your device.
         </p>
-        <a class="pill primary big" data-store-link="closing" href="#">Add to Chrome</a>
+        <a class="pill primary big" data-store-link="closing" href="#"><svg class="cws" viewBox="0 0 48 48" width="17" height="17" aria-hidden="true"><path fill="#DB4437" d="M24 4a20 20 0 0 1 17.32 10H24a10 10 0 0 0-8.66 5L9.2 8.4A19.93 19.93 0 0 1 24 4z"/><path fill="#0F9D58" d="M6.68 34A20 20 0 0 1 9.2 8.4l6.14 10.6a10 10 0 0 0 0 10z"/><path fill="#FFCD40" d="M24 44a20 20 0 0 1-17.32-10h12.26a10 10 0 0 0 8.66 5h.08L21.5 43.8z"/><path fill="#FFCD40" d="M41.32 14A20 20 0 0 1 24 44l6.14-10.6A10 10 0 0 0 34 24a9.9 9.9 0 0 0-1.34-5z"/><circle fill="#F1F1F1" cx="24" cy="24" r="10"/><circle fill="#4285F4" cx="24" cy="24" r="7.5"/></svg>Add to Chrome</a>
       </section>
     </div>
   </div>

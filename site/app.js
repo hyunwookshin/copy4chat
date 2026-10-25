@@ -1,11 +1,10 @@
 /* Copy4Chat landing page.
  *
  * The comparison is live, not canned. The Copy4Chat column runs the
- * extension's own mask.js / extract.js / render-boxed.js against the widget
- * beside it — the same files the published extension ships, copied in by
- * tools/build-site.sh. The Regular Copy column runs Turndown over the same
- * selection's HTML, which is what a chat client receives from an ordinary
- * copy and paste.
+ * extension's own mask.js / extract.js / render-boxed.js — the same files the
+ * published extension ships, copied in by tools/build-site.sh. The Regular
+ * Copy column runs Turndown over the same selection's HTML, which is what a
+ * chat client actually receives from an ordinary copy and paste.
  *
  * Neither side is hand-written, so neither can flatter the other.
  */
@@ -16,18 +15,17 @@
     "https://chromewebstore.google.com/detail/copy4chat/jfcmdbgodjiacadofiacehfmnnonfjec";
   var VERSION = "__VERSION__"; // replaced by tools/build-site.sh
 
-  // Analytics events. Guarded so the page works identically with the tag
-  // blocked, which many visitors will have.
+  var REDUCED = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  // Guarded so the page behaves identically with the tag blocked.
   function track(name, params) {
     if (typeof window.gtag === "function") window.gtag("event", name, params || {});
   }
 
   // ------------------------------------------------------------- chrome UI
 
-  // UTM tags so the Web Store dashboard can attribute installs to this page,
-  // and to which button on it. Nothing is tracked here: the parameters ride
-  // on the outbound link, so the page itself stays script-free and the
-  // "nothing is sent anywhere" claim in the footer stays true.
+  // UTM tags ride on the outbound link so the Web Store can attribute installs
+  // to this page and to which button.
   document.querySelectorAll("[data-store-link]").forEach(function (a) {
     var params = new URLSearchParams({
       utm_source: "copy4chat.com",
@@ -53,7 +51,8 @@
   // ------------------------------------------------------------------ theme
 
   var MODES = ["auto", "light", "dark"];
-  var LABELS = { auto: "Auto", light: "Light", dark: "Dark" };
+  var LABELS = { auto: "System", light: "Light", dark: "Dark" };
+  var GLYPHS = { auto: "◑", light: "☀", dark: "☾" };
   var root = document.documentElement;
   var stored = null;
   try { stored = localStorage.getItem("c4c-theme"); } catch (e) {}
@@ -61,8 +60,12 @@
 
   function applyTheme() {
     root.setAttribute("data-theme", theme);
+    var glyph = document.querySelector("[data-theme-glyph]");
     var label = document.querySelector("[data-theme-label]");
+    if (glyph) glyph.textContent = GLYPHS[theme];
     if (label) label.textContent = LABELS[theme];
+    var btn = document.querySelector("[data-theme-toggle]");
+    if (btn) btn.setAttribute("aria-label", "Colour theme: " + LABELS[theme] + ". Click to change.");
   }
   applyTheme();
 
@@ -72,6 +75,7 @@
       theme = MODES[(MODES.indexOf(theme) + 1) % MODES.length];
       try { localStorage.setItem("c4c-theme", theme); } catch (e) {}
       applyTheme();
+      track("theme_change", { mode: theme });
     });
   }
 
@@ -84,7 +88,7 @@
 
   if ("IntersectionObserver" in window && sections.length) {
     var visible = new Map();
-    var observer = new IntersectionObserver(
+    var navObserver = new IntersectionObserver(
       function (entries) {
         entries.forEach(function (e) { visible.set(e.target.id, e.intersectionRatio); });
         var best = null;
@@ -93,29 +97,27 @@
           if (ratio > bestRatio) { bestRatio = ratio; best = id; }
         });
         links.forEach(function (a) {
-          var on = best && a.getAttribute("href") === "#" + best;
-          if (on) a.setAttribute("aria-current", "true");
+          if (best && a.getAttribute("href") === "#" + best) a.setAttribute("aria-current", "true");
           else a.removeAttribute("aria-current");
         });
       },
-      // Top margin clears the sticky header so a section counts as "current"
-      // once it reaches the reading area rather than the viewport edge.
       { rootMargin: "-120px 0px -45% 0px", threshold: [0, 0.2, 0.5, 1] }
     );
-    sections.forEach(function (s) { observer.observe(s); });
+    sections.forEach(function (s) { navObserver.observe(s); });
   }
 
   // ------------------------------------------------------------ widget tabs
 
-  // Keep the mock widgets genuinely interactive: tabs must actually switch,
-  // because the extractor reads the live aria-selected state.
+  // The widgets are genuinely interactive: tabs must actually switch, because
+  // the extractor reads the live aria-selected state.
   document.querySelectorAll('.widget [role="tablist"]').forEach(function (list) {
     var tabs = Array.prototype.slice.call(list.querySelectorAll('[role="tab"]'));
     list.addEventListener("click", function (e) {
       var tab = e.target.closest('[role="tab"]');
       if (!tab) return;
       tabs.forEach(function (t) { t.setAttribute("aria-selected", String(t === tab)); });
-      refresh(list.closest("[data-demo]"));
+      var demo = list.closest("[data-demo]");
+      if (demo) refresh(demo);
     });
     list.addEventListener("keydown", function (e) {
       var i = tabs.indexOf(document.activeElement);
@@ -141,8 +143,7 @@
   }
 
   // If the visitor has highlighted something inside this widget, copy exactly
-  // that — the same ragged, partial selection the extension would see on a
-  // real page. Otherwise fall back to the whole widget.
+  // that — the same ragged, partial range the extension sees on a real page.
   function rangeOf(widget) {
     var sel = window.getSelection();
     if (sel && sel.rangeCount && !sel.isCollapsed) {
@@ -154,16 +155,14 @@
     return full;
   }
 
-  // What a chat client actually receives: the clipboard's text/html flavour,
-  // converted to Markdown. Note this serialises the DOM, so a value the user
-  // typed is absent — the attribute is what gets copied, not the live
-  // property. That is real browser behaviour, not a thumb on the scale.
+  // Note this serialises the DOM, so a value the visitor typed is absent —
+  // the attribute is what gets copied, not the live property. That is real
+  // browser behaviour, not a thumb on the scale.
   function regularOutput(widget) {
     if (!turndown) return "(converter unavailable)";
     var holder = document.createElement("div");
     holder.appendChild(rangeOf(widget).cloneContents());
-    var md = turndown.turndown(holder.innerHTML).trim();
-    return md || "(nothing)";
+    return turndown.turndown(holder.innerHTML).trim() || "(nothing)";
   }
 
   function c4cOutput(widget) {
@@ -181,99 +180,34 @@
     c4c: "Generated just now by Copy4Chat itself, running on this page.",
   };
 
+  // --------------------------------------------------------------- learning
+
+  // Once a visitor has produced output once they have understood the gesture;
+  // nudging them for the rest of the visit is just noise.
+  var LEARNED_KEY = "c4c-learned";
+  var learned = false;
+  try { learned = sessionStorage.getItem(LEARNED_KEY) === "1"; } catch (e) {}
+
+  function markLearned() {
+    if (learned) return;
+    learned = true;
+    try { sessionStorage.setItem(LEARNED_KEY, "1"); } catch (e) {}
+    document.querySelectorAll(".panel-label").forEach(function (el) {
+      el.classList.remove("nudge");
+    });
+  }
+
   // ------------------------------------------------------------------ demos
 
-  function refresh(demo, reveal) {
-    if (!demo) return;
+  function refresh(demo) {
     var widget = demo.querySelector("[data-widget]");
     var out = demo.querySelector("[data-out]");
     var note = demo.querySelector("[data-note]");
     var mode = demo.dataset.mode || "c4c";
-    var text = mode === "c4c" ? c4cOutput(widget) : regularOutput(widget);
-
-    if (reveal) {
-      // Wrapped so the fade applies to the text rather than the panel, which
-      // would otherwise flash the whole box on every keystroke.
-      out.textContent = "";
-      var span = document.createElement("span");
-      span.className = "out-reveal";
-      span.textContent = text;
-      out.appendChild(span);
-    } else {
-      out.textContent = text;
-    }
+    out.textContent = mode === "c4c" ? c4cOutput(widget) : regularOutput(widget);
     if (note) note.textContent = NOTES[mode];
     demo.querySelector(".out-panel").classList.add("has-output");
-  }
-
-  var REDUCED = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-
-  // Replays the real sequence once, the first time a demo scrolls into view:
-  // the selection highlights, the menu action appears, then the output
-  // generates. Any interaction cancels it and shows the result immediately,
-  // so the theatre never gets in the way of the thing being demonstrated.
-  function choreograph(demo) {
-    if (demo.dataset.played === "1") return;
-    demo.dataset.played = "1";
-
-    var panel = demo.querySelector(".widget-panel");
-    var outPanel = demo.querySelector(".out-panel");
-    var seg = demo.querySelector(".seg");
-    var copyBtn = demo.querySelector("[data-copy]");
-    // Built on demand and removed afterwards: left in the DOM it would be
-    // copied by the extension itself whenever it happened to be on screen,
-    // which is exactly the artefact this demo should not produce.
-    var toast = document.createElement("div");
-    toast.className = "stage-toast";
-    toast.setAttribute("aria-hidden", "true");
-    toast.innerHTML = '<img src="icon.png" alt=""><span data-toast-text></span>';
-    var toastText = toast.querySelector("[data-toast-text]");
-    var timers = [];
-
-    function finish() {
-      timers.forEach(clearTimeout);
-      timers = [];
-      panel.classList.remove("is-selecting");
-      outPanel.classList.remove("is-busy");
-      seg.classList.remove("is-busy");
-      if (toast.parentNode) toast.parentNode.removeChild(toast);
-      refresh(demo, !REDUCED);
-    }
-    demo.dataset.cancel = "";
-    demo._cancelPlay = finish;
-
-    if (REDUCED) { finish(); return; }
-
-    var at = function (ms, fn) { timers.push(setTimeout(fn, ms)); };
-
-    // Clear only now, so the output was already on screen for anyone whose
-    // browser never fires the observer.
-    outPanel.classList.remove("has-output");
-    demo.querySelector("[data-out]").textContent = "";
-    panel.classList.add("is-selecting");
-    toastText.textContent = "Select the page";
-    panel.appendChild(toast);
-    requestAnimationFrame(function () { toast.classList.add("show"); });
-
-    at(900, function () { toastText.textContent = "Copy For Chat"; });
-
-    at(1700, function () {
-      panel.classList.remove("is-selecting");
-      toast.classList.remove("show");
-      setTimeout(function () { if (toast.parentNode) toast.parentNode.removeChild(toast); }, 260);
-      outPanel.classList.add("is-busy");
-      seg.classList.add("is-busy");
-    });
-
-    at(2500, function () {
-      outPanel.classList.remove("is-busy");
-      seg.classList.remove("is-busy");
-      refresh(demo, true);
-      if (copyBtn) {
-        copyBtn.classList.add("pulse");
-        setTimeout(function () { copyBtn.classList.remove("pulse"); }, 2400);
-      }
-    });
+    markLearned();
   }
 
   document.querySelectorAll("[data-demo]").forEach(function (demo) {
@@ -281,24 +215,24 @@
 
     demo.querySelectorAll(".seg [data-mode]").forEach(function (btn) {
       btn.addEventListener("click", function () {
-        // Switching mode mid-animation means the visitor is ahead of us.
-        if (demo._cancelPlay) { var c = demo._cancelPlay; demo._cancelPlay = null; c(); }
         demo.dataset.mode = btn.dataset.mode;
-        track("demo_toggle", { demo: demo.id, mode: btn.dataset.mode });
         demo.querySelectorAll(".seg [data-mode]").forEach(function (b) {
           b.setAttribute("aria-selected", String(b === btn));
         });
-        refresh(demo);
+        track("demo_toggle", { demo: demo.id, mode: btn.dataset.mode });
+        // Only re-render if there is already something to re-render: the
+        // panel stays empty until the visitor has actually selected something.
+        if (demo.querySelector(".out-panel").classList.contains("has-output")) refresh(demo);
       });
     });
 
     var widget = demo.querySelector("[data-widget]");
     var pending = null;
     function schedule() {
-      if (demo._cancelPlay) { var c = demo._cancelPlay; demo._cancelPlay = null; c(); return; }
       clearTimeout(pending);
       pending = setTimeout(function () { refresh(demo); }, 120);
     }
+
     // focusin/focusout included so the ‹focused› annotation tracks reality.
     ["input", "change", "focusin", "focusout"].forEach(function (evt) {
       widget.addEventListener(evt, schedule);
@@ -314,59 +248,35 @@
     if (copyBtn) {
       copyBtn.addEventListener("click", function () {
         var text = demo.querySelector("[data-out]").textContent;
-        var done = function () {
-          var was = copyBtn.textContent;
-          copyBtn.textContent = "Copied";
-          setTimeout(function () { copyBtn.textContent = was; }, 1400);
-        };
+        if (!text) return;
         track("demo_copy", { demo: demo.id, mode: demo.dataset.mode });
         if (navigator.clipboard && navigator.clipboard.writeText) {
-          navigator.clipboard.writeText(text).then(done, function () {});
+          navigator.clipboard.writeText(text).then(function () {
+            var was = copyBtn.textContent;
+            copyBtn.textContent = "Copied";
+            setTimeout(function () { copyBtn.textContent = was; }, 1400);
+          }, function () {});
         }
       });
     }
-
-    // Left blank on purpose: the output appears only once something has been
-    // highlighted, which is the whole point being demonstrated.
-    if (REDUCED) refresh(demo);
   });
 
-  // Play when a demo reaches the reading area, once each.
-  //
-  // Belt and braces: the observer is the normal path, but the panel starts
-  // blank, so a browser that never delivers a callback would leave the demo
-  // permanently empty. A cheap rect check on scroll guarantees it plays.
-  var pending = document.querySelectorAll("[data-demo]");
-  var queue = Array.prototype.slice.call(pending);
+  // ------------------------------------------------------------------ nudge
 
-  function play(demo) {
-    var i = queue.indexOf(demo);
-    if (i < 0) return;
-    queue.splice(i, 1);
-    choreograph(demo);
-  }
-
+  // Pulse the highlight hint while a demo is on screen, until the visitor has
+  // worked it out once.
   if ("IntersectionObserver" in window) {
-    var player = new IntersectionObserver(
+    var nudger = new IntersectionObserver(
       function (entries) {
         entries.forEach(function (e) {
-          if (e.isIntersecting) { play(e.target); player.unobserve(e.target); }
+          var label = e.target.querySelector(".panel-label");
+          if (!label) return;
+          if (e.isIntersecting && !learned && !REDUCED) label.classList.add("nudge");
+          else label.classList.remove("nudge");
         });
       },
       { threshold: 0, rootMargin: "-20% 0px -20% 0px" }
     );
-    queue.forEach(function (d) { player.observe(d); });
+    document.querySelectorAll("[data-demo]").forEach(function (d) { nudger.observe(d); });
   }
-
-  function sweep() {
-    if (!queue.length) return;
-    var h = window.innerHeight || document.documentElement.clientHeight;
-    queue.slice().forEach(function (d) {
-      var r = d.getBoundingClientRect();
-      if (r.top < h * 0.8 && r.bottom > h * 0.2) play(d);
-    });
-  }
-  window.addEventListener("scroll", sweep, { passive: true });
-  window.addEventListener("resize", sweep, { passive: true });
-  sweep();
 })();
