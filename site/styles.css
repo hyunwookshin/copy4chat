@@ -316,7 +316,16 @@ a { color: inherit; }
 }
 .out-panel.has-output .out-empty { display: none; }
 .out-panel:not(.has-output) .out { display: none; }
-.hl-hint { color: var(--fg); font-weight: 560; }
+.hl-hint {
+  color: var(--fg); font-weight: 560;
+  background: rgba(125, 190, 255, .25); border-radius: 3px;
+  padding: 1px 4px;
+}
+.hl-hint::before {
+  content: ""; display: inline-block; width: 12px; height: 16px;
+  margin-right: 4px; vertical-align: -3px; background: currentColor;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 16'%3E%3Cpath d='M3 2h2l1 1 1-1h2M6 3v10M3 14h2l1-1 1 1h2' fill='none' stroke='black' stroke-width='1.4' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / contain no-repeat;
+}
 
 .out-note {
   margin: 0; padding: 10px 18px 13px; font-size: 12px; color: var(--muted);
