@@ -198,19 +198,14 @@ a { color: inherit; }
 }
 .divider .pill.try { position: relative; z-index: 1; }
 .pill.try {
-  background: linear-gradient(180deg, #ffc23d, #ff8a1f 52%, #f4700d);
+  background: #e5b56d;
   color: #2a1704; border-color: transparent; font-weight: 680; font-size: 15px;
   padding: 12px 24px; letter-spacing: -.005em;
-  box-shadow:
-    0 1px 1px rgba(120, 60, 0, .22),
-    0 6px 16px rgba(255, 138, 31, .34),
-    inset 0 1px 0 rgba(255, 255, 255, .55);
+  box-shadow: none;
 }
 .pill.try:hover {
-  box-shadow:
-    0 1px 1px rgba(120, 60, 0, .22),
-    0 10px 24px rgba(255, 138, 31, .42),
-    inset 0 1px 0 rgba(255, 255, 255, .55);
+  background: #dba65b;
+  box-shadow: none;
 }
 .pill.try .arr { display: inline-block; animation: c4c-bob 1.9s ease-in-out infinite; }
 @keyframes c4c-bob { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(3px); } }
