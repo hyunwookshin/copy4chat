@@ -56,7 +56,7 @@
   var root = document.documentElement;
   var stored = null;
   try { stored = localStorage.getItem("c4c-theme"); } catch (e) {}
-  var theme = MODES.indexOf(stored) >= 0 ? stored : "auto";
+  var theme = MODES.indexOf(stored) >= 0 ? stored : "light";
 
   function applyTheme() {
     root.setAttribute("data-theme", theme);
