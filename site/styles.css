@@ -132,11 +132,11 @@ a { color: inherit; }
 
 /* ------------------------------------------------------------------ intro */
 
-.intro { max-width: 760px; margin: 0 auto; padding: 68px 24px 44px; }
+.intro { max-width: 820px; margin: 0 auto; padding: 44px 24px 26px; }
 /* Hero: the product icon sits beside the headline like an app listing. */
-.hero { display: flex; align-items: center; gap: 28px; margin-bottom: 24px; }
+.hero { display: flex; align-items: center; gap: 24px; margin-bottom: 18px; }
 .hero-icon { flex: 0 0 auto; line-height: 0; }
-.hero-icon svg { display: block; }
+.hero-icon svg { display: block; width: 104px; height: 104px; }
 .hero-text { min-width: 0; }
 .hero h1 { margin-bottom: 0; }
 
@@ -145,11 +145,12 @@ a { color: inherit; }
   letter-spacing: .12em; text-transform: uppercase; color: var(--muted);
 }
 .intro h1 {
-  font-size: clamp(32px, 5vw, 46px); line-height: 1.12;
+  font-size: clamp(29px, 4.1vw, 40px); line-height: 1.14;
   letter-spacing: -.028em; margin: 0 0 22px; font-weight: 680;
 }
 .intro p { margin: 0 0 18px; color: var(--muted); }
-.intro .lede { font-size: 19px; line-height: 1.58; color: var(--fg); }
+.intro .lede { font-size: 18px; line-height: 1.55; color: var(--fg); }
+.intro .lede.short { max-width: 68ch; }
 .intro strong { font-weight: 620; color: var(--fg); }
 .more { margin: 4px 0 0; }
 .more summary {
@@ -195,7 +196,7 @@ a { color: inherit; }
 
 /* --------------------------------------------------------------- roadshow */
 
-.roadshow { display: grid; gap: 68px; min-width: 0; }
+.roadshow { display: grid; gap: 60px; min-width: 0; }
 .demo { scroll-margin-top: 92px; min-width: 0; }
 .demo-head h2 { font-size: 25px; letter-spacing: -.02em; margin: 0 0 6px; font-weight: 640; }
 .demo-head p { margin: 0 0 20px; color: var(--muted); font-size: 15px; max-width: 62ch; }
