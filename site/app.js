@@ -79,6 +79,11 @@
     });
   }
 
+  var tryBtn = document.querySelector("[data-try]");
+  if (tryBtn) {
+    tryBtn.addEventListener("click", function () { track("try_click", {}); });
+  }
+
   // -------------------------------------------------------- sticky section nav
 
   var links = Array.prototype.slice.call(document.querySelectorAll(".toc a"));
