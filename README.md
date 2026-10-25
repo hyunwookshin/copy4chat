@@ -1,5 +1,6 @@
 # Copy4Chat
 
+[![Website](https://img.shields.io/badge/website-copy4chat.com-5965d8)](https://copy4chat.com/)
 [![Chrome Web Store](https://img.shields.io/chrome-web-store/v/jfcmdbgodjiacadofiacehfmnnonfjec?logo=googlechrome&logoColor=white&label=Chrome%20Web%20Store&color=4285F4)](https://chromewebstore.google.com/detail/copy4chat/jfcmdbgodjiacadofiacehfmnnonfjec)
 
 Copies browser selections as structured text for LLMs, preserving visual and semantic relationships that plain-text copy drops.
