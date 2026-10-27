@@ -185,13 +185,21 @@
         <div class="demo-body">
           <div class="panel widget-panel">
             <p class="panel-label"><span class="hl-hint">Highlight any part of this widget</span> — or change a value</p>
-            <div class="chrome" aria-hidden="true">
-              <span class="dot"></span><span class="dot"></span><span class="dot"></span>
-              <span class="url">verify.example/account</span>
-            </div>
             <div class="widget" data-brand="telecom" data-widget>
               <form class="acct" onsubmit="return false">
                 <div class="brandbar"><span class="logo"></span>Verify Mobile</div>
+                <div class="acct-card">
+                  <span class="ava lg">DO</span>
+                  <div class="acct-id">
+                    <p class="acct-name">Dana Okafor <span class="badge">Unlimited Plus</span></p>
+                    <p class="acct-line">Account 4471-882-903 · 3 lines · next bill 14 Nov</p>
+                  </div>
+                  <div class="acct-fig"><strong>$184.62</strong><span>due in 19 days</span></div>
+                </div>
+                <div class="meter">
+                  <div class="meter-top"><span>Data used this cycle</span><span><strong>18.4 GB</strong> of 30 GB</span></div>
+                  <div class="meter-bar"><i style="width:61%"></i></div>
+                </div>
                 <h3>Find my account</h3>
                 <p class="acct-sub">Enter the details on your most recent bill.</p>
 
@@ -265,10 +273,6 @@
         <div class="demo-body">
           <div class="panel widget-panel">
             <p class="panel-label"><span class="hl-hint">Highlight any part of this widget</span> — or change a value</p>
-            <div class="chrome" aria-hidden="true">
-              <span class="dot"></span><span class="dot"></span><span class="dot"></span>
-              <span class="url">ultimateair.example/book</span>
-            </div>
             <div class="widget" data-brand="air" data-widget>
               <div class="bk">
                 <div class="brandbar"><span class="logo"></span>Ultimate Air</div>
@@ -334,6 +338,13 @@
                 <div class="actions">
                   <button type="button" class="btn solid">Search flights</button>
                 </div>
+                <p class="fare-head">Lowest fares from SFO</p>
+                <div class="fares">
+                  <button type="button" class="fare" aria-pressed="false"><span class="fare-day">Sat 12</span><span class="fare-amt">$284</span><span class="fare-cab">Economy</span></button>
+                  <button type="button" class="fare" aria-pressed="true"><span class="fare-day">Sun 13</span><span class="fare-amt">$248</span><span class="fare-cab">Economy</span></button>
+                  <button type="button" class="fare" aria-pressed="false"><span class="fare-day">Mon 14</span><span class="fare-amt">$319</span><span class="fare-cab">Economy</span></button>
+                  <button type="button" class="fare" aria-pressed="false"><span class="fare-day">Tue 15</span><span class="fare-amt">$612</span><span class="fare-cab">Business</span></button>
+                </div>
               </div>
             </div>
           </div>
@@ -364,10 +375,6 @@
         <div class="demo-body">
           <div class="panel widget-panel">
             <p class="panel-label"><span class="hl-hint">Highlight any part of this widget</span> — or change a value</p>
-            <div class="chrome" aria-hidden="true">
-              <span class="dot"></span><span class="dot"></span><span class="dot"></span>
-              <span class="url">app.quickledger.example/invoices</span>
-            </div>
             <div class="widget" data-brand="dash" data-widget>
               <div class="dash">
                 <div class="brandbar"><span class="logo"></span>Quickledger</div>
@@ -377,6 +384,14 @@
                   <button role="tab" aria-selected="false" type="button">Usage</button>
                 </div>
 
+                <div class="kpis">
+                  <div class="kpi"><span>Outstanding</span><strong>$18,470.00</strong><em class="up">▲ 12.4%</em></div>
+                  <div class="kpi"><span>Overdue</span><strong>4 invoices</strong><em class="down">▼ 2 vs last month</em></div>
+                  <div class="kpi"><span>Collected · Oct</span><strong>$42,905.50</strong><em class="up">▲ 6.1%</em></div>
+                  <div class="kpi spark"><span>90-day trend</span>
+                    <svg viewBox="0 0 120 34" preserveAspectRatio="none" aria-hidden="true"><polyline points="0,27 12,24 24,28 36,19 48,22 60,14 72,17 84,9 96,12 108,6 120,8" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>
+                  </div>
+                </div>
                 <div class="filters">
                   <label>Status
                     <select name="status">
@@ -404,11 +419,14 @@
                     <tr><th scope="col">Invoice</th><th scope="col">Client</th><th scope="col">Due</th><th scope="col">Amount</th><th scope="col">Days late</th></tr>
                   </thead>
                   <tbody>
-                    <tr><td>INV-2041</td><td>Harbour Logistics</td><td>28 Sep</td><td>$4,200</td><td>26</td></tr>
-                    <tr><td>INV-2038</td><td>Brightline Media</td><td>02 Oct</td><td>$880</td><td>22</td></tr>
-                    <tr><td>INV-2033</td><td>Okafor &amp; Sons</td><td>11 Oct</td><td>$12,750</td><td>13</td></tr>
-                    <tr><td>INV-2029</td><td>Nordvik Foods</td><td>19 Oct</td><td>$640</td><td>5</td></tr>
+                    <tr><td>INV-2041</td><td><span class="ava sm c1">HL</span>Harbour Logistics</td><td>28 Sep 2026</td><td class="num">$4,200.00</td><td><span class="sev hi">26 days</span></td></tr>
+                    <tr><td>INV-2038</td><td><span class="ava sm c2">BM</span>Brightline Media</td><td>02 Oct 2026</td><td class="num">$880.00</td><td><span class="sev hi">22 days</span></td></tr>
+                    <tr><td>INV-2033</td><td><span class="ava sm c3">OS</span>Okafor &amp; Sons</td><td>11 Oct 2026</td><td class="num">$12,750.00</td><td><span class="sev mid">13 days</span></td></tr>
+                    <tr><td>INV-2029</td><td><span class="ava sm c4">NF</span>Nordvik Foods</td><td>19 Oct 2026</td><td class="num">$640.00</td><td><span class="sev low">5 days</span></td></tr>
                   </tbody>
+                  <tfoot>
+                    <tr><td colspan="3">4 invoices · 1 client overdue twice</td><td class="num"><strong>$18,470.00</strong></td><td></td></tr>
+                  </tfoot>
                 </table>
 
                 <div class="actions">
@@ -445,19 +463,24 @@
         <div class="demo-body">
           <div class="panel widget-panel">
             <p class="panel-label"><span class="hl-hint">Highlight any part of this widget</span> — or change a value</p>
-            <div class="chrome" aria-hidden="true">
-              <span class="dot"></span><span class="dot"></span><span class="dot"></span>
-              <span class="url">amazing.example/dp/B09TRAILRUNNER</span>
-            </div>
             <div class="widget" data-brand="shop" data-widget>
               <div class="brandbar"><span class="logo"></span>Amazing</div>
               <div class="pdp">
-                <div class="pdp-art" aria-hidden="true"></div>
+                <div class="pdp-gallery">
+                  <div class="pdp-art" aria-hidden="true"><span class="shoe"></span></div>
+                  <div class="thumbs" role="tablist" aria-label="Product images">
+                    <button role="tab" aria-selected="true" type="button" class="th t1"></button>
+                    <button role="tab" aria-selected="false" type="button" class="th t2"></button>
+                    <button role="tab" aria-selected="false" type="button" class="th t3"></button>
+                    <button role="tab" aria-selected="false" type="button" class="th t4"></button>
+                  </div>
+                </div>
                 <div class="pdp-main">
                   <h3>Fellrunner Trail Shoe — Unisex</h3>
                   <p class="stars">★★★★☆ <span>4.3 · 2,841 ratings</span></p>
                   <p class="price"><strong>$118.40</strong> <s>$149.00</s> <span class="save">Save 21%</span></p>
-                  <p class="deliv">Free delivery <strong>Thursday 30 October</strong></p>
+                  <p class="deliv">Free delivery <strong>Thursday 30 October</strong> · order within <strong>6 hrs 12 mins</strong></p>
+                  <p class="stock">Only <strong>3 left</strong> in this size — more on the way</p>
                 </div>
               </div>
               <div class="tabs" role="tablist" aria-label="Product sections">
@@ -508,17 +531,14 @@
         <div class="demo-body">
           <div class="panel widget-panel">
             <p class="panel-label"><span class="hl-hint">Highlight any part of this widget</span> — or change a value</p>
-            <div class="chrome" aria-hidden="true">
-              <span class="dot"></span><span class="dot"></span><span class="dot"></span>
-              <span class="url">newfly.example/title/the-long-winter</span>
-            </div>
             <div class="widget" data-brand="stream" data-widget>
               <div class="brandbar"><span class="logo"></span>Newfly</div>
               <div class="sv-hero">
                 <div class="sv-art" aria-hidden="true"></div>
                 <div>
                   <h3>The Long Winter</h3>
-                  <p class="sv-meta">Season 2 · 2026 · 8 episodes · Drama</p>
+                  <p class="sv-meta"><span class="match">97% match</span> · 2026 · Season 2 · 8 episodes · <span class="rating">15</span> · Drama, Survival</p>
+                  <p class="sv-desc">A supply convoy loses contact north of the ridge, and the only road back is closing.</p>
                   <div class="actions">
                     <button type="button" class="btn solid">Resume episode 4</button>
                     <button type="button" class="btn">Add to list</button>
@@ -537,9 +557,9 @@
                 </select>
               </label>
               <ul class="eps">
-                <li><span class="n">3</span><div><strong>Blackthaw</strong><p>Mara breaks the embargo.</p></div><span class="dur">51m</span></li>
-                <li class="on"><span class="n">4</span><div><strong>The Ridge</strong><p>A signal from the north.</p></div><span class="dur">48m</span></li>
-                <li><span class="n">5</span><div><strong>Ash Lake</strong><p>Two convoys, one road.</p></div><span class="dur">55m</span></li>
+                <li><span class="n">3</span><span class="still s1" aria-hidden="true"></span><div><strong>Blackthaw</strong><p>Mara breaks the embargo and the council votes without her.</p></div><span class="dur">51m</span></li>
+                <li class="on"><span class="n">4</span><span class="still s2" aria-hidden="true"></span><div><strong>The Ridge</strong><p>A signal arrives from the north station, nineteen days late.</p><span class="prog"><i style="width:38%"></i></span><span class="left">31m left</span></div><span class="dur">48m</span></li>
+                <li><span class="n">5</span><span class="still s3" aria-hidden="true"></span><div><strong>Ash Lake</strong><p>Two convoys, one road, and weather closing from the west.</p></div><span class="dur">55m</span></li>
               </ul>
               <label class="check"><input type="checkbox" name="subs" checked><span>Subtitles — English</span></label>
             </div>
@@ -568,14 +588,19 @@
         <div class="demo-body">
           <div class="panel widget-panel">
             <p class="panel-label"><span class="hl-hint">Highlight any part of this widget</span> — or change a value</p>
-            <div class="chrome" aria-hidden="true">
-              <span class="dot"></span><span class="dot"></span><span class="dot"></span>
-              <span class="url">ticketmania.example/event/hollow-coast</span>
-            </div>
             <div class="widget" data-brand="tix" data-widget>
               <div class="brandbar"><span class="logo"></span>Ticketmania</div>
               <h3>Hollow Coast — Live</h3>
               <p class="acct-sub">Friday 12 December · 8:00pm · Dockside Hall</p>
+              <div class="venue" aria-hidden="true">
+                <span class="stage">STAGE</span>
+                <div class="rows">
+                  <span class="blk a"></span><span class="blk a"></span><span class="blk a"></span>
+                  <span class="blk b sel"></span><span class="blk b"></span><span class="blk b"></span>
+                  <span class="blk c"></span><span class="blk c"></span><span class="blk c"></span>
+                </div>
+                <p class="legend"><span class="sw a"></span>Front standing <span class="sw b"></span>Balcony <span class="sw c"></span>General</p>
+              </div>
               <div class="tabs" role="tablist" aria-label="Purchase steps">
                 <button role="tab" aria-selected="true" type="button">Tickets</button>
                 <button role="tab" aria-selected="false" type="button">Seat map</button>
@@ -599,7 +624,12 @@
                 <input type="text" name="promo" value="EARLY10" autocomplete="off">
               </label>
               <label class="check"><input type="checkbox" name="protect"><span>Add ticket protection (+$6.50)</span></label>
-              <div class="total"><span>Total</span><strong>$178.00</strong></div>
+              <dl class="costs">
+                <div><dt>2 × Balcony reserved</dt><dd>$178.00</dd></div>
+                <div><dt>Service fee</dt><dd>$21.40</dd></div>
+                <div><dt>Promo EARLY10</dt><dd class="cr">−$17.80</dd></div>
+              </dl>
+              <div class="total"><span>Order total</span><strong>$181.60</strong></div>
               <div class="actions"><button type="button" class="btn solid">Continue to checkout</button></div>
             </div>
           </div>
@@ -627,14 +657,10 @@
         <div class="demo-body">
           <div class="panel widget-panel">
             <p class="panel-label"><span class="hl-hint">Highlight any part of this widget</span> — or change a value</p>
-            <div class="chrome" aria-hidden="true">
-              <span class="dot"></span><span class="dot"></span><span class="dot"></span>
-              <span class="url">iomail.example/mail/inbox</span>
-            </div>
             <div class="widget" data-brand="mail" data-widget>
               <div class="brandbar"><span class="logo"></span>ioMail</div>
               <div class="tabs" role="tablist" aria-label="Folders">
-                <button role="tab" aria-selected="true" type="button">Inbox</button>
+                <button role="tab" aria-selected="true" type="button">Inbox <span class="cnt">12</span></button>
                 <button role="tab" aria-selected="false" type="button">Starred</button>
                 <button role="tab" aria-selected="false" type="button">Archive</button>
               </div>
@@ -649,20 +675,24 @@
               <ul class="msgs">
                 <li class="unread">
                   <input type="checkbox" name="m1" checked aria-label="Select message from Harbour Logistics">
-                  <div><p class="from">Harbour Logistics <span class="tag">Billing</span></p>
+                  <span class="ava sm c1">HL</span>
+                  <div><p class="from"><span class="dot-u" aria-hidden="true"></span>Harbour Logistics <span class="tag">Billing</span> <span class="clip" aria-hidden="true">📎</span></p>
                   <p class="subj">Invoice INV-2041 is now overdue</p>
-                  <p class="prev">The payment due 28 September has not yet been received.</p></div>
+                  <p class="prev">The payment due 28 September has not yet been received. Our terms are net 30 and the account now shows…</p>
+                  <p class="atts"><span class="att">INV-2041.pdf · 84 KB</span><span class="att">statement-sep.csv · 11 KB</span></p></div>
                   <span class="when">09:12</span>
                 </li>
                 <li class="unread">
                   <input type="checkbox" name="m2" aria-label="Select message from Nordvik Foods">
-                  <div><p class="from">Nordvik Foods <span class="tag alt">Contracts</span></p>
+                  <span class="ava sm c4">NF</span>
+                  <div><p class="from"><span class="dot-u" aria-hidden="true"></span>Nordvik Foods <span class="tag alt">Contracts</span></p>
                   <p class="subj">Re: renewal terms for Q1</p>
                   <p class="prev">Happy to extend at the current rate if we sign before…</p></div>
                   <span class="when">08:41</span>
                 </li>
                 <li>
                   <input type="checkbox" name="m3" aria-label="Select message from Brightline Media">
+                  <span class="ava sm c2">BM</span>
                   <div><p class="from">Brightline Media</p>
                   <p class="subj">Invoice paid — thank you</p>
                   <p class="prev">Reference INV-2038 settled by bank transfer.</p></div>
@@ -696,10 +726,6 @@
         <div class="demo-body">
           <div class="panel widget-panel">
             <p class="panel-label"><span class="hl-hint">Highlight any part of this widget</span> — or change a value</p>
-            <div class="chrome" aria-hidden="true">
-              <span class="dot"></span><span class="dot"></span><span class="dot"></span>
-              <span class="url">lilac.example/w/acme/design-review</span>
-            </div>
             <div class="widget" data-brand="chat" data-widget>
               <div class="brandbar"><span class="logo"></span>Lilac</div>
               <div class="tabs" role="tablist" aria-label="Channels">
@@ -708,9 +734,9 @@
                 <button role="tab" aria-selected="false" type="button">Direct messages</button>
               </div>
               <ul class="thread">
-                <li><span class="av a" aria-hidden="true"></span><div><p class="who">Priya <span>10:02</span></p><p>The narrow variant breaks below 320px — the labels wrap under the inputs.</p></div></li>
-                <li><span class="av b" aria-hidden="true"></span><div><p class="who">Sam <span>10:05</span></p><p>Do we support 320 any more? Analytics says 0.4% of sessions.</p></div></li>
-                <li><span class="av c" aria-hidden="true"></span><div><p class="who">Priya <span>10:06</span></p><p>Small, but it is the checkout page. I would rather not break it.</p></div></li>
+                <li><span class="av a" aria-hidden="true"></span><div><p class="who">Priya Raman <span class="pres on" aria-hidden="true"></span><span>10:02</span></p><p>The narrow variant breaks below 320px — the labels wrap under the inputs.</p><p class="code">min-width: 320px; /* checkout.css:214 */</p><p class="rx"><span>👀 3</span><span>🐛 1</span></p></div></li>
+                <li><span class="av b" aria-hidden="true"></span><div><p class="who">Sam Whitlock <span class="pres" aria-hidden="true"></span><span>10:05</span></p><p>Do we support 320 any more? Analytics says 0.4% of sessions — about 1,900 a month.</p><p class="rx"><span class="thr">4 replies</span><span class="last">last reply 10:11</span></p></div></li>
+                <li><span class="av c" aria-hidden="true"></span><div><p class="who">Priya Raman <span class="pres on" aria-hidden="true"></span><span>10:06</span></p><p>Small, but it is the checkout page — 1,900 people is about £40k a month. I would rather not break it.</p><p class="rx"><span>💯 2</span></p></div></li>
               </ul>
               <label>Message #design-review
                 <textarea name="compose" rows="2">Agreed — can we ship the narrow variant first and</textarea>
