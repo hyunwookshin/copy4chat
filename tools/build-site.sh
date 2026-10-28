@@ -23,6 +23,7 @@ done
 
 cp site/vendor/turndown.js site/vendor/turndown-plugin-gfm.js site/vendor/NOTICE.txt "$OUT/vendor/"
 cp site/styles.css "$OUT/styles.css"
+mkdir -p "$OUT/art" && cp site/art/*.png "$OUT/art/"
 cp icons/icon128.png "$OUT/icon.png"
 [ -f site/og.png ] && cp site/og.png "$OUT/og.png"
 

@@ -1,0 +1,157 @@
+<!doctype html><meta charset="utf-8">
+<style>
+  html,body{margin:0;padding:0;overflow:hidden;background:#000}
+  svg{position:fixed;inset:0;width:100%;height:100%}
+  [data-scene]{display:none}
+</style>
+
+<!-- ridge: cold dusk over a mountain pass -->
+<svg data-scene="ridge" viewBox="0 0 272 160" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="r-sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#1b2740"/><stop offset=".52" stop-color="#4a5f7e"/>
+      <stop offset=".78" stop-color="#9aa6b0"/><stop offset="1" stop-color="#cfd3d4"/>
+    </linearGradient>
+    <linearGradient id="r-far" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#6f7d90"/><stop offset="1" stop-color="#8d98a4"/>
+    </linearGradient>
+    <linearGradient id="r-mid" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#3b4859"/><stop offset="1" stop-color="#28323f"/>
+    </linearGradient>
+    <linearGradient id="r-near" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#161d26"/><stop offset="1" stop-color="#0b0f14"/>
+    </linearGradient>
+    <radialGradient id="r-sun" cx=".66" cy=".74" r=".42">
+      <stop offset="0" stop-color="#ffd9a8" stop-opacity=".85"/><stop offset="1" stop-color="#ffd9a8" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="272" height="160" fill="url(#r-sky)"/>
+  <rect width="272" height="160" fill="url(#r-sun)"/>
+  <path d="M0 108 L38 84 L64 96 L96 70 L128 94 L160 76 L196 98 L232 80 L272 104 V160 H0Z" fill="url(#r-far)" opacity=".75"/>
+  <path d="M0 126 L34 104 L70 120 L104 92 L142 118 L178 100 L214 122 L248 106 L272 120 V160 H0Z" fill="url(#r-mid)"/>
+  <path d="M0 146 L46 128 L88 142 L132 120 L176 140 L220 126 L272 142 V160 H0Z" fill="url(#r-near)"/>
+  <g stroke="#e8eef5" stroke-opacity=".5" stroke-width="1" fill="none">
+    <path d="M96 70 L104 78 L112 74"/><path d="M160 76 L168 84 L176 80"/>
+  </g>
+  <rect width="272" height="160" fill="#0a0e14" opacity=".12"/>
+</svg>
+
+<!-- convoy: headlights on a night road -->
+<svg data-scene="convoy" viewBox="0 0 272 160" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="c-sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#0a1018"/><stop offset=".62" stop-color="#1c2a38"/><stop offset="1" stop-color="#33414f"/>
+    </linearGradient>
+    <radialGradient id="c-glow" cx=".42" cy=".82" r=".5">
+      <stop offset="0" stop-color="#ffcf7a" stop-opacity=".9"/><stop offset=".45" stop-color="#ff9f45" stop-opacity=".30"/>
+      <stop offset="1" stop-color="#ff9f45" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="c-road" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#2a3340"/><stop offset="1" stop-color="#11161d"/>
+    </linearGradient>
+  </defs>
+  <rect width="272" height="160" fill="url(#c-sky)"/>
+  <circle cx="214" cy="34" r="2" fill="#dfe8f5" opacity=".8"/><circle cx="238" cy="52" r="1.4" fill="#dfe8f5" opacity=".6"/>
+  <circle cx="66" cy="28" r="1.6" fill="#dfe8f5" opacity=".7"/><circle cx="130" cy="20" r="1.2" fill="#dfe8f5" opacity=".5"/>
+  <path d="M0 112 L60 104 L112 110 L170 100 L228 108 L272 102 V160 H0Z" fill="#141b24"/>
+  <path d="M96 160 L124 112 L152 112 L196 160Z" fill="url(#c-road)"/>
+  <rect width="272" height="160" fill="url(#c-glow)"/>
+  <g fill="#0d1218">
+    <rect x="118" y="96" width="20" height="14" rx="2"/><rect x="146" y="100" width="15" height="11" rx="2"/>
+  </g>
+  <g fill="#ffe3ad"><circle cx="122" cy="110" r="2.6"/><circle cx="134" cy="110" r="2.6"/><circle cx="150" cy="110" r="1.8"/></g>
+  <g stroke="#c9d6e4" stroke-opacity=".35" stroke-width="1.6" stroke-dasharray="5 9" fill="none"><path d="M138 158 L138 114"/></g>
+</svg>
+
+<!-- lake: still water at first light -->
+<svg data-scene="lake" viewBox="0 0 272 160" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="l-sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#20343a"/><stop offset=".55" stop-color="#5c7a74"/><stop offset="1" stop-color="#b9c7b4"/>
+    </linearGradient>
+    <linearGradient id="l-water" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#8aa29a"/><stop offset=".3" stop-color="#4e6a66"/><stop offset="1" stop-color="#1d2b2c"/>
+    </linearGradient>
+  </defs>
+  <rect width="272" height="160" fill="url(#l-sky)"/>
+  <ellipse cx="190" cy="86" rx="26" ry="9" fill="#f3e7c8" opacity=".35"/>
+  <path d="M0 92 L44 72 L82 86 L124 66 L168 84 L210 70 L250 86 L272 78 V96 H0Z" fill="#2c3b3a"/>
+  <rect y="96" width="272" height="64" fill="url(#l-water)"/>
+  <g stroke="#cfe0d6" stroke-opacity=".30" stroke-width="1" fill="none">
+    <path d="M18 108 h52"/><path d="M96 116 h74"/><path d="M34 128 h38"/><path d="M150 134 h66"/><path d="M62 146 h92"/>
+  </g>
+  <ellipse cx="190" cy="104" rx="20" ry="4" fill="#f3e7c8" opacity=".22"/>
+  <g fill="#17211f"><path d="M232 94 l5 -16 l5 16Z"/><path d="M244 94 l4 -11 l4 11Z"/></g>
+</svg>
+
+<!-- shoe: three-quarter product render -->
+<svg data-scene="shoe" viewBox="0 0 300 300">
+  <defs>
+    <linearGradient id="s-bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#ffffff"/><stop offset="1" stop-color="#eceff3"/>
+    </linearGradient>
+    <linearGradient id="s-upper" x1=".1" y1="0" x2=".85" y2="1">
+      <stop offset="0" stop-color="#5a6b82"/><stop offset=".45" stop-color="#33415a"/><stop offset="1" stop-color="#1a2232"/>
+    </linearGradient>
+    <linearGradient id="s-toe" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#6f8098"/><stop offset="1" stop-color="#3b4860"/>
+    </linearGradient>
+    <linearGradient id="s-sole" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#f4f6f8"/><stop offset=".55" stop-color="#d8dee6"/><stop offset="1" stop-color="#aeb8c4"/>
+    </linearGradient>
+    <radialGradient id="s-shadow" cx=".5" cy=".5" r=".5">
+      <stop offset="0" stop-color="#2b3b4a" stop-opacity=".42"/><stop offset="1" stop-color="#2b3b4a" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="300" height="300" fill="url(#s-bg)"/>
+  <ellipse cx="152" cy="226" rx="104" ry="18" fill="#2b3b4a" opacity=".20"/>
+  <!-- midsole -->
+  <path d="M44 206 q-8 -16 10 -22 l38 -10 q26 -9 46 -24 l40 -28 q16 -11 32 -4 q18 8 22 28 q4 22 -10 38 q-18 20 -52 26 l-88 10 q-30 3 -38 -14Z" fill="url(#s-sole)"/>
+  <path d="M44 206 q-8 -16 10 -22 l38 -10 l0 34 l-10 1 q-30 3 -38 -3Z" fill="#c3ccd7" opacity=".7"/>
+  <!-- upper -->
+  <path d="M74 176 q-4 -22 16 -30 l36 -14 q22 -9 38 -24 l26 -24 q14 -12 28 -4 q16 9 18 28 q2 20 -12 34 q-20 20 -54 28 l-70 14 q-22 4 -26 -8Z" fill="url(#s-upper)"/>
+  <!-- toe cap -->
+  <path d="M188 84 q14 -12 28 -4 q16 9 18 28 q1 12 -5 22 q-18 -20 -41 -46Z" fill="url(#s-toe)"/>
+  <!-- lace panel -->
+  <g stroke="#e8edf3" stroke-width="3.4" stroke-linecap="round" opacity=".92">
+    <path d="M122 142 l24 -14"/><path d="M134 154 l24 -14"/><path d="M146 166 l24 -15"/><path d="M110 130 l22 -13"/>
+  </g>
+  <!-- accent flash -->
+  <path d="M96 166 q34 -8 62 -26 q20 -13 34 -28" stroke="#a3e635" stroke-width="8" fill="none" stroke-linecap="round"/>
+  <!-- heel pull -->
+  <path d="M70 152 q-10 2 -10 12 q0 8 10 8" stroke="#8e9bb0" stroke-width="5" fill="none" stroke-linecap="round"/>
+  <!-- outsole lugs -->
+  <g fill="#8c97a4" opacity=".85">
+    <rect x="58" y="196" width="13" height="7" rx="3"/><rect x="80" y="193" width="13" height="7" rx="3"/>
+    <rect x="102" y="190" width="13" height="7" rx="3"/><rect x="124" y="186" width="13" height="7" rx="3"/>
+    <rect x="146" y="181" width="13" height="7" rx="3"/><rect x="168" y="175" width="13" height="7" rx="3"/>
+  </g>
+  <!-- specular -->
+  <path d="M104 134 q40 -10 72 -34" stroke="#ffffff" stroke-opacity=".28" stroke-width="7" fill="none" stroke-linecap="round"/>
+</svg>
+
+<!-- poster: key art -->
+<svg data-scene="poster" viewBox="0 0 200 280">
+  <defs>
+    <linearGradient id="p-sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#0b1119"/><stop offset=".55" stop-color="#2b3c52"/><stop offset="1" stop-color="#6d7f8c"/>
+    </linearGradient>
+    <radialGradient id="p-glow" cx=".5" cy=".62" r=".46">
+      <stop offset="0" stop-color="#ffd9a0" stop-opacity=".55"/><stop offset="1" stop-color="#ffd9a0" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="200" height="280" fill="url(#p-sky)"/>
+  <rect width="200" height="280" fill="url(#p-glow)"/>
+  <path d="M0 196 L30 168 L58 184 L92 150 L126 180 L158 158 L200 186 V280 H0Z" fill="#1b2430"/>
+  <path d="M0 226 L40 206 L80 222 L124 198 L166 220 L200 208 V280 H0Z" fill="#0c1118"/>
+  <g fill="#f4f7fa" opacity=".9"><circle cx="150" cy="56" r="1.6"/><circle cx="46" cy="42" r="1.2"/><circle cx="104" cy="30" r="1"/></g>
+  <g fill="#e9eef4">
+    <rect x="22" y="222" width="2.6" height="14" rx="1"/><rect x="28" y="226" width="2.6" height="10" rx="1"/>
+  </g>
+</svg>
+
+<script>
+  var s = new URLSearchParams(location.search).get("s") || "ridge";
+  var el = document.querySelector('[data-scene="' + s + '"]');
+  if (el) el.style.display = "block";
+</script>
