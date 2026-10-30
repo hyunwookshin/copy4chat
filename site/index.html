@@ -170,6 +170,7 @@
         <li><a href="#tickets">Tickets</a></li>
         <li><a href="#inbox">Inbox</a></li>
         <li><a href="#thread">Chat thread</a></li>
+        <li><a href="#application">Job application</a></li>
       </ol>
     </nav>
 
@@ -755,6 +756,170 @@
             <pre class="out" data-out tabindex="0"></pre>
             <p class="out-empty" data-empty>Highlight part of the widget to copy it</p>
             <div class="spinner" aria-hidden="true"><i></i>Generating…</div>
+            <p class="out-note" data-note></p>
+          </div>
+        </div>
+      </section>
+
+
+      <section id="application" class="demo" data-demo>
+        <header class="demo-head">
+          <h2>Job application</h2>
+          <p>A long multi-section form, part filled in. Scroll it — the output panel stays with you, so you can watch the copied text change as you move down the page.</p>
+        </header>
+
+        <div class="demo-body">
+          <div class="panel widget-panel">
+            <p class="panel-label"><span class="hl-hint">Highlight any part of this widget</span> — or change a value</p>
+            <div class="widget tall" data-brand="jobs" data-widget>
+              <div class="brandbar"><span class="logo"></span>Hireline</div>
+
+              <div class="post">
+                <p class="post-co">Meridian Robotics · Series C</p>
+                <h3>Senior Logistics Coordinator</h3>
+                <p class="post-meta"><span>Rotterdam, NL</span><span>Hybrid · 3 days on-site</span><span>€62,000 – €74,000</span><span>Posted 11 days ago</span></p>
+                <p class="post-tags"><span class="jt">Full time</span><span class="jt">Supply chain</span><span class="jt">Mid–senior</span></p>
+              </div>
+
+              <div class="prog-steps" role="tablist" aria-label="Application steps">
+                <button role="tab" aria-selected="false" type="button">1. Role</button>
+                <button role="tab" aria-selected="true" type="button">2. Your details</button>
+                <button role="tab" aria-selected="false" type="button">3. Review</button>
+              </div>
+
+              <fieldset class="sect">
+                <legend>Personal details</legend>
+                <div class="row two">
+                  <label>First name <input type="text" name="fname" value="Joe" autocomplete="off"></label>
+                  <label>Last name <input type="text" name="lname" value="Doe" autocomplete="off"></label>
+                </div>
+                <div class="row two">
+                  <label>Email <input type="email" name="email" value="joe.doe@example.com" autocomplete="off"></label>
+                  <label>Phone <input type="tel" name="phone" value="+31 6 2041 8873" autocomplete="off"></label>
+                </div>
+                <div class="row two">
+                  <label>City <input type="text" name="city" value="Utrecht" autocomplete="off"></label>
+                  <label>Country
+                    <select name="country"><option>Belgium</option><option>Germany</option><option selected>Netherlands</option><option>United Kingdom</option></select>
+                  </label>
+                </div>
+                <label>LinkedIn <input type="url" name="li" value="linkedin.com/in/joedoe-logistics" autocomplete="off"></label>
+              </fieldset>
+
+              <fieldset class="sect">
+                <legend>Work authorisation</legend>
+                <label class="radio"><input type="radio" name="auth" checked><span>I am authorised to work in the EU</span></label>
+                <label class="radio"><input type="radio" name="auth"><span>I will require sponsorship</span></label>
+                <label>Notice period
+                  <select name="notice"><option>Immediately</option><option>2 weeks</option><option selected>1 month</option><option>3 months</option></select>
+                </label>
+              </fieldset>
+
+              <fieldset class="sect">
+                <legend>Experience</legend>
+                <div class="exp">
+                  <div class="row two">
+                    <label>Job title <input type="text" name="r1t" value="Logistics Coordinator" autocomplete="off"></label>
+                    <label>Company <input type="text" name="r1c" value="Harbour Logistics BV" autocomplete="off"></label>
+                  </div>
+                  <div class="row two">
+                    <label>From <input type="month" name="r1f" value="2023-04"></label>
+                    <label>To <input type="month" name="r1u" value="2026-09"></label>
+                  </div>
+                  <label>What you did
+                    <textarea name="r1d" rows="3">Ran inbound scheduling for 40+ weekly containers across three terminals. Cut average dwell time from 4.1 to 2.6 days.</textarea>
+                  </label>
+                </div>
+                <div class="exp">
+                  <div class="row two">
+                    <label>Job title <input type="text" name="r2t" value="Freight Planner" autocomplete="off"></label>
+                    <label>Company <input type="text" name="r2c" value="Nordvik Foods" autocomplete="off"></label>
+                  </div>
+                  <div class="row two">
+                    <label>From <input type="month" name="r2f" value="2021-01"></label>
+                    <label>To <input type="month" name="r2u" value="2023-03"></label>
+                  </div>
+                  <label>What you did
+                    <textarea name="r2d" rows="2">Planned chilled distribution for 11 depots. Owned the carrier tender each spring.</textarea>
+                  </label>
+                </div>
+                <button type="button" class="btn ghosty">+ Add another role</button>
+              </fieldset>
+
+              <fieldset class="sect">
+                <legend>Education</legend>
+                <div class="row two">
+                  <label>Qualification <input type="text" name="deg" value="BSc Supply Chain Management" autocomplete="off"></label>
+                  <label>Institution <input type="text" name="sch" value="Erasmus University Rotterdam" autocomplete="off"></label>
+                </div>
+                <div class="row two">
+                  <label>Graduated
+                    <select name="gy"><option>2018</option><option>2019</option><option selected>2020</option><option>2021</option></select>
+                  </label>
+                  <label>Grade <input type="text" name="gr" value="Cum laude" autocomplete="off"></label>
+                </div>
+              </fieldset>
+
+              <fieldset class="sect">
+                <legend>Skills</legend>
+                <div class="chips">
+                  <label class="chip-c"><input type="checkbox" name="s1" checked><span>SAP EWM</span></label>
+                  <label class="chip-c"><input type="checkbox" name="s2" checked><span>Customs &amp; incoterms</span></label>
+                  <label class="chip-c"><input type="checkbox" name="s3"><span>Power BI</span></label>
+                  <label class="chip-c"><input type="checkbox" name="s4" checked><span>Carrier tendering</span></label>
+                  <label class="chip-c"><input type="checkbox" name="s5"><span>Lean / Six Sigma</span></label>
+                  <label class="chip-c"><input type="checkbox" name="s6" checked><span>Dutch (native)</span></label>
+                </div>
+              </fieldset>
+
+              <fieldset class="sect">
+                <legend>Documents</legend>
+                <div class="file"><span class="file-ic" aria-hidden="true">📄</span><div><p class="file-n">joe-doe-cv-2026.pdf</p><p class="file-s">284 KB · uploaded 2 minutes ago</p></div><button type="button" class="btn ghosty sm">Replace</button></div>
+                <label>Cover letter
+                  <textarea name="cl" rows="5">Dear hiring team,
+
+I have spent five years coordinating container and chilled freight across the Randstad, most recently at Harbour Logistics where I owned inbound scheduling for three terminals. What draws me to Meridian is that the</textarea>
+                </label>
+              </fieldset>
+
+              <fieldset class="sect">
+                <legend>Voluntary disclosures</legend>
+                <p class="sect-note">Used for reporting only. It is not shared with the hiring team.</p>
+                <div class="row two">
+                  <label>Gender
+                    <select name="g"><option selected>Prefer not to say</option><option>Man</option><option>Woman</option><option>Non-binary</option></select>
+                  </label>
+                  <label>Veteran status
+                    <select name="v"><option>Yes</option><option>No</option><option selected>Prefer not to say</option></select>
+                  </label>
+                </div>
+              </fieldset>
+
+              <fieldset class="sect">
+                <legend>Before you submit</legend>
+                <label class="check"><input type="checkbox" name="a1" checked><span>I confirm the information above is accurate</span></label>
+                <label class="check"><input type="checkbox" name="a2"><span>Keep my profile on file for similar roles</span></label>
+                <label class="check"><input type="checkbox" name="a3" aria-invalid="true"><span>I accept the privacy notice</span></label>
+                <p class="err">You must accept the privacy notice to continue.</p>
+              </fieldset>
+
+              <div class="actions sticky-actions">
+                <button type="button" class="btn">Save draft</button>
+                <button type="button" class="btn solid">Submit application</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="panel out-panel">
+            <div class="panel-head">
+              <div class="seg" role="tablist" aria-label="Output mode">
+                <button role="tab" type="button" data-mode="regular">Regular copy</button>
+                <button role="tab" type="button" data-mode="c4c" aria-selected="true"><img src="icon.png" alt="" width="14" height="14">Copy4Chat</button>
+              </div>
+              <button class="pill ghost tiny" type="button" data-copy>Copy output</button>
+            </div>
+            <pre class="out" data-out tabindex="0"></pre>
+            <p class="out-empty" data-empty>Highlight part of the widget to copy it</p>
             <p class="out-note" data-note></p>
           </div>
         </div>

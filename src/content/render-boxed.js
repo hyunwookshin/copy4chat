@@ -299,13 +299,17 @@
   // Forms emit the same string two or three times — a <label>, the control's
   // accessible name, a visible span. Drop the echoes before rendering.
   function dropEchoes(children, title) {
+    // Case-insensitive: a legend rendered through text-transform: uppercase
+    // reads as a different string from the accessible name it came from, so
+    // an exact match lets the heading through twice.
+    const same = (x) => x.toLowerCase() === (title || "").toLowerCase();
     const out = [];
     for (let i = 0; i < children.length; i++) {
       const c = children[i];
       if (c.kind === "text") {
         const t = c.text.trim();
         if (!t) continue;
-        if (t === title) continue;
+        if (title && same(t)) continue;
         const prev = out[out.length - 1];
         if (prev && prev.kind === "text" && prev.text.trim() === t) continue;
         // A control's label may sit on either side of it in the DOM.
@@ -314,7 +318,7 @@
         out.push(c);
         continue;
       }
-      if (c.kind === "field" && (c.label || "").trim() === title) {
+      if (c.kind === "field" && title && same((c.label || "").trim())) {
         out.push({ ...c, label: "" });
         continue;
       }
